@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es2015",
+    "noImplicitAny": false,
+    "declaration": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "allowSyntheticDefaultImports": true,
+    "preserveSymlinks": true,
+    "lib": [
+      "dom",
+      "es6",
+      "es2015"
+    ],
+    "types": [],
+    "moduleResolution": "node"
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tmp"
+  ],
+  "angularCompilerOptions": {
+    "genDir": "aot"
+  }
+}
