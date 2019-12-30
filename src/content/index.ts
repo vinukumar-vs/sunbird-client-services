@@ -57,6 +57,7 @@ export interface Content {
     originData?: OriginData;
     origin?: string;
     totalQuestions?: number;
+    itemSetPreviewUrl?: string;
 }
 
 export interface LicenseDetails {
