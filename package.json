@@ -1,5 +1,5 @@
 {
-  "name": "@project-sunbird/telemetry-sdk/client-data-models",
+  "name": "@project-sunbird/client-data-models",
   "version": "1.0.4",
   "description": "Type definitions and models for Sunbird platform clients",
   "main": "dist/index.js",
