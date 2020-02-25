@@ -20,6 +20,7 @@ export interface Batch {
     creatorFirstName?: string;
     creatorLastName?: string;
     enrollmentEndDate?: string;
+    cert_templates: any;
 }
 
 export interface CourseCertificate {
