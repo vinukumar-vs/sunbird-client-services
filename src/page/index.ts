@@ -1,3 +1,5 @@
+import {Content} from '../content';
+
 export interface PageAssemble {
     name: string;
     id: string;
@@ -13,7 +15,8 @@ export interface PageSections {
     sectionDataType: string;
     imgUrl?: string;
     resmsgId: string;
-    contents?: any;
+    collections?: Content[];
+    contents?: Content[];
     searchQuery: string;
     name: string;
     id: string;
