@@ -1,12 +1,12 @@
 import {Content} from '../content';
 
-export interface PageAssemble {
+export interface Page {
     name: string;
     id: string;
-    sections: Array<PageSections>;
+    sections: PageSection[];
 }
 
-export interface PageSections {
+export interface PageSection {
     display?: string;
     alt?: string;
     count: number;
