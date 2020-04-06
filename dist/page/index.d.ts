@@ -1,9 +1,10 @@
-export interface PageAssemble {
+import { Content } from '../content';
+export interface Page {
     name: string;
     id: string;
-    sections: Array<PageSections>;
+    sections: PageSection[];
 }
-export interface PageSections {
+export interface PageSection {
     display?: string;
     alt?: string;
     count: number;
@@ -12,7 +13,8 @@ export interface PageSections {
     sectionDataType: string;
     imgUrl?: string;
     resmsgId: string;
-    contents?: any;
+    collections?: Content[];
+    contents?: Content[];
     searchQuery: string;
     name: string;
     id: string;

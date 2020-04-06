@@ -12,7 +12,7 @@ export interface Content {
     board: string;
     medium: string | string[];
     publisher: string;
-    me_totalRatings: string;
+    me_totalRatingsCount: number;
     me_averageRating: string;
     me_totalDownloads: string;
     copyright: string;
