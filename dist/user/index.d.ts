@@ -18,3 +18,23 @@ export interface RootOrg {
     slug?: string;
     hashTagId: string;
 }
+export interface Location {
+    code: string;
+    name: string;
+    id: string;
+    type: string;
+}
+export interface Feed {
+    id: string;
+    userId: string;
+    category: string;
+    priority: number;
+    createdBy: string;
+    createdOn: string;
+    channel: string;
+    status: string;
+    expireOn: string;
+    data: {
+        prospectChannels: string[];
+    };
+}

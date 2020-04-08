@@ -17,8 +17,7 @@ export interface Batch {
     status: number;
     courseCreator: string;
     createdBy: string;
-    creatorFirstName?: string;
-    creatorLastName?: string;
+    creator?: string;
     enrollmentEndDate?: string;
     cert_templates: any;
 }
