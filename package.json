@@ -17,12 +17,57 @@
     "url": "https://github.com/Sunbird-Ed/sunbird-client-services/issues"
   },
   "homepage": "https://github.com/Sunbird-Ed/sunbird-client-services#readme",
+  "peerDependencies": {
+    "rxjs": ">=6"
+  },
   "devDependencies": {
+    "jest": "^25.1.0",
+    "rxjs": "^6.5.3",
+    "ts-jest": "^25.2.0",
     "tslint": "^5.12.0",
     "ts-loader": "^5.3.2",
     "typescript": "2.9.1",
     "uglifyjs-webpack-plugin": "^2.1.1",
     "webpack": "^4.28.3",
     "webpack-cli": "^3.3.10"
+  },
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.spec.json"
+      }
+    },
+    "browser": false,
+    "rootDir": "./",
+    "roots": [
+      "<rootDir>/src/"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "coveragePathIgnorePatterns": [],
+    "testMatch": [
+      "**/?(*.)(spec).ts"
+    ],
+    "restoreMocks": true,
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "ts",
+      "tsx"
+    ],
+    "setupFiles": [],
+    "transform": {
+      "^.+\\.(ts)$": "ts-jest"
+    },
+    "coverageReporters": [
+      "text",
+      "json"
+    ],
+    "transformIgnorePatterns": []
   }
 }
