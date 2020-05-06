@@ -1,8 +1,8 @@
-import {CsRequestInterceptor} from '../../interface/cs-request-interceptor';
+import {CsRequestInterceptor} from '../../interface';
 import {Observable, of} from 'rxjs';
 import {Container} from 'inversify';
 import {InjectionTokens} from '../../../../injection-tokens';
-import {CsRequest} from '../../interface/cs-request';
+import {CsRequest} from '../../interface';
 
 export class BearerTokenInjectRequestInterceptor implements CsRequestInterceptor {
     constructor(

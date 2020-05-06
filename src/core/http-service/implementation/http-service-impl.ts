@@ -1,28 +1,40 @@
-import {CsHttpRequestType, CsHttpSerializer, CsRequest} from '../interface/cs-request';
-import {CsResponse, CsHttpResponseCode} from '../interface/cs-response';
+import {CsHttpRequestType, CsHttpSerializer, CsRequest} from '../interface';
+import {CsResponse, CsHttpResponseCode} from '../interface';
 import {from, Observable} from 'rxjs';
 import {Container, inject, injectable} from 'inversify';
 import * as qs from 'qs';
-import {CsHttpService} from '../interface/cs-http-service';
+import {CsHttpService} from '../interface';
 import {InjectionTokens} from '../../../injection-tokens';
 import {HttpClient} from './http-client-adapters/http-client';
 import {BearerTokenInjectRequestInterceptor} from './interceptors/bearer-token-inject-request-interceptor';
 import {UserTokenRequestInterceptor} from './interceptors/user-token-request-interceptor';
-import {CsRequestInterceptor} from '../interface/cs-request-interceptor';
-import {CsResponseInterceptor} from '../interface/cs-response-interceptor';
+import {CsRequestInterceptor} from '../interface';
+import {CsResponseInterceptor} from '../interface';
 
 @injectable()
 export class HttpServiceImpl implements CsHttpService {
     private _requestInterceptors: CsRequestInterceptor[] = [];
     private _responseInterceptors: CsResponseInterceptor[] = [];
 
+    get host(): string {
+        return this.container.get(InjectionTokens.core.api.HOST);
+    }
+
+    get channelId(): string {
+        return this.container.get(InjectionTokens.core.global.headers.CHANNEL_ID);
+    }
+
+    get deviceId(): string {
+        return this.container.get(InjectionTokens.core.global.headers.DEVICE_ID);
+    }
+
+    get producerId(): string {
+        return this.container.get(InjectionTokens.core.global.headers.PRODUCER_ID);
+    }
+
     constructor(
         @inject(InjectionTokens.CONTAINER) private container: Container,
-        @inject(InjectionTokens.core.HTTP_ADAPTER) private http: HttpClient,
-        @inject(InjectionTokens.core.api.HOST) private readonly host: string,
-        @inject(InjectionTokens.core.global.headers.CHANNEL_ID) private readonly channelId: string,
-        @inject(InjectionTokens.core.global.headers.DEVICE_ID) private readonly deviceId: string,
-        @inject(InjectionTokens.core.global.headers.PRODUCER_ID) private readonly producerId: string,
+        @inject(InjectionTokens.core.HTTP_ADAPTER) private http: HttpClient
     ) {
     }
 

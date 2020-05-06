@@ -14,14 +14,14 @@ export interface CsConfig {
         api: {
             host: string;
             authentication: {
-                userToken: string;
-                bearerToken: string;
+                userToken?: string;
+                bearerToken?: string;
             };
         };
     };
 }
 
-class CsModule {
+export class CsModule {
     private static _instance?: CsModule;
 
     public static get instance(): CsModule {
@@ -36,6 +36,8 @@ class CsModule {
 
     private _isInitialised = false;
 
+    private _config: CsConfig;
+
     get isInitialised(): boolean {
         return this._isInitialised;
     }
@@ -44,7 +46,13 @@ class CsModule {
         return this._container.get<CsClassRoomService>(InjectionTokens.services.CLASS_ROOM_SERVICE);
     }
 
+    get config(): CsConfig {
+        return this._config;
+    }
+
     public async init(config: CsConfig) {
+        this._config = config;
+
         this._container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(this._container = new Container());
 
         if (config.core.httpAdapter === 'HttpClientCordovaAdapter') {
@@ -55,12 +63,7 @@ class CsModule {
                 .to(HttpClientBrowserAdapter).inSingletonScope();
         }
 
-        console.assert(!!config.core.api.authentication.bearerToken);
-        this._container.bind<string>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
-            .toConstantValue(config.core.api.authentication.bearerToken);
-        console.assert(!!config.core.api.authentication.userToken);
-        this._container.bind<string>(InjectionTokens.core.api.authentication.USER_TOKEN)
-            .toConstantValue(config.core.api.authentication.userToken);
+        this.updateConfig(config);
 
         this._container.bind<CsHttpService>(InjectionTokens.core.HTTP_SERVICE)
             .to(HttpServiceImpl).inSingletonScope();
@@ -69,5 +72,16 @@ class CsModule {
             .to(ClassRoomServiceImpl).inSingletonScope();
 
         this._isInitialised = true;
+    }
+
+    updateConfig(config: CsConfig) {
+        this._config = config;
+
+        this._container.bind<string>(InjectionTokens.core.api.HOST)
+            .toConstantValue(config.core.api.host);
+        this._container.bind<string | undefined>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
+            .toConstantValue(config.core.api.authentication.bearerToken);
+        this._container.bind<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
+            .toConstantValue(config.core.api.authentication.userToken);
     }
 }
