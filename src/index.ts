@@ -6,31 +6,7 @@ import {CsHttpService} from './core/http-service/interface/cs-http-service';
 import {HttpServiceImpl} from './core/http-service/implementation/http-service-impl';
 import {ClassRoomServiceImpl} from './services/class-room/implementation/class-room-service-impl';
 import {ScClassRoomService} from './services/class-room/interface';
-
-export const CsInjectionTokens = {
-    CONTAINER: Symbol.for('CONTAINER'),
-    core: {
-        HTTP_ADAPTER: Symbol.for('HTTP_ADAPTER'),
-        global: {
-            headers: {
-                CHANNEL_ID: Symbol.for('CHANNEL_ID'),
-                PRODUCER_ID: Symbol.for('PRODUCER_ID'),
-                DEVICE_ID: Symbol.for('DEVICE_ID'),
-            }
-        },
-        api: {
-            HOST: Symbol.for('HOST'),
-            authentication: {
-                USER_TOKEN: Symbol.for('USER_TOKEN'),
-                BEARER_TOKEN: Symbol.for('BEARER_TOKEN'),
-            }
-        },
-        HTTP_SERVICE: Symbol.for('HTTP_SERVICE'),
-    },
-    services: {
-        CLASS_ROOM_SERVICE: Symbol.for('CLASS_ROOM_SERVICE')
-    }
-};
+import {InjectionTokens} from './injection-tokens';
 
 export interface CsConfig {
     core: {
@@ -65,31 +41,31 @@ class CsModule {
     }
 
     get classRoomService(): ScClassRoomService {
-        return this._container.get<ScClassRoomService>(CsInjectionTokens.services.CLASS_ROOM_SERVICE);
+        return this._container.get<ScClassRoomService>(InjectionTokens.services.CLASS_ROOM_SERVICE);
     }
 
     public async init(config: CsConfig) {
-        this._container.bind<Container>(CsInjectionTokens.CONTAINER).toConstantValue(this._container = new Container());
+        this._container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(this._container = new Container());
 
         if (config.core.httpAdapter === 'HttpClientCordovaAdapter') {
-            this._container.bind<HttpClient>(CsInjectionTokens.core.api.authentication.BEARER_TOKEN)
+            this._container.bind<HttpClient>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
                 .to(HttpClientCordovaAdapter).inRequestScope();
         } else {
-            this._container.bind<HttpClient>(CsInjectionTokens.core.api.authentication.BEARER_TOKEN)
+            this._container.bind<HttpClient>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
                 .to(HttpClientBrowserAdapter).inRequestScope();
         }
 
         console.assert(!!config.core.api.authentication.bearerToken);
-        this._container.bind<string>(CsInjectionTokens.core.api.authentication.BEARER_TOKEN)
+        this._container.bind<string>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
             .toConstantValue(config.core.api.authentication.bearerToken);
         console.assert(!!config.core.api.authentication.userToken);
-        this._container.bind<string>(CsInjectionTokens.core.api.authentication.USER_TOKEN)
+        this._container.bind<string>(InjectionTokens.core.api.authentication.USER_TOKEN)
             .toConstantValue(config.core.api.authentication.userToken);
 
-        this._container.bind<CsHttpService>(CsInjectionTokens.core.HTTP_SERVICE)
+        this._container.bind<CsHttpService>(InjectionTokens.core.HTTP_SERVICE)
             .to(HttpServiceImpl).inRequestScope();
 
-        this._container.bind<ScClassRoomService>(CsInjectionTokens.services.CLASS_ROOM_SERVICE)
+        this._container.bind<ScClassRoomService>(InjectionTokens.services.CLASS_ROOM_SERVICE)
             .to(ClassRoomServiceImpl).inRequestScope();
 
         this._isInitialised = true;

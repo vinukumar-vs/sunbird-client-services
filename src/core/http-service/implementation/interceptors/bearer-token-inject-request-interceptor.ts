@@ -1,7 +1,7 @@
 import {CsRequestInterceptor} from '../../interface/cs-request-interceptor';
 import {Observable, of} from 'rxjs';
 import {Container} from 'inversify';
-import {CsInjectionTokens} from '../../../../index';
+import {InjectionTokens} from '../../../../injection-tokens';
 import {CsRequest} from '../../interface/cs-request';
 
 export class BearerTokenInjectRequestInterceptor implements CsRequestInterceptor {
@@ -11,7 +11,7 @@ export class BearerTokenInjectRequestInterceptor implements CsRequestInterceptor
     }
 
     interceptRequest(request: CsRequest): Observable<CsRequest> {
-        request.headers['Authorization'] = `Bearer ${this.container.get<string>(CsInjectionTokens.core.api.authentication.BEARER_TOKEN)}`;
+        request.headers['Authorization'] = `Bearer ${this.container.get<string>(InjectionTokens.core.api.authentication.BEARER_TOKEN)}`;
         return of(request);
     }
 }
