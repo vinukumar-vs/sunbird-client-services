@@ -4,7 +4,7 @@ import {from, Observable} from 'rxjs';
 import {Container, inject, injectable} from 'inversify';
 import * as qs from 'qs';
 import {CsHttpService} from '../interface/cs-http-service';
-import {InjectionTokens} from '../../../index';
+import {CsInjectionTokens} from '../../../index';
 import {HttpClient} from './http-client-adapters/http-client';
 import {BearerTokenInjectRequestInterceptor} from './interceptors/bearer-token-inject-request-interceptor';
 import {UserTokenRequestInterceptor} from './interceptors/user-token-request-interceptor';
@@ -17,12 +17,12 @@ export class HttpServiceImpl implements CsHttpService {
     private _responseInterceptors: CsResponseInterceptor[] = [];
 
     constructor(
-        @inject(InjectionTokens.CONTAINER) private container: Container,
-        @inject(InjectionTokens.core.HTTP_ADAPTER) private http: HttpClient,
-        @inject(InjectionTokens.core.api.HOST) private readonly host: string,
-        @inject(InjectionTokens.core.global.headers.CHANNEL_ID) private readonly channelId: string,
-        @inject(InjectionTokens.core.global.headers.DEVICE_ID) private readonly deviceId: string,
-        @inject(InjectionTokens.core.global.headers.PRODUCER_ID) private readonly producerId: string,
+        @inject(CsInjectionTokens.CONTAINER) private container: Container,
+        @inject(CsInjectionTokens.core.HTTP_ADAPTER) private http: HttpClient,
+        @inject(CsInjectionTokens.core.api.HOST) private readonly host: string,
+        @inject(CsInjectionTokens.core.global.headers.CHANNEL_ID) private readonly channelId: string,
+        @inject(CsInjectionTokens.core.global.headers.DEVICE_ID) private readonly deviceId: string,
+        @inject(CsInjectionTokens.core.global.headers.PRODUCER_ID) private readonly producerId: string,
     ) {
     }
 
