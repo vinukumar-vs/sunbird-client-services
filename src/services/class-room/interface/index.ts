@@ -1,0 +1,1 @@
+export * from './sc-class-room-service';

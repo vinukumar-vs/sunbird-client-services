@@ -2,10 +2,10 @@ import {Container} from 'inversify';
 import {HttpClient} from './core/http-service/implementation/http-client-adapters/http-client';
 import {HttpClientCordovaAdapter} from './core/http-service/implementation/http-client-adapters/http-client-cordova-adapter';
 import {HttpClientBrowserAdapter} from './core/http-service/implementation/http-client-adapters/http-client-browser-adapter';
-import {ScClassRoomService} from './services/class-room';
 import {CsHttpService} from './core/http-service/interface/cs-http-service';
-import {CsHttpServiceImpl} from './core/http-service/implementation/cs-http-service-impl';
-import {ScClassRoomServiceImpl} from './services/class-room/implementation/sc-class-room-service-impl';
+import {HttpServiceImpl} from './core/http-service/implementation/http-service-impl';
+import {ClassRoomServiceImpl} from './services/class-room/implementation/class-room-service-impl';
+import {ScClassRoomService} from './services/class-room/interface';
 
 export const InjectionTokens = {
     CONTAINER: Symbol.for('CONTAINER'),
@@ -34,7 +34,7 @@ export const InjectionTokens = {
 
 export interface CsConfig {
     core: {
-        httpAdapter: 'cordova' | 'browser';
+        httpAdapter: 'HttpClientBrowserAdapter' | 'HttpClientCordovaAdapter';
         api: {
             host: string;
             authentication: {
@@ -71,7 +71,7 @@ class CsModule {
     public async init(config: CsConfig) {
         this._container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(this._container = new Container());
 
-        if (config.core.httpAdapter === 'cordova') {
+        if (config.core.httpAdapter === 'HttpClientCordovaAdapter') {
             this._container.bind<HttpClient>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
                 .to(HttpClientCordovaAdapter).inRequestScope();
         } else {
@@ -87,10 +87,10 @@ class CsModule {
             .toConstantValue(config.core.api.authentication.userToken);
 
         this._container.bind<CsHttpService>(InjectionTokens.core.HTTP_SERVICE)
-            .to(CsHttpServiceImpl).inRequestScope();
+            .to(HttpServiceImpl).inRequestScope();
 
         this._container.bind<ScClassRoomService>(InjectionTokens.services.CLASS_ROOM_SERVICE)
-            .to(ScClassRoomServiceImpl).inRequestScope();
+            .to(ClassRoomServiceImpl).inRequestScope();
 
         this._isInitialised = true;
     }

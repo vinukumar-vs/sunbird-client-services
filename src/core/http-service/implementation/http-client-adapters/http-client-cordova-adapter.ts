@@ -1,10 +1,10 @@
 import {Observable, Subject} from 'rxjs';
 import {HttpClient} from './http-client';
-import {HttpRequestType, HttpSerializer} from '../../interface/request';
-import {NetworkError} from '../../errors/network-error';
-import {ResponseCode, Response} from '../../interface/response';
-import {HttpClientError} from '../../errors/http-client-error';
-import {HttpServerError} from '../../errors/http-server-error';
+import {CsHttpRequestType, CsHttpSerializer} from '../../interface/cs-request';
+import {CsNetworkError} from '../../errors/cs-network-error';
+import {CsHttpResponseCode, CsResponse} from '../../interface/cs-response';
+import {CsHttpClientError} from '../../errors/cs-http-client-error';
+import {CsHttpServerError} from '../../errors/cs-http-server-error';
 
 interface CordovaHttpClientResponse {
     data?: string;
@@ -19,7 +19,7 @@ export class HttpClientCordovaAdapter implements HttpClient {
     constructor() {
     }
 
-    setSerializer(httpSerializer: HttpSerializer) {
+    setSerializer(httpSerializer: CsHttpSerializer) {
         this.http.setDataSerializer(httpSerializer);
     }
 
@@ -35,24 +35,24 @@ export class HttpClientCordovaAdapter implements HttpClient {
         this.http.setHeader('*', key, value);
     }
 
-    get(baseUrl: string, path: string, headers: any, parameters: { [key: string]: string }): Observable<Response> {
-        return this.invokeRequest(HttpRequestType.GET, baseUrl + path, parameters, headers);
+    get(baseUrl: string, path: string, headers: any, parameters: { [key: string]: string }): Observable<CsResponse> {
+        return this.invokeRequest(CsHttpRequestType.GET, baseUrl + path, parameters, headers);
     }
 
-    patch(baseUrl: string, path: string, headers: any, body: {}): Observable<Response> {
-        return this.invokeRequest(HttpRequestType.PATCH, baseUrl + path, body, headers);
+    patch(baseUrl: string, path: string, headers: any, body: {}): Observable<CsResponse> {
+        return this.invokeRequest(CsHttpRequestType.PATCH, baseUrl + path, body, headers);
     }
 
-    post(baseUrl: string, path: string, headers: any, body: {}): Observable<Response> {
-        return this.invokeRequest(HttpRequestType.POST, baseUrl + path, body, headers);
+    post(baseUrl: string, path: string, headers: any, body: {}): Observable<CsResponse> {
+        return this.invokeRequest(CsHttpRequestType.POST, baseUrl + path, body, headers);
     }
 
-    private invokeRequest(type: HttpRequestType, url: string, parametersOrData: any,
-                          headers: { [key: string]: string }): Observable<Response> {
-        const observable = new Subject<Response>();
+    private invokeRequest(type: CsHttpRequestType, url: string, parametersOrData: any,
+                          headers: { [key: string]: string }): Observable<CsResponse> {
+        const observable = new Subject<CsResponse>();
 
         this.http[type.toLowerCase()](url, parametersOrData, headers, (response: CordovaHttpClientResponse) => {
-            const r = new Response();
+            const r = new CsResponse();
 
             try {
                 r.body = JSON.parse(response.data!);
@@ -66,10 +66,10 @@ export class HttpClientCordovaAdapter implements HttpClient {
             observable.complete();
 
         }, (response: CordovaHttpClientResponse) => {
-            const r = new Response();
+            const r = new CsResponse();
 
             if (response.status === 0) {
-                observable.error(new NetworkError(`
+                observable.error(new CsNetworkError(`
                     ${url} -
                     ${response.error || ''}
                 `));
@@ -84,24 +84,24 @@ export class HttpClientCordovaAdapter implements HttpClient {
                 r.responseCode = response.status;
                 r.errorMesg = 'SERVER_ERROR';
 
-                if (r.responseCode === ResponseCode.HTTP_UNAUTHORISED || r.responseCode === ResponseCode.HTTP_FORBIDDEN) {
+                if (r.responseCode === CsHttpResponseCode.HTTP_UNAUTHORISED || r.responseCode === CsHttpResponseCode.HTTP_FORBIDDEN) {
                     observable.next(r);
                     observable.complete();
                 } else {
                     if (r.responseCode >= 400 && r.responseCode <= 499) {
-                        observable.error(new HttpClientError(`
+                        observable.error(new CsHttpClientError(`
                             ${url} -
                             ${response.error || ''}
                         `, r));
                     } else {
-                        observable.error(new HttpServerError(`
+                        observable.error(new CsHttpServerError(`
                             ${url} -
                             ${response.error || ''}
                         `, r));
                     }
                 }
             } catch (e) {
-                observable.error(new NetworkError(`
+                observable.error(new CsNetworkError(`
                     ${url} -
                     ${response.error || ''}
                 `));

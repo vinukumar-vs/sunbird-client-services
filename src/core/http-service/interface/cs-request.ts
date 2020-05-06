@@ -1,27 +1,27 @@
-import {ResponseInterceptor} from './response-interceptor';
-import {RequestInterceptor} from './request-interceptor';
-import {RequestBuildError} from '../errors/request-build-error';
+import {CsResponseInterceptor} from './cs-response-interceptor';
+import {CsRequestInterceptor} from './cs-request-interceptor';
+import {CsRequestBuilderError} from '../errors/cs-request-builder-error';
 
-export enum HttpSerializer {
+export enum CsHttpSerializer {
     JSON = 'json',
     URLENCODED = 'urlencoded',
     UTF8 = 'utf8',
     RAW = 'raw'
 }
 
-export enum HttpRequestType {
+export enum CsHttpRequestType {
     GET = 'GET',
     POST = 'POST',
     PATCH = 'PATCH'
 }
 
-export class Request {
+export class CsRequest {
     static Builder: any = class Builder {
 
-        protected request: Request;
+        protected request: CsRequest;
 
         constructor() {
-            this.request = new Request();
+            this.request = new CsRequest();
         }
 
         withHost(host: string) {
@@ -34,17 +34,17 @@ export class Request {
             return this;
         }
 
-        withType(type: HttpRequestType) {
+        withType(type: CsHttpRequestType) {
             this.request._type = type;
             return this;
         }
 
-        withResponseInterceptor(responseInterceptor: ResponseInterceptor) {
+        withResponseInterceptor(responseInterceptor: CsResponseInterceptor) {
             this.request._responseInterceptors.push(responseInterceptor);
             return this;
         }
 
-        withRequestInterceptor(requestInterceptor: RequestInterceptor) {
+        withRequestInterceptor(requestInterceptor: CsRequestInterceptor) {
             this.request._requestInterceptors.push(requestInterceptor);
             return this;
         }
@@ -74,18 +74,18 @@ export class Request {
             return this;
         }
 
-        withSerializer(serializer: HttpSerializer) {
+        withSerializer(serializer: CsHttpSerializer) {
             this.request._serializer = serializer;
             return this;
         }
 
-        build(): Request {
+        build(): CsRequest {
             if (!this.request._path) {
-                throw new RequestBuildError('withPath() is required');
+                throw new CsRequestBuilderError('withPath() is required');
             }
 
             if (!this.request._type) {
-                throw new RequestBuildError('withType() is required');
+                throw new CsRequestBuilderError('withType() is required');
             }
 
             return this.request;
@@ -94,17 +94,17 @@ export class Request {
     };
 
     private _host?: string;
-    private _serializer: HttpSerializer = HttpSerializer.JSON;
-    private _responseInterceptors: ResponseInterceptor[] = [];
+    private _serializer: CsHttpSerializer = CsHttpSerializer.JSON;
+    private _responseInterceptors: CsResponseInterceptor[] = [];
     private _withBearerToken = false;
     private _path: string;
-    private _type: HttpRequestType;
+    private _type: CsHttpRequestType;
 
-    get serializer(): HttpSerializer {
+    get serializer(): CsHttpSerializer {
         return this._serializer;
     }
 
-    set serializer(value: HttpSerializer) {
+    set serializer(value: CsHttpSerializer) {
         this._serializer = value;
     }
 
@@ -133,11 +133,11 @@ export class Request {
         this._path = value;
     }
 
-    get type(): HttpRequestType {
+    get type(): CsHttpRequestType {
         return this._type;
     }
 
-    set responseInterceptors(value: Array<ResponseInterceptor>) {
+    set responseInterceptors(value: Array<CsResponseInterceptor>) {
         this._responseInterceptors = value;
     }
 
@@ -153,11 +153,11 @@ export class Request {
         return this._path;
     }
 
-    set type(value: HttpRequestType) {
+    set type(value: CsHttpRequestType) {
         this._type = value;
     }
 
-    get responseInterceptors(): Array<ResponseInterceptor> {
+    get responseInterceptors(): Array<CsResponseInterceptor> {
         return this._responseInterceptors;
     }
 
@@ -181,9 +181,9 @@ export class Request {
         this._withUserToken = value;
     }
 
-    private _requestInterceptors: RequestInterceptor[] = [];
+    private _requestInterceptors: CsRequestInterceptor[] = [];
 
-    get requestInterceptors(): RequestInterceptor[] {
+    get requestInterceptors(): CsRequestInterceptor[] {
         return this._requestInterceptors;
     }
 

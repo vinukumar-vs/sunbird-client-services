@@ -1,9 +1,9 @@
 import {CsError} from '../../cs-error';
 
-export class RequestBuildError extends CsError {
+export class CsRequestBuilderError extends CsError {
   constructor(message: string) {
     super(message, 'REQUEST_BUILD_ERROR');
 
-    Object.setPrototypeOf(this, RequestBuildError.prototype);
+    Object.setPrototypeOf(this, CsRequestBuilderError.prototype);
   }
 }

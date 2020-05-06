@@ -1,22 +1,22 @@
-export enum ResponseCode {
+export enum CsHttpResponseCode {
     HTTP_UNAUTHORISED = 401,
     HTTP_FORBIDDEN = 403,
     HTTP_SUCCESS = 200,
     HTTP_BAD_REQUEST = 400
 }
 
-export class Response<T = any> {
+export class CsResponse<T = any> {
 
-    private _responseCode: ResponseCode;
+    private _responseCode: CsHttpResponseCode;
     private _errorMesg: string;
     private _body: T;
 
 
-    get responseCode(): ResponseCode {
+    get responseCode(): CsHttpResponseCode {
         return this._responseCode;
     }
 
-    set responseCode(value: ResponseCode) {
+    set responseCode(value: CsHttpResponseCode) {
         this._responseCode = value;
     }
 

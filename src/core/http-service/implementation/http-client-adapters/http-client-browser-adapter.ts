@@ -1,60 +1,60 @@
 import {Observable, from} from 'rxjs';
 import * as qs from 'qs';
 import {HttpClient} from './http-client';
-import {HttpSerializer} from '../../interface/request';
-import {HttpServerError} from '../../errors/http-server-error';
-import {NetworkError} from '../../errors/network-error';
-import {Response as ScResponse, ResponseCode} from '../../interface/response';
+import {CsHttpSerializer} from '../../interface/cs-request';
+import {CsHttpServerError} from '../../errors';
+import {CsNetworkError} from '../../errors';
+import {CsResponse as ScResponse, CsHttpResponseCode} from '../../interface/cs-response';
 
 export class HttpClientBrowserAdapter implements HttpClient {
     private headers: { [key: string]: string } = {};
-    private serializer?: HttpSerializer;
+    private serializer?: CsHttpSerializer;
 
     private static async mapError(url: string, e: any): Promise<ScResponse> {
-        if (e instanceof HttpServerError || e instanceof NetworkError) {
+        if (e instanceof CsHttpServerError || e instanceof CsNetworkError) {
             throw e;
         }
 
-        throw new NetworkError(`
+        throw new CsNetworkError(`
             ${url} -
             ${e || ''}
         `);
     }
 
     private static async mapResponse(response: Response): Promise<ScResponse> {
-        const sunbirdApiResponse = new ScResponse<any>();
-        sunbirdApiResponse.responseCode = response.status;
+        const scResponse = new ScResponse<any>();
+        scResponse.responseCode = response.status;
 
-        sunbirdApiResponse.body = await response.json();
+        scResponse.body = await response.json();
 
-        if (typeof sunbirdApiResponse.body !== 'object') {
-            throw new NetworkError(`
+        if (typeof scResponse.body !== 'object') {
+            throw new CsNetworkError(`
                 ${response.url} -
-                ${sunbirdApiResponse.body || ''}
+                ${scResponse.body || ''}
             `);
         }
 
         if (response.ok) {
-            return sunbirdApiResponse;
+            return scResponse;
         }
 
-        sunbirdApiResponse.errorMesg = 'SERVER_ERROR';
+        scResponse.errorMesg = 'SERVER_ERROR';
 
         if (
-            response.status === ResponseCode.HTTP_UNAUTHORISED ||
-            response.status === ResponseCode.HTTP_FORBIDDEN
+            response.status === CsHttpResponseCode.HTTP_UNAUTHORISED ||
+            response.status === CsHttpResponseCode.HTTP_FORBIDDEN
         ) {
-            return sunbirdApiResponse;
+            return scResponse;
         }
 
-        throw new HttpServerError(`
+        throw new CsHttpServerError(`
             ${response.url}
-        `, sunbirdApiResponse);
+        `, scResponse);
     }
 
     constructor() {}
 
-    setSerializer(httpSerializer: HttpSerializer) {
+    setSerializer(httpSerializer: CsHttpSerializer) {
         this.serializer = httpSerializer;
     }
 
@@ -87,7 +87,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
     patch(baseUrl: string, path: string, headers: any, body: any): Observable<ScResponse> {
         const url = new URL(baseUrl + path);
 
-        if (this.serializer === HttpSerializer.URLENCODED && typeof body === 'object') {
+        if (this.serializer === CsHttpSerializer.URLENCODED && typeof body === 'object') {
             this.addHeader('content-type', 'application/x-www-form-urlencoded');
             body = qs.stringify(body);
         } else if (typeof body === 'object') {
@@ -108,7 +108,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
     post(baseUrl: string, path: string, headers: any, body: any): Observable<ScResponse> {
         const url = new URL(baseUrl + path);
 
-        if (this.serializer === HttpSerializer.URLENCODED && typeof body === 'object') {
+        if (this.serializer === CsHttpSerializer.URLENCODED && typeof body === 'object') {
             this.addHeader('content-type', 'application/x-www-form-urlencoded');
             body = qs.stringify(body);
         } else if (typeof body === 'object') {

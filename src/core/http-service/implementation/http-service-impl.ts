@@ -1,5 +1,5 @@
-import {HttpRequestType, HttpSerializer, Request} from '../interface/request';
-import {Response, ResponseCode} from '../interface/response';
+import {CsHttpRequestType, CsHttpSerializer, CsRequest} from '../interface/cs-request';
+import {CsResponse, CsHttpResponseCode} from '../interface/cs-response';
 import {from, Observable} from 'rxjs';
 import {Container, inject, injectable} from 'inversify';
 import * as qs from 'qs';
@@ -10,8 +10,8 @@ import {BearerTokenInjectRequestInterceptor} from './interceptors/bearer-token-i
 import {UserTokenRequestInterceptor} from './interceptors/user-token-request-interceptor';
 
 @injectable()
-export class CsHttpServiceImpl implements CsHttpService {
-    private static async interceptRequest(request: Request): Promise<Request> {
+export class HttpServiceImpl implements CsHttpService {
+    private static async interceptRequest(request: CsRequest): Promise<CsRequest> {
         const interceptors = request.requestInterceptors;
         for (const interceptor of interceptors) {
             request = await interceptor.interceptRequest(request).toPromise();
@@ -20,13 +20,13 @@ export class CsHttpServiceImpl implements CsHttpService {
         return request;
     }
 
-    private static async interceptResponse(request: Request, response: Response): Promise<Response> {
+    private static async interceptResponse(request: CsRequest, response: CsResponse): Promise<CsResponse> {
         const interceptors = request.responseInterceptors;
         for (const interceptor of interceptors) {
             response = await interceptor.interceptResponse(request, response).toPromise();
         }
 
-        if (response.responseCode !== ResponseCode.HTTP_SUCCESS) {
+        if (response.responseCode !== CsHttpResponseCode.HTTP_SUCCESS) {
             throw response;
         }
 
@@ -43,26 +43,26 @@ export class CsHttpServiceImpl implements CsHttpService {
     ) {
     }
 
-    public fetch<T = any>(request: Request): Observable<Response<T>> {
+    public fetch<T = any>(request: CsRequest): Observable<CsResponse<T>> {
         this.addGlobalHeader();
 
         this.buildInterceptorsFromAuthenticators(request);
 
         let response = (async () => {
-            request = await CsHttpServiceImpl.interceptRequest(request);
+            request = await HttpServiceImpl.interceptRequest(request);
 
             switch (request.type) {
-                case HttpRequestType.GET:
+                case CsHttpRequestType.GET:
                     response = await this.http.get(
                         request.host || this.host, request.path, request.headers, request.parameters
                     ).toPromise();
                     break;
-                case HttpRequestType.PATCH:
+                case CsHttpRequestType.PATCH:
                     response = await this.http.patch(
                         request.host || this.host, request.path, request.headers, request.body
                     ).toPromise();
                     break;
-                case HttpRequestType.POST: {
+                case CsHttpRequestType.POST: {
                     response = await this.http.post(
                         request.host || this.host, request.path, request.headers, request.body
                     ).toPromise();
@@ -70,11 +70,11 @@ export class CsHttpServiceImpl implements CsHttpService {
                 }
             }
 
-            response = await CsHttpServiceImpl.interceptResponse(request, response);
+            response = await HttpServiceImpl.interceptResponse(request, response);
             return response;
         })();
 
-        return from(response as Promise<Response<T>>);
+        return from(response as Promise<CsResponse<T>>);
     }
 
     protected addGlobalHeader() {
@@ -89,7 +89,7 @@ export class CsHttpServiceImpl implements CsHttpService {
         this.http.addHeaders(header);
     }
 
-    private buildInterceptorsFromAuthenticators(request: Request) {
+    private buildInterceptorsFromAuthenticators(request: CsRequest) {
         if (request.withBearerToken) {
             request.requestInterceptors.push(new BearerTokenInjectRequestInterceptor(this.container));
         }
@@ -98,7 +98,7 @@ export class CsHttpServiceImpl implements CsHttpService {
             request.requestInterceptors.push(new UserTokenRequestInterceptor(this.container));
         }
 
-        if (this.http.setSerializer(request.serializer) === HttpSerializer.URLENCODED) {
+        if (this.http.setSerializer(request.serializer) === CsHttpSerializer.URLENCODED) {
             request.body = qs.stringify(request.body);
         }
 

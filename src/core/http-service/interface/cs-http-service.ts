@@ -1,7 +1,7 @@
 import {Observable} from 'rxjs';
-import {Request} from './request';
-import {Response} from './response';
+import {CsRequest} from './cs-request';
+import {CsResponse} from './cs-response';
 
 export interface CsHttpService {
-    fetch<T>(request: Request): Observable<Response<T>>;
+    fetch<T>(request: CsRequest): Observable<CsResponse<T>>;
 }

@@ -1,9 +1,9 @@
 import {CsError} from '../../cs-error';
 
-export class NetworkError extends CsError {
+export class CsNetworkError extends CsError {
     constructor(message: string) {
         super(message, 'NETWORK_ERROR');
 
-        Object.setPrototypeOf(this, NetworkError.prototype);
+        Object.setPrototypeOf(this, CsNetworkError.prototype);
     }
 }
