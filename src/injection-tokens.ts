@@ -3,11 +3,9 @@ export const InjectionTokens = {
     core: {
         HTTP_ADAPTER: Symbol.for('HTTP_ADAPTER'),
         global: {
-            headers: {
-                CHANNEL_ID: Symbol.for('CHANNEL_ID'),
-                PRODUCER_ID: Symbol.for('PRODUCER_ID'),
-                DEVICE_ID: Symbol.for('DEVICE_ID'),
-            }
+            CHANNEL_ID: Symbol.for('CHANNEL_ID'),
+            PRODUCER_ID: Symbol.for('PRODUCER_ID'),
+            DEVICE_ID: Symbol.for('DEVICE_ID'),
         },
         api: {
             HOST: Symbol.for('HOST'),

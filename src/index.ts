@@ -11,6 +11,11 @@ import {InjectionTokens} from './injection-tokens';
 export interface CsConfig {
     core: {
         httpAdapter: 'HttpClientBrowserAdapter' | 'HttpClientCordovaAdapter';
+        global: {
+            channelId?: string;
+            producerId?: string;
+            deviceId?: string;
+        },
         api: {
             host: string;
             authentication: {
@@ -42,6 +47,10 @@ export class CsModule {
         return this._isInitialised;
     }
 
+    get httpService(): CsHttpService {
+        return this._container.get<CsHttpService>(InjectionTokens.core.HTTP_SERVICE);
+    }
+
     get classRoomService(): CsClassRoomService {
         return this._container.get<CsClassRoomService>(InjectionTokens.services.CLASS_ROOM_SERVICE);
     }
@@ -53,17 +62,30 @@ export class CsModule {
     public async init(config: CsConfig) {
         this._config = config;
 
-        this._container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(this._container = new Container());
+        this._container = new Container()
+
+        this._container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(this._container);
 
         if (config.core.httpAdapter === 'HttpClientCordovaAdapter') {
-            this._container.bind<HttpClient>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
+            this._container.bind<HttpClient>(InjectionTokens.core.HTTP_ADAPTER)
                 .to(HttpClientCordovaAdapter).inSingletonScope();
         } else {
-            this._container.bind<HttpClient>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
+            this._container.bind<HttpClient>(InjectionTokens.core.HTTP_ADAPTER)
                 .to(HttpClientBrowserAdapter).inSingletonScope();
         }
 
-        this.updateConfig(config);
+        this._container.bind<string>(InjectionTokens.core.api.HOST)
+            .toConstantValue(config.core.api.host);
+        this._container.bind<string | undefined>(InjectionTokens.core.global.CHANNEL_ID)
+            .toConstantValue(config.core.global.channelId);
+        this._container.bind<string | undefined>(InjectionTokens.core.global.PRODUCER_ID)
+            .toConstantValue(config.core.global.producerId);
+        this._container.bind<string | undefined>(InjectionTokens.core.global.DEVICE_ID)
+            .toConstantValue(config.core.global.deviceId);
+        this._container.bind<string | undefined>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
+            .toConstantValue(config.core.api.authentication.bearerToken);
+        this._container.bind<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
+            .toConstantValue(config.core.api.authentication.userToken);
 
         this._container.bind<CsHttpService>(InjectionTokens.core.HTTP_SERVICE)
             .to(HttpServiceImpl).inSingletonScope();
@@ -77,11 +99,17 @@ export class CsModule {
     updateConfig(config: CsConfig) {
         this._config = config;
 
-        this._container.bind<string>(InjectionTokens.core.api.HOST)
+        this._container.rebind<string>(InjectionTokens.core.api.HOST)
             .toConstantValue(config.core.api.host);
-        this._container.bind<string | undefined>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
+        this._container.rebind<string | undefined>(InjectionTokens.core.global.CHANNEL_ID)
+            .toConstantValue(config.core.global.channelId);
+        this._container.rebind<string | undefined>(InjectionTokens.core.global.PRODUCER_ID)
+            .toConstantValue(config.core.global.producerId);
+        this._container.rebind<string | undefined>(InjectionTokens.core.global.DEVICE_ID)
+            .toConstantValue(config.core.global.deviceId);
+        this._container.rebind<string | undefined>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
             .toConstantValue(config.core.api.authentication.bearerToken);
-        this._container.bind<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
+        this._container.rebind<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
             .toConstantValue(config.core.api.authentication.userToken);
     }
 }

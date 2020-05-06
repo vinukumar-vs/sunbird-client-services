@@ -21,15 +21,15 @@ export class HttpServiceImpl implements CsHttpService {
     }
 
     get channelId(): string {
-        return this.container.get(InjectionTokens.core.global.headers.CHANNEL_ID);
+        return this.container.get(InjectionTokens.core.global.CHANNEL_ID);
     }
 
     get deviceId(): string {
-        return this.container.get(InjectionTokens.core.global.headers.DEVICE_ID);
+        return this.container.get(InjectionTokens.core.global.DEVICE_ID);
     }
 
     get producerId(): string {
-        return this.container.get(InjectionTokens.core.global.headers.PRODUCER_ID);
+        return this.container.get(InjectionTokens.core.global.PRODUCER_ID);
     }
 
     constructor(

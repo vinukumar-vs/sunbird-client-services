@@ -5,7 +5,9 @@ import {CsHttpSerializer} from '../../interface';
 import {CsHttpServerError} from '../../errors';
 import {CsNetworkError} from '../../errors';
 import {CsResponse, CsHttpResponseCode} from '../../interface';
+import {injectable} from 'inversify';
 
+@injectable()
 export class HttpClientBrowserAdapter implements HttpClient {
     private headers: { [key: string]: string } = {};
     private serializer?: CsHttpSerializer;

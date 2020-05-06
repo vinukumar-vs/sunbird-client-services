@@ -1,10 +1,11 @@
 import {Observable, Subject} from 'rxjs';
 import {HttpClient} from './http-client';
-import {CsHttpRequestType, CsHttpSerializer} from '../../interface/cs-request';
-import {CsNetworkError} from '../../errors/cs-network-error';
-import {CsHttpResponseCode, CsResponse} from '../../interface/cs-response';
-import {CsHttpClientError} from '../../errors/cs-http-client-error';
-import {CsHttpServerError} from '../../errors/cs-http-server-error';
+import {CsHttpRequestType, CsHttpSerializer} from '../../interface';
+import {CsNetworkError} from '../../errors';
+import {CsHttpResponseCode, CsResponse} from '../../interface';
+import {CsHttpClientError} from '../../errors';
+import {CsHttpServerError} from '../../errors';
+import {injectable} from 'inversify';
 
 interface CordovaHttpClientResponse {
     data?: string;
@@ -12,6 +13,7 @@ interface CordovaHttpClientResponse {
     status: number;
 }
 
+@injectable()
 export class HttpClientCordovaAdapter implements HttpClient {
 
     private http = window['cordova'].plugin.http;
