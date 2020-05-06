@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/client-services",
-  "version": "2.10.1",
+  "version": "2.10.0",
   "description": "Type definitions and models for Sunbird platform clients",
   "main": "dist/index.js",
   "scripts": {
