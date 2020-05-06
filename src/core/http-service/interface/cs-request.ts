@@ -205,6 +205,7 @@ export class CsRequest {
 
     toJSON(): string {
         return JSON.stringify({
+            body: this._body,
             type: this._type,
             host: this._host,
             path: this._path,
