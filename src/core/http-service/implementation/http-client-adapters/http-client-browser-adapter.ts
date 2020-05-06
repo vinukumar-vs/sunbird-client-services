@@ -1,16 +1,16 @@
 import {Observable, from} from 'rxjs';
 import * as qs from 'qs';
 import {HttpClient} from './http-client';
-import {CsHttpSerializer} from '../../interface/cs-request';
+import {CsHttpSerializer} from '../../interface';
 import {CsHttpServerError} from '../../errors';
 import {CsNetworkError} from '../../errors';
-import {CsResponse as ScResponse, CsHttpResponseCode} from '../../interface/cs-response';
+import {CsResponse, CsHttpResponseCode} from '../../interface';
 
 export class HttpClientBrowserAdapter implements HttpClient {
     private headers: { [key: string]: string } = {};
     private serializer?: CsHttpSerializer;
 
-    private static async mapError(url: string, e: any): Promise<ScResponse> {
+    private static async mapError(url: string, e: any): Promise<CsResponse> {
         if (e instanceof CsHttpServerError || e instanceof CsNetworkError) {
             throw e;
         }
@@ -21,8 +21,8 @@ export class HttpClientBrowserAdapter implements HttpClient {
         `);
     }
 
-    private static async mapResponse(response: Response): Promise<ScResponse> {
-        const scResponse = new ScResponse<any>();
+    private static async mapResponse(response: Response): Promise<CsResponse> {
+        const scResponse = new CsResponse<any>();
         scResponse.responseCode = response.status;
 
         scResponse.body = await response.json();
@@ -66,7 +66,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
         this.headers = {...this.headers, ...headers};
     }
 
-    get(baseUrl: string, path: string, headers: any, parameters: any): Observable<ScResponse> {
+    get(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse> {
         const url = new URL(baseUrl + path);
 
         if (typeof parameters === 'object') {
@@ -84,7 +84,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
         );
     }
 
-    patch(baseUrl: string, path: string, headers: any, body: any): Observable<ScResponse> {
+    patch(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse> {
         const url = new URL(baseUrl + path);
 
         if (this.serializer === CsHttpSerializer.URLENCODED && typeof body === 'object') {
@@ -105,7 +105,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
         );
     }
 
-    post(baseUrl: string, path: string, headers: any, body: any): Observable<ScResponse> {
+    post(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse> {
         const url = new URL(baseUrl + path);
 
         if (this.serializer === CsHttpSerializer.URLENCODED && typeof body === 'object') {

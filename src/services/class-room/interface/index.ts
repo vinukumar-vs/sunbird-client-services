@@ -1,1 +1,1 @@
-export * from './sc-class-room-service';
+export * from './cs-class-room-service';
