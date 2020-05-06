@@ -1,0 +1,28 @@
+{
+  "name": "@project-sunbird/client-services",
+  "version": "2.10.0",
+  "description": "Type definitions and models for Sunbird platform clients",
+  "main": "dist/index.js",
+  "scripts": {
+    "preversion": "rm -rf dist",
+    "version": "npm run build && git add -A dist && git commit -m \"RELEASE\"",
+    "postversion": "git push && git push --tags",
+    "build": "rm -rf dist && NODE_ENV=production webpack --verbose true --progress true --cache false",
+    "build:prod": "rm -rf dist && NODE_ENV=production webpack --verbose true --progress true --cache false && cp ./package.json ./LICENSE ./README.md ./dist"
+  },
+  "dependencies": {},
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sunbird-Ed/sunbird-client-services/issues"
+  },
+  "homepage": "https://github.com/Sunbird-Ed/sunbird-client-services#readme",
+  "devDependencies": {
+    "tslint": "^5.12.0",
+    "ts-loader": "^5.3.2",
+    "typescript": "2.9.1",
+    "uglifyjs-webpack-plugin": "^2.1.1",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.3.10"
+  }
+}
