@@ -1,8 +1,9 @@
 {
   "name": "@project-sunbird/client-services",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Type definitions and models for Sunbird platform clients",
   "main": "dist/index.js",
+  "module": "src/index.ts",
   "scripts": {
     "preversion": "rm -rf dist",
     "version": "npm run build && git add -A dist && git commit -m \"RELEASE\"",
