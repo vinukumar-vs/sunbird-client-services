@@ -91,9 +91,9 @@ export class CsContentsGroupGenerator {
     static filterContents(contents: Content[], attribute: string, acceptedValue: string): Content[] {
         return contents.filter((content) => {
             if (CsContentsGroupGenerator.isMultiValueAttribute(content, attribute)) {
-                return content[attribute].map((c) => c.toLowerCase()).includes(acceptedValue.toLowerCase());
+                return content[attribute].map((c) => (c || '').toLowerCase()).includes((acceptedValue || '').toLowerCase());
             } else {
-                return acceptedValue.toLowerCase() === content[attribute].toLowerCase();
+                return (acceptedValue || '').toLowerCase() === (content[attribute] || '').toLowerCase();
             }
         });
     }

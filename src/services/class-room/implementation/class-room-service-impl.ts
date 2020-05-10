@@ -10,7 +10,7 @@ import {map} from 'rxjs/operators';
 export class ClassRoomServiceImpl implements CsClassRoomService {
     private static configuration = {
         FIND_PATH: 'https://next.json-generator.com/api/json/get/E1J7EZW9_',
-        FIND_ONE_PATH: 'https://next.json-generator.com/api/json/get/E1J7EZW9_'
+        FIND_ONE_PATH: 'https://next.json-generator.com/api/json/get/NJV3IWWcd'
     };
 
     constructor(
@@ -34,7 +34,7 @@ export class ClassRoomServiceImpl implements CsClassRoomService {
             new CsRequest.Builder()
                 .withType(CsHttpRequestType.GET)
                 .withHost(ClassRoomServiceImpl.configuration.FIND_PATH)
-                .withPath('')
+                .withPath('/')
                 .withBearerToken(false)
                 .withUserToken(false)
                 .build()
@@ -48,7 +48,7 @@ export class ClassRoomServiceImpl implements CsClassRoomService {
             new CsRequest.Builder()
                 .withType(CsHttpRequestType.GET)
                 .withHost(ClassRoomServiceImpl.configuration.FIND_ONE_PATH)
-                .withPath('')
+                .withPath('/')
                 .withBearerToken(false)
                 .withUserToken(false)
                 .build()
