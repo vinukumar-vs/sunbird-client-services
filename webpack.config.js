@@ -7,6 +7,8 @@ const config = {
         'dist/core/index': './src/core/index.ts',
         'dist/core/http-service/index': './src/core/http-service/index.ts',
         'dist/core/http-service/utilities/interceptors/index': './src/core/http-service/utilities/interceptors/index.ts',
+        'dist/services/content/index': './src/services/content/index.ts',
+        'dist/services/content/utilities/content-group-generator/index': './src/services/content/utilities/content-group-generator/index.ts',
     },
     externals: [
         // externals here
