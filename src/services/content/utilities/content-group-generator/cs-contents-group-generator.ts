@@ -41,6 +41,10 @@ export class CsContentsGroupGenerator {
             combination = {};
 
             for (const attribute of Object.keys(criteria.combination)) {
+                if (!criteria.combination[attribute]) {
+                    continue;
+                }
+
                 for (const value of criteria.combination[attribute]) {
                     if (combination![attribute]) {
                         continue;
@@ -52,6 +56,7 @@ export class CsContentsGroupGenerator {
 
                     if (afterFilterLength && afterFilterLength <= beforeFilterLength) {
                         combination![attribute] = value;
+                        contents = filteredContents;
                     }
                 }
             }
