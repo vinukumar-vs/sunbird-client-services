@@ -1,94 +1,98 @@
 import {Content} from '../../../../models/content';
 import {CsContentSortCriteria, CsSortOrder} from '../../interface';
 
-export interface CsContentGroupingCriteria {
-    groupAttribute: string;
-    values: string[];
-    sortCriteria?: CsContentSortCriteria;
-    meta?: {
-        combination: {
-            of: keyof Content,
-            with: keyof Content
-        }
+export interface CsContentSectionGroupingCriteria {
+    groupBy: keyof Content;
+    combination?: {
+        [key in keyof Content]?: string[]
+    };
+    sortCriteria: {
+        sortAttribute: keyof Content,
+        sortOrder: CsSortOrder.ASC,
     };
 }
 
-interface CsContentsGrouped {
-    attribute: string;
+export interface CsContentSection {
     name: string;
-    groups?: CsContentsGrouped[];
-    contents?: Content[];
-    meta?: {
-        combination: {
-            string: {
-                string: boolean;
-            }
-        }
+    combination?: {
+        [key in keyof Content]?: string
     };
+    sections: Section[];
+}
+
+interface Section {
+    count?: number;
+    name?: string;
+    contents?: Content[];
 }
 
 export class CsContentsGroupGenerator {
     static generate(
-        contents: Content[], criteria: CsContentGroupingCriteria[], contentSortCriteria?: CsContentSortCriteria
-    ): CsContentsGrouped[] | undefined {
-        criteria = [...criteria];
-        const currentGroupCriteria = criteria.shift();
+        contents: Content[],
+        criteria: CsContentSectionGroupingCriteria
+    ): CsContentSection {
+        CsContentsGroupGenerator.sortItems(contents, criteria.sortCriteria);
 
-        if (!currentGroupCriteria) {
-            return undefined;
-        }
+        let combination: {
+            [key in keyof Content]?: string
+        } | undefined;
 
-        const currentGroupCriteriaValues = [...currentGroupCriteria.values];
+        if (criteria.combination) {
+            combination = {};
 
-        if (!currentGroupCriteriaValues.length) {
-            contents.forEach((content) => {
-                if (CsContentsGroupGenerator.isMultiValueAttribute(content, currentGroupCriteria.groupAttribute)) {
-                    (content[currentGroupCriteria.groupAttribute] as string[]).forEach((attr) => {
-                        CsContentsGroupGenerator.uniquelyAddValue(currentGroupCriteriaValues, attr);
-                    });
-                }
-
-                CsContentsGroupGenerator.uniquelyAddValue(currentGroupCriteriaValues, content[currentGroupCriteria.groupAttribute]);
-            });
-        }
-
-        const groups = currentGroupCriteriaValues.reduce<CsContentsGrouped[]>((acc: CsContentsGrouped[], acceptedValue: string) => {
-            const newContentSlice = CsContentsGroupGenerator.filterContents(contents, currentGroupCriteria.groupAttribute, acceptedValue);
-
-            if (!newContentSlice.length) {
-                return acc;
-            }
-
-            acc.push({
-                attribute: currentGroupCriteria.groupAttribute,
-                name: acceptedValue,
-                contents: (() => {
-                    if (!criteria.length) {
-                        if (contentSortCriteria) {
-                            CsContentsGroupGenerator.sortItems(newContentSlice, contentSortCriteria);
-                            return newContentSlice;
-                        }
-
-                        return newContentSlice;
+            for (const attribute of Object.keys(criteria.combination)) {
+                for (const value of criteria.combination[attribute]) {
+                    if (combination![attribute]) {
+                        continue;
                     }
-                })(),
-                groups: CsContentsGroupGenerator.generate(newContentSlice, criteria, contentSortCriteria),
-                meta: currentGroupCriteria.meta ?
-                    {combination: CsContentsGroupGenerator.generateCombinations(newContentSlice, currentGroupCriteria.meta.combination)} :
-                    undefined
-            } as CsContentsGrouped);
 
-            return acc;
-        }, []);
+                    const beforeFilterLength = contents.length;
+                    const filteredContents = CsContentsGroupGenerator.filterContents(contents, attribute, value);
+                    const afterFilterLength = filteredContents.length;
 
-        if (currentGroupCriteria.sortCriteria) {
-            CsContentsGroupGenerator.sortItems(groups, currentGroupCriteria.sortCriteria);
+                    if (afterFilterLength && afterFilterLength <= beforeFilterLength) {
+                        combination![attribute] = value;
+                    }
+                }
+            }
         }
 
-        return groups;
+        const sections = Array.from(
+            contents
+                .reduce<Map<string, Content[]>>((acc, content) => {
+                    if (CsContentsGroupGenerator.isMultiValueAttribute(content, criteria.groupBy)) {
+                        content[criteria.groupBy].forEach((value) => {
+                            const c = acc.get(value) || [];
+                            c.push(content);
+                            acc.set(value, c);
+                        });
+                    } else {
+                        const c = acc.get(content[criteria.groupBy]) || [];
+                        c.push(content);
+                        acc.set(content[criteria.groupBy], c);
+                    }
+
+                    return acc;
+                }, new Map<string, Content[]>())
+                .entries()
+        ).map<Section>(([groupBy, contentsList]) => {
+            return {
+                name: groupBy,
+                count: contentsList.length,
+                contents: contentsList
+            };
+        });
+
+        CsContentsGroupGenerator.sortItems(sections, criteria.sortCriteria);
+
+        return {
+            name: criteria.groupBy,
+            sections,
+            combination
+        };
     }
 
-    static filterContents(contents: Content[], attribute: string, acceptedValue: string): Content[] {
+    private static filterContents(contents: Content[], attribute: string, acceptedValue: string): Content[] {
         return contents.filter((content) => {
             if (CsContentsGroupGenerator.isMultiValueAttribute(content, attribute)) {
                 return content[attribute].map((c) => (c || '').toLowerCase()).includes((acceptedValue || '').toLowerCase());
@@ -98,11 +102,11 @@ export class CsContentsGroupGenerator {
         });
     }
 
-    static isMultiValueAttribute = (content, attr) => Array.isArray(content[attr]);
+    private static isMultiValueAttribute = (content, attr) => Array.isArray(content[attr]);
 
-    static uniquelyAddValue = (list: any[], value: any) => !(list.indexOf(value) >= 0) && list.push(value);
+    private static uniquelyAddValue = (list: any[], value: any) => !(list.indexOf(value) >= 0) && list.push(value);
 
-    static sortItems<T>(items: T[], sortCriteria: CsContentSortCriteria): void {
+    private static sortItems<T>(items: T[], sortCriteria: CsContentSortCriteria): void {
         items.sort((a, b) => {
             if (!a[sortCriteria.sortAttribute] || !b[sortCriteria.sortAttribute]) {
                 return 0;
@@ -111,33 +115,5 @@ export class CsContentsGroupGenerator {
 
             return sortCriteria.sortOrder === CsSortOrder.ASC ? comparison : (comparison * -1);
         });
-    }
-
-    static generateCombinations(
-        contents: Content[], combination: { of: keyof Content, with: keyof Content },
-    ): { [key: string]: { [key: string]: boolean } } {
-        return contents.reduce<{ [key: string]: { [key: string]: boolean } }>((acc, content) => {
-            const addToCombinations = (combinationOf) => {
-                if (!acc[content[combinationOf]]) {
-                    acc[content[combinationOf]] = {};
-                }
-
-                if (CsContentsGroupGenerator.isMultiValueAttribute(content, combination.with)) {
-                    content[combination.with].forEach((v) => {
-                        acc[content[combinationOf]][v] = true;
-                    });
-                } else {
-                    acc[content[combinationOf]][content[combination.with]] = true;
-                }
-            };
-
-            if (CsContentsGroupGenerator.isMultiValueAttribute(content, combination.of)) {
-                content[combination.of].forEach(addToCombinations);
-            } else {
-                addToCombinations(combination.of);
-            }
-
-            return acc;
-        }, {});
     }
 }
