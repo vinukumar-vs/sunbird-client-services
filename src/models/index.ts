@@ -7,4 +7,4 @@ export * from './user';
 export * from './device';
 export * from './organisation';
 export * from './form';
-export * from './class-room';
+export * from './group';

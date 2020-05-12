@@ -1,4 +1,6 @@
-export interface ClassRoom {
+import {User} from '../user';
+
+export interface Group {
     identifier: string;
     name: string;
     description: string;
@@ -14,4 +16,5 @@ export interface ClassRoom {
     createdOn: string;
     lastUpdatedOn: string;
     createdBy: string;
+    members: User[];
 }

@@ -5,12 +5,11 @@ const config = {
     entry: {
         'dist/index': './src/index.ts',
         'dist/core/index': './src/core/index.ts',
-        'dist/core/repository/index.ts': './src/core/repository/index.ts',
         'dist/core/http-service/index': './src/core/http-service/index.ts',
         'dist/core/http-service/utilities/interceptors/index': './src/core/http-service/utilities/interceptors/index.ts',
         'dist/services/content/index': './src/services/content/index.ts',
         'dist/services/content/utilities/content-group-generator/index': './src/services/content/utilities/content-group-generator/index.ts',
-        'dist/services/class-room/index': './src/services/class-room/index.ts',
+        'dist/services/group/index': './src/services/group/index.ts',
     },
     externals: [
         // externals here

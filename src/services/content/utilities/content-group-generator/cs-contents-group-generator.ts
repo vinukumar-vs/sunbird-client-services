@@ -1,17 +1,6 @@
 import {Content} from '../../../../models/content';
 import {CsContentSortCriteria, CsSortOrder} from '../../interface';
 
-export interface CsContentSectionGroupingCriteria {
-    groupBy: keyof Content;
-    combination?: {
-        [key in keyof Content]?: string[]
-    };
-    sortCriteria: {
-        sortAttribute: keyof Content,
-        sortOrder: CsSortOrder.ASC,
-    };
-}
-
 export interface CsContentSection {
     name: string;
     combination?: {
@@ -29,24 +18,28 @@ interface Section {
 export class CsContentsGroupGenerator {
     static generate(
         contents: Content[],
-        criteria: CsContentSectionGroupingCriteria
+        groupBy: keyof Content,
+        sortCriteria: CsContentSortCriteria,
+        combination?: {
+            [key in keyof Content]?: string[]
+        }
     ): CsContentSection {
-        CsContentsGroupGenerator.sortItems(contents, criteria.sortCriteria);
+        CsContentsGroupGenerator.sortItems(contents, sortCriteria);
 
-        let combination: {
+        let resultingCombination: {
             [key in keyof Content]?: string
         } | undefined;
 
-        if (criteria.combination) {
-            combination = {};
+        if (combination) {
+            resultingCombination = {};
 
-            for (const attribute of Object.keys(criteria.combination)) {
-                if (!criteria.combination[attribute]) {
+            for (const attribute of Object.keys(combination)) {
+                if (!combination[attribute]) {
                     continue;
                 }
 
-                for (const value of criteria.combination[attribute]) {
-                    if (combination![attribute]) {
+                for (const value of combination[attribute]) {
+                    if (resultingCombination![attribute]) {
                         continue;
                     }
 
@@ -55,7 +48,7 @@ export class CsContentsGroupGenerator {
                     const afterFilterLength = filteredContents.length;
 
                     if (afterFilterLength && afterFilterLength <= beforeFilterLength) {
-                        combination![attribute] = value;
+                        resultingCombination![attribute] = value;
                         contents = filteredContents;
                     }
                 }
@@ -65,35 +58,35 @@ export class CsContentsGroupGenerator {
         const sections = Array.from(
             contents
                 .reduce<Map<string, Content[]>>((acc, content) => {
-                    if (CsContentsGroupGenerator.isMultiValueAttribute(content, criteria.groupBy)) {
-                        content[criteria.groupBy].forEach((value) => {
+                    if (CsContentsGroupGenerator.isMultiValueAttribute(content, groupBy)) {
+                        content[groupBy].forEach((value) => {
                             const c = acc.get(value) || [];
                             c.push(content);
                             acc.set(value, c);
                         });
                     } else {
-                        const c = acc.get(content[criteria.groupBy]) || [];
+                        const c = acc.get(content[groupBy]) || [];
                         c.push(content);
-                        acc.set(content[criteria.groupBy], c);
+                        acc.set(content[groupBy], c);
                     }
 
                     return acc;
                 }, new Map<string, Content[]>())
                 .entries()
-        ).map<Section>(([groupBy, contentsList]) => {
+        ).map<Section>(([groupedBy, contentsList]) => {
             return {
-                name: groupBy,
+                name: groupedBy,
                 count: contentsList.length,
                 contents: contentsList
             };
         });
 
-        CsContentsGroupGenerator.sortItems(sections, criteria.sortCriteria);
+        CsContentsGroupGenerator.sortItems(sections, sortCriteria);
 
         return {
-            name: criteria.groupBy,
+            name: groupBy,
             sections,
-            combination
+            combination: resultingCombination
         };
     }
 

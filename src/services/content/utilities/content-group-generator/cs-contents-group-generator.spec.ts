@@ -8,17 +8,15 @@ describe('ContentGroupGenerator', () => {
         expect(
             CsContentsGroupGenerator.generate(
                 searchResult.result.content as any,
+                'subject',
                 {
-                    groupBy: 'subject',
-                    combination: {
-                        medium: ['invalid_medium', 'english', 'hindi'],
-                        gradeLevel: ['class 2', 'invalid']
-                    },
-                    sortCriteria: {
-                        sortAttribute: 'name',
-                        sortOrder: CsSortOrder.ASC,
-                    }
-                }
+                    sortAttribute: 'name',
+                    sortOrder: CsSortOrder.ASC,
+                },
+                {
+                    medium: ['invalid_medium', 'english', 'hindi'],
+                    gradeLevel: ['class 2', 'invalid']
+                },
             )
         ).toMatchSnapshot();
     });
