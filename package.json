@@ -14,6 +14,7 @@
     "build:dev": "rm -rf tmp && mkdir tmp && cp ./package-dev.json ./tmp/package.json && tsc -w --outDir ./tmp"
   },
   "dependencies": {
+    "reflect-metadata": "^0.1.13",
     "inversify": "^5.0.1",
     "qs": "^6.9.4"
   },
@@ -24,7 +25,7 @@
   },
   "homepage": "https://github.com/Sunbird-Ed/sunbird-client-services#readme",
   "peerDependencies": {
-    "rxjs": ">=6"
+    "rxjs": "6.x.x"
   },
   "devDependencies": {
     "@types/jest": "~25.1.1",

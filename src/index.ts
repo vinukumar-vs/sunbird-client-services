@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import {Container} from 'inversify';
 import {HttpClient} from './core/http-service/implementation/http-client-adapters/http-client';
 import {HttpClientCordovaAdapter} from './core/http-service/implementation/http-client-adapters/http-client-cordova-adapter';
@@ -14,7 +15,7 @@ export interface CsGroupServiceConfig {
 
 export interface CsConfig {
     core: {
-        httpAdapter: 'HttpClientBrowserAdapter' | 'HttpClientCordovaAdapter';
+        httpAdapter?: 'HttpClientBrowserAdapter' | 'HttpClientCordovaAdapter';
         global: {
             channelId?: string;
             producerId?: string;
@@ -29,7 +30,7 @@ export interface CsConfig {
         };
     };
     services: {
-        groupService?: CsGroupServiceConfig
+        groupServiceConfig?: CsGroupServiceConfig
     };
 }
 
@@ -111,9 +112,9 @@ export class CsModule {
         // groupService
         this._container[mode]<CsGroupService>(InjectionTokens.services.group.GROUP_SERVICE)
             .to(GroupServiceImpl).inSingletonScope();
-        if (config.services.groupService) {
+        if (config.services.groupServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_API_PATH)
-                .toConstantValue(config.services.groupService.apiPath);
+                .toConstantValue(config.services.groupServiceConfig.apiPath);
         }
     }
 }
