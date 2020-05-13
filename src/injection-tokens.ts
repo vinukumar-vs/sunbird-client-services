@@ -17,6 +17,9 @@ export const InjectionTokens = {
         HTTP_SERVICE: Symbol.for('HTTP_SERVICE'),
     },
     services: {
-        CLASS_ROOM_SERVICE: Symbol.for('CLASS_ROOM_SERVICE')
+        group: {
+            GROUP_SERVICE_API_PATH: Symbol.for('GROUP_SERVICE_API_PATH'),
+            GROUP_SERVICE: Symbol.for('GROUP_SERVICE')
+        }
     }
 };

@@ -1,16 +1,21 @@
+import 'reflect-metadata';
 import {Container} from 'inversify';
 import {HttpClient} from './core/http-service/implementation/http-client-adapters/http-client';
 import {HttpClientCordovaAdapter} from './core/http-service/implementation/http-client-adapters/http-client-cordova-adapter';
 import {HttpClientBrowserAdapter} from './core/http-service/implementation/http-client-adapters/http-client-browser-adapter';
 import {CsHttpService} from './core/http-service/interface';
 import {HttpServiceImpl} from './core/http-service/implementation/http-service-impl';
-import {ClassRoomServiceImpl} from './services/class-room/implementation/class-room-service-impl';
-import {CsClassRoomService} from './services/class-room/interface';
+import {GroupServiceImpl} from './services/group/implementation/group-service-impl';
+import {CsGroupService} from './services/group/interface';
 import {InjectionTokens} from './injection-tokens';
+
+export interface CsGroupServiceConfig {
+    apiPath: string;
+}
 
 export interface CsConfig {
     core: {
-        httpAdapter: 'HttpClientBrowserAdapter' | 'HttpClientCordovaAdapter';
+        httpAdapter?: 'HttpClientBrowserAdapter' | 'HttpClientCordovaAdapter';
         global: {
             channelId?: string;
             producerId?: string;
@@ -23,6 +28,9 @@ export interface CsConfig {
                 bearerToken?: string;
             };
         };
+    };
+    services: {
+        groupServiceConfig?: CsGroupServiceConfig
     };
 }
 
@@ -51,8 +59,8 @@ export class CsModule {
         return this._container.get<CsHttpService>(InjectionTokens.core.HTTP_SERVICE);
     }
 
-    get classRoomService(): CsClassRoomService {
-        return this._container.get<CsClassRoomService>(InjectionTokens.services.CLASS_ROOM_SERVICE);
+    get groupService(): CsGroupService {
+        return this._container.get<CsGroupService>(InjectionTokens.services.group.GROUP_SERVICE);
     }
 
     get config(): CsConfig {
@@ -62,36 +70,11 @@ export class CsModule {
     public async init(config: CsConfig) {
         this._config = config;
 
-        this._container = new Container()
+        this._container = new Container();
 
         this._container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(this._container);
 
-        if (config.core.httpAdapter === 'HttpClientCordovaAdapter') {
-            this._container.bind<HttpClient>(InjectionTokens.core.HTTP_ADAPTER)
-                .to(HttpClientCordovaAdapter).inSingletonScope();
-        } else {
-            this._container.bind<HttpClient>(InjectionTokens.core.HTTP_ADAPTER)
-                .to(HttpClientBrowserAdapter).inSingletonScope();
-        }
-
-        this._container.bind<string>(InjectionTokens.core.api.HOST)
-            .toConstantValue(config.core.api.host);
-        this._container.bind<string | undefined>(InjectionTokens.core.global.CHANNEL_ID)
-            .toConstantValue(config.core.global.channelId);
-        this._container.bind<string | undefined>(InjectionTokens.core.global.PRODUCER_ID)
-            .toConstantValue(config.core.global.producerId);
-        this._container.bind<string | undefined>(InjectionTokens.core.global.DEVICE_ID)
-            .toConstantValue(config.core.global.deviceId);
-        this._container.bind<string | undefined>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
-            .toConstantValue(config.core.api.authentication.bearerToken);
-        this._container.bind<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
-            .toConstantValue(config.core.api.authentication.userToken);
-
-        this._container.bind<CsHttpService>(InjectionTokens.core.HTTP_SERVICE)
-            .to(HttpServiceImpl).inSingletonScope();
-
-        this._container.bind<CsClassRoomService>(InjectionTokens.services.CLASS_ROOM_SERVICE)
-            .to(ClassRoomServiceImpl).inSingletonScope();
+        this.updateConfig(config);
 
         this._isInitialised = true;
     }
@@ -99,17 +82,39 @@ export class CsModule {
     updateConfig(config: CsConfig) {
         this._config = config;
 
-        this._container.rebind<string>(InjectionTokens.core.api.HOST)
+        const mode: 'rebind' | 'bind' = this._isInitialised ? 'rebind' : 'bind';
+
+        if (config.core.httpAdapter === 'HttpClientCordovaAdapter') {
+            this._container[mode]<HttpClient>(InjectionTokens.core.HTTP_ADAPTER)
+                .to(HttpClientCordovaAdapter).inSingletonScope();
+        } else {
+            this._container[mode]<HttpClient>(InjectionTokens.core.HTTP_ADAPTER)
+                .to(HttpClientBrowserAdapter).inSingletonScope();
+        }
+
+        this._container[mode]<string>(InjectionTokens.core.api.HOST)
             .toConstantValue(config.core.api.host);
-        this._container.rebind<string | undefined>(InjectionTokens.core.global.CHANNEL_ID)
+        this._container[mode]<string | undefined>(InjectionTokens.core.global.CHANNEL_ID)
             .toConstantValue(config.core.global.channelId);
-        this._container.rebind<string | undefined>(InjectionTokens.core.global.PRODUCER_ID)
+        this._container[mode]<string | undefined>(InjectionTokens.core.global.PRODUCER_ID)
             .toConstantValue(config.core.global.producerId);
-        this._container.rebind<string | undefined>(InjectionTokens.core.global.DEVICE_ID)
+        this._container[mode]<string | undefined>(InjectionTokens.core.global.DEVICE_ID)
             .toConstantValue(config.core.global.deviceId);
-        this._container.rebind<string | undefined>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
+        this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
             .toConstantValue(config.core.api.authentication.bearerToken);
-        this._container.rebind<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
+        this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
             .toConstantValue(config.core.api.authentication.userToken);
+
+        // httpService
+        this._container[mode]<CsHttpService>(InjectionTokens.core.HTTP_SERVICE)
+            .to(HttpServiceImpl).inSingletonScope();
+
+        // groupService
+        this._container[mode]<CsGroupService>(InjectionTokens.services.group.GROUP_SERVICE)
+            .to(GroupServiceImpl).inSingletonScope();
+        if (config.services.groupServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_API_PATH)
+                .toConstantValue(config.services.groupServiceConfig.apiPath);
+        }
     }
 }

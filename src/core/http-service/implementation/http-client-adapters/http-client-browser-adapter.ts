@@ -1,10 +1,8 @@
-import {Observable, from} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import * as qs from 'qs';
 import {HttpClient} from './http-client';
-import {CsHttpSerializer} from '../../interface';
-import {CsHttpServerError} from '../../errors';
-import {CsNetworkError} from '../../errors';
-import {CsResponse, CsHttpResponseCode} from '../../interface';
+import {CsHttpResponseCode, CsHttpSerializer, CsResponse} from '../../interface';
+import {CsHttpClientError, CsHttpServerError, CsNetworkError} from '../../errors';
 import {injectable} from 'inversify';
 
 @injectable()
@@ -49,9 +47,15 @@ export class HttpClientBrowserAdapter implements HttpClient {
             return scResponse;
         }
 
-        throw new CsHttpServerError(`
-            ${response.url}
-        `, scResponse);
+        if (response.status >= 400 && response.status <= 499) {
+            throw new CsHttpClientError(`
+                ${response.url}
+            `, scResponse);
+        } else {
+            throw new CsHttpServerError(`
+                ${response.url}
+            `, scResponse);
+        }
     }
 
     constructor() {}
@@ -80,7 +84,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
         return from(
             window.fetch(url.toString(), {
                 method: 'GET',
-                headers: new Headers({...this.headers, ...headers}),
+                headers: {...this.headers, ...headers},
             }).then(HttpClientBrowserAdapter.mapResponse)
                 .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
         );
@@ -100,7 +104,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
         return from(
             window.fetch(url.toString(), {
                 method: 'PATCH',
-                headers: new Headers({...this.headers, ...headers}),
+                headers: {...this.headers, ...headers},
                 body
             }).then(HttpClientBrowserAdapter.mapResponse)
                 .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
@@ -121,7 +125,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
         return from(
             window.fetch(url.toString(), {
                 method: 'POST',
-                headers: new Headers({...this.headers, ...headers}),
+                headers: {...this.headers, ...headers},
                 body
             }).then(HttpClientBrowserAdapter.mapResponse)
                 .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
