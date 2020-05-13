@@ -1,20 +1,41 @@
-import {CsHttpRequestType, CsHttpSerializer, CsRequest} from '../interface';
-import {CsResponse, CsHttpResponseCode} from '../interface';
+import {
+    CsHttpRequestType,
+    CsHttpResponseCode,
+    CsHttpSerializer,
+    CsHttpService,
+    CsRequest,
+    CsRequestInterceptor,
+    CsResponse,
+    CsResponseInterceptor
+} from '../interface';
 import {from, Observable} from 'rxjs';
 import {Container, inject, injectable} from 'inversify';
 import * as qs from 'qs';
-import {CsHttpService} from '../interface';
 import {InjectionTokens} from '../../../injection-tokens';
 import {HttpClient} from './http-client-adapters/http-client';
 import {BearerTokenInjectRequestInterceptor} from './interceptors/bearer-token-inject-request-interceptor';
-import {UserTokenRequestInterceptor} from './interceptors/user-token-request-interceptor';
-import {CsRequestInterceptor} from '../interface';
-import {CsResponseInterceptor} from '../interface';
+import {UserTokenInjectRequestInterceptor} from './interceptors/user-token-inject-request-interceptor';
 
 @injectable()
 export class HttpServiceImpl implements CsHttpService {
     private _requestInterceptors: CsRequestInterceptor[] = [];
     private _responseInterceptors: CsResponseInterceptor[] = [];
+
+    private _bearerTokenInjectRequestInterceptor?: BearerTokenInjectRequestInterceptor;
+    get bearerTokenInjectRequestInterceptor(): BearerTokenInjectRequestInterceptor {
+        if (!this._bearerTokenInjectRequestInterceptor) {
+            this._bearerTokenInjectRequestInterceptor = new BearerTokenInjectRequestInterceptor(this.container);
+        }
+        return this._bearerTokenInjectRequestInterceptor;
+    }
+
+    private _userTokenInjectRequestInterceptor?: UserTokenInjectRequestInterceptor;
+    get userTokenInjectRequestInterceptor(): UserTokenInjectRequestInterceptor {
+        if (!this._userTokenInjectRequestInterceptor) {
+            this._userTokenInjectRequestInterceptor = new UserTokenInjectRequestInterceptor(this.container);
+        }
+        return this._userTokenInjectRequestInterceptor;
+    }
 
     get host(): string {
         return this.container.get(InjectionTokens.core.api.HOST);
@@ -129,12 +150,12 @@ export class HttpServiceImpl implements CsHttpService {
     }
 
     private buildInterceptorsFromRequest(request: CsRequest) {
-        if (request.withBearerToken) {
-            request.requestInterceptors.push(new BearerTokenInjectRequestInterceptor(this.container));
+        if (request.withBearerToken && request.requestInterceptors.indexOf(this.bearerTokenInjectRequestInterceptor) === -1) {
+            request.requestInterceptors.push(this.bearerTokenInjectRequestInterceptor);
         }
 
-        if (request.withUserToken) {
-            request.requestInterceptors.push(new UserTokenRequestInterceptor(this.container));
+        if (request.withUserToken && request.requestInterceptors.indexOf(this.userTokenInjectRequestInterceptor) === -1) {
+            request.requestInterceptors.push(this.userTokenInjectRequestInterceptor);
         }
 
         if (this.http.setSerializer(request.serializer) === CsHttpSerializer.URLENCODED) {
