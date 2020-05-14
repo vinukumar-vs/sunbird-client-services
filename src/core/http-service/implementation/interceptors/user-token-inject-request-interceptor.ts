@@ -1,10 +1,9 @@
-import {CsRequestInterceptor} from '../../interface';
+import {CsRequest, CsRequestInterceptor} from '../../interface';
 import {Observable, of} from 'rxjs';
 import {Container} from 'inversify';
-import {CsRequest} from '../../interface';
 import {InjectionTokens} from '../../../../injection-tokens';
 
-export class UserTokenRequestInterceptor implements CsRequestInterceptor {
+export class UserTokenInjectRequestInterceptor implements CsRequestInterceptor {
     constructor(
         private container: Container
     ) {
