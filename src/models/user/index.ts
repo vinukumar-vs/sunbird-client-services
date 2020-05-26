@@ -12,6 +12,8 @@ export interface User {
     tncLatestVersionUrl: string;
     avatar: string;
     managedBy: string;
+    locationIds: string;
+    framework: any;
 }
 
 export interface RootOrg {
