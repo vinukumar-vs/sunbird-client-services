@@ -14,6 +14,12 @@ export interface User {
     managedBy: string;
     locationIds: string;
     framework: any;
+    externalIds?: {
+        id: string;
+        operation: string;
+        idType: string;
+        provider: string;
+    }[];
 }
 
 export interface RootOrg {
