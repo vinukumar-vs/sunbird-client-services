@@ -41,7 +41,7 @@ export class CsCourseProgressCalculator {
         visitedContentEnd: boolean,
     ) {
         let customProgress;
-        if (endPageSeen || visitedContentEnd || ((visitedLength * 100) / totalLength) > 20) {
+        if (endPageSeen || visitedContentEnd || (totalLength && (visitedLength * 100) / totalLength) > 20) {
             customProgress = 100;
         } else {
             customProgress = progress;
