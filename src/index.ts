@@ -8,8 +8,20 @@ import {HttpServiceImpl} from './core/http-service/implementation/http-service-i
 import {GroupServiceImpl} from './services/group/implementation/group-service-impl';
 import {CsGroupService} from './services/group/interface';
 import {InjectionTokens} from './injection-tokens';
+import {CsFrameworkService} from "./services/framework/interface";
+import {FrameworkServiceImpl} from "./services/framework/implementation/framework-service-impl";
+import {CsLocationService} from "./services/location/interface";
+import {LocationServiceImpl} from "./services/location/implementation/location-service-impl";
 
 export interface CsGroupServiceConfig {
+    apiPath: string;
+}
+
+export interface CsFrameworkServiceConfig {
+    apiPath: string;
+}
+
+export interface CsLocationServiceConfig {
     apiPath: string;
 }
 
@@ -30,7 +42,9 @@ export interface CsConfig {
         };
     };
     services: {
-        groupServiceConfig?: CsGroupServiceConfig
+        groupServiceConfig?: CsGroupServiceConfig,
+        frameworkServiceConfig?: CsFrameworkServiceConfig,
+        locationServiceConfig?: CsLocationServiceConfig
     };
 }
 
@@ -61,6 +75,14 @@ export class CsModule {
 
     get groupService(): CsGroupService {
         return this._container.get<CsGroupService>(InjectionTokens.services.group.GROUP_SERVICE);
+    }
+
+    get frameworkService(): CsFrameworkService {
+        return this._container.get<CsFrameworkService>(InjectionTokens.services.framework.FRAMEWORK_SERVICE);
+    }
+
+    get locationService(): CsLocationService {
+        return this._container.get<CsLocationService>(InjectionTokens.services.location.LOCATION_SERVICE);
     }
 
     get config(): CsConfig {
@@ -115,6 +137,22 @@ export class CsModule {
         if (config.services.groupServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_API_PATH)
                 .toConstantValue(config.services.groupServiceConfig.apiPath);
+        }
+
+        // frameworkService
+        this._container[mode]<CsFrameworkService>(InjectionTokens.services.framework.FRAMEWORK_SERVICE)
+            .to(FrameworkServiceImpl).inSingletonScope();
+        if (config.services.frameworkServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.framework.FRAMEWORK_SERVICE_API_PATH)
+                .toConstantValue(config.services.frameworkServiceConfig.apiPath);
+        }
+
+        // locationService
+        this._container[mode]<CsLocationService>(InjectionTokens.services.location.LOCATION_SERVICE)
+            .to(LocationServiceImpl).inSingletonScope();
+        if (config.services.locationServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.location.LOCATION_SERVICE_API_PATH)
+                .toConstantValue(config.services.locationServiceConfig.apiPath);
         }
     }
 }
