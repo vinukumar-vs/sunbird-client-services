@@ -105,11 +105,8 @@ export class CsModule {
             .toConstantValue(config.core.api.authentication.bearerToken);
         this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
             .toConstantValue(config.core.api.authentication.userToken);
-
-        if (config.core.api.authentication.userToken) {
-            this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.MANAGED_USER_TOKEN)
-                .toConstantValue(config.core.api.authentication.managedUserToken);
-        }
+        this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.MANAGED_USER_TOKEN)
+            .toConstantValue(config.core.api.authentication.managedUserToken);
 
         // httpService
         this._container[mode]<CsHttpService>(InjectionTokens.core.HTTP_SERVICE)
