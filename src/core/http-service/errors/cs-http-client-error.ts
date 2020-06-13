@@ -1,10 +1,16 @@
-import {CsResponse} from '../interface/cs-response';
+import {CsResponse} from '../interface';
 import {CsError} from '../../cs-error';
 
 export class CsHttpClientError extends CsError {
+    private static code = 'HTTP_CLIENT_ERROR';
+
     constructor(message: string, public readonly response: CsResponse) {
-        super(message, 'HTTP_CLIENT_ERROR');
+        super(message, CsHttpClientError.code);
 
         Object.setPrototypeOf(this, CsHttpClientError.prototype);
+    }
+
+    static isInstance(obj: any): boolean {
+        return obj instanceof Error && obj['code'] && obj['code'] === CsHttpClientError.code;
     }
 }
