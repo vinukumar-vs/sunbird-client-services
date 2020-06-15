@@ -1,6 +1,6 @@
-import {CsMimeType} from '../../../content/interface/cs-content-mime-type';
+import {CsMimeType} from '../../interface';
 
-export class CsCourseProgressCalculator {
+export class CsContentProgressCalculator {
     private static PLAYBACK_MIME_TYPES = [CsMimeType.YOUTUBE, CsMimeType.VIDEO, CsMimeType.WEBM, CsMimeType.PDF, CsMimeType.EPUB];
     private static OTHER_MIME_TYPES = [CsMimeType.H5P, CsMimeType.HTML];
 
@@ -16,8 +16,8 @@ export class CsCourseProgressCalculator {
             return 0;
         }
 
-        if (CsCourseProgressCalculator.PLAYBACK_MIME_TYPES.indexOf(mimeType) > -1) {
-            return CsCourseProgressCalculator.calculatePlaybackProgress(
+        if (CsContentProgressCalculator.PLAYBACK_MIME_TYPES.indexOf(mimeType) > -1) {
+            return CsContentProgressCalculator.calculatePlaybackProgress(
                 summaryMap['progress'] || 0,
                 summaryMap['visitedlength'] || 0,
                 summaryMap['totallength'] || 0,
@@ -25,11 +25,11 @@ export class CsCourseProgressCalculator {
                 summaryMap['visitedcontentend'] || false,
             );
         } else if (
-            CsCourseProgressCalculator.OTHER_MIME_TYPES.indexOf(mimeType) > -1
+            CsContentProgressCalculator.OTHER_MIME_TYPES.indexOf(mimeType) > -1
         ) {
-            return CsCourseProgressCalculator.absoluteProgress(summaryMap.progress, 0);
+            return CsContentProgressCalculator.absoluteProgress(summaryMap.progress, 0);
         } else {
-            return CsCourseProgressCalculator.absoluteProgress(summaryMap.progress, 100);
+            return CsContentProgressCalculator.absoluteProgress(summaryMap.progress, 100);
         }
     }
 
