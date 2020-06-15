@@ -10,7 +10,14 @@ export class UserTokenInjectRequestInterceptor implements CsRequestInterceptor {
     }
 
     interceptRequest(request: CsRequest): Observable<CsRequest> {
-        request.headers['X-Authenticated-User-Token'] = this.container.get<string>(InjectionTokens.core.api.authentication.USER_TOKEN);
+        const userToken = this.container.get<string>(InjectionTokens.core.api.authentication.USER_TOKEN);
+        const manageUserToken = this.container.get<string>(InjectionTokens.core.api.authentication.MANAGED_USER_TOKEN);
+        if (userToken) {
+            request.headers['X-Authenticated-User-Token'] = userToken;
+        }
+        if (manageUserToken) {
+            request.headers['X-Authenticated-For'] = manageUserToken;
+        }
         return of(request);
     }
 }

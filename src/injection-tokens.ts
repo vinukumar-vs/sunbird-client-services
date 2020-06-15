@@ -11,6 +11,7 @@ export const InjectionTokens = {
             HOST: Symbol.for('HOST'),
             authentication: {
                 USER_TOKEN: Symbol.for('USER_TOKEN'),
+                MANAGED_USER_TOKEN: Symbol.for('MANAGED_USER_TOKEN'),
                 BEARER_TOKEN: Symbol.for('BEARER_TOKEN'),
             }
         },

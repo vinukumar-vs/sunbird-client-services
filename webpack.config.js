@@ -9,8 +9,8 @@ const config = {
         'dist/core/http-service/utilities/interceptors/index': './src/core/http-service/utilities/interceptors/index.ts',
         'dist/services/content/index': './src/services/content/index.ts',
         'dist/services/content/utilities/content-group-generator/index': './src/services/content/utilities/content-group-generator/index.ts',
-        'dist/services/group/index': './src/services/group/index.ts',
-        'dist/services/course/utilities/course-progress-calculator/index': './src/services/course/utilities/course-progress-calculator/index.ts',
+        'dist/services/content/utilities/content-progress-calculator/index': './src/services/content/utilities/content-progress-calculator/index.ts',
+        'dist/services/group/index': './src/services/group/index.ts'
     },
     externals: [
         // externals here
