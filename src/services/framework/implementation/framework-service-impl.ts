@@ -19,7 +19,7 @@ export class FrameworkServiceImpl implements CsFrameworkService {
     getFramework(id: string, options?: GetFrameworkOptions, config?: CsFrameworkServiceConfig): Observable<Framework> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath( (config ? config.apiPath : this.apiPath ) + '/' + id)
+            .withPath( (config ? config.apiPath : this.apiPath ) + '/read/' + id)
             .withParameters({
                 ...(options ? {categories: options.requiredCategories.join(',')} : {})
             })

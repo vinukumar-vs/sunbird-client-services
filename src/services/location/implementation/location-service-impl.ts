@@ -12,14 +12,14 @@ export class LocationServiceImpl implements CsLocationService {
 
     constructor(
         @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService,
-        @inject(InjectionTokens.services.framework.FRAMEWORK_SERVICE_API_PATH) private apiPath: string
+        @inject(InjectionTokens.services.location.LOCATION_SERVICE_API_PATH) private apiPath: string
     ) {
     }
 
     searchLocations(request?: SearchLocationRequests, config?: CsLocationServiceConfig): Observable<Location[]> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
-            .withPath((config ? config.apiPath : this.apiPath))
+            .withPath((config ? config.apiPath : this.apiPath) + '/search')
             .withBearerToken(true)
             .withUserToken(false)
             .withBody({request})
