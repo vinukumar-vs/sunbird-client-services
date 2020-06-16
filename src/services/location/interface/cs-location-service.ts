@@ -1,6 +1,6 @@
-import {Observable} from "rxjs";
-import {Location} from "../../../models/location";
-import {CsLocationServiceConfig} from "../../../index";
+import {Observable} from 'rxjs';
+import {Location} from '../../../models/location';
+import {CsLocationServiceConfig} from '../../../index';
 
 export interface SearchLocationRequests {
     filter?: {
@@ -10,7 +10,7 @@ export interface SearchLocationRequests {
         code?: string;
         limit?: number;
         offset?: string;
-    }
+    };
 }
 
 export interface CsLocationService {

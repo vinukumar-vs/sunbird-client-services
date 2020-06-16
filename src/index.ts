@@ -8,10 +8,12 @@ import {HttpServiceImpl} from './core/http-service/implementation/http-service-i
 import {GroupServiceImpl} from './services/group/implementation/group-service-impl';
 import {CsGroupService} from './services/group/interface';
 import {InjectionTokens} from './injection-tokens';
-import {CsFrameworkService} from "./services/framework/interface";
-import {FrameworkServiceImpl} from "./services/framework/implementation/framework-service-impl";
-import {CsLocationService} from "./services/location/interface";
-import {LocationServiceImpl} from "./services/location/implementation/location-service-impl";
+import {CsFrameworkService} from './services/framework/interface';
+import {FrameworkServiceImpl} from './services/framework/implementation/framework-service-impl';
+import {CsLocationService} from './services/location/interface';
+import {LocationServiceImpl} from './services/location/implementation/location-service-impl';
+import {CsCourseService} from './services/course/interface';
+import {CourseServiceImpl} from './services/course/implementation/course-service-impl';
 
 export interface CsGroupServiceConfig {
     apiPath: string;
@@ -22,6 +24,10 @@ export interface CsFrameworkServiceConfig {
 }
 
 export interface CsLocationServiceConfig {
+    apiPath: string;
+}
+
+export interface CsCourseServiceConfig {
     apiPath: string;
 }
 
@@ -45,7 +51,8 @@ export interface CsConfig {
     services: {
         groupServiceConfig?: CsGroupServiceConfig,
         frameworkServiceConfig?: CsFrameworkServiceConfig,
-        locationServiceConfig?: CsLocationServiceConfig
+        locationServiceConfig?: CsLocationServiceConfig,
+        courseServiceConfig?: CsCourseServiceConfig
     };
 }
 
@@ -84,6 +91,10 @@ export class CsModule {
 
     get locationService(): CsLocationService {
         return this._container.get<CsLocationService>(InjectionTokens.services.location.LOCATION_SERVICE);
+    }
+
+    get courseService(): CsCourseService {
+        return this._container.get<CsCourseService>(InjectionTokens.services.course.COURSE_SERVICE);
     }
 
     get config(): CsConfig {
@@ -156,6 +167,14 @@ export class CsModule {
         if (config.services.locationServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.location.LOCATION_SERVICE_API_PATH)
                 .toConstantValue(config.services.locationServiceConfig.apiPath);
+        }
+
+        // courseService
+        this._container[mode]<CsCourseService>(InjectionTokens.services.course.COURSE_SERVICE)
+            .to(CourseServiceImpl).inSingletonScope();
+        if (config.services.courseServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.course.COURSE_SERVICE_API_PATH)
+                .toConstantValue(config.services.courseServiceConfig.apiPath);
         }
     }
 }
