@@ -10,7 +10,10 @@ const config = {
         'dist/services/content/index': './src/services/content/index.ts',
         'dist/services/content/utilities/content-group-generator/index': './src/services/content/utilities/content-group-generator/index.ts',
         'dist/services/content/utilities/content-progress-calculator/index': './src/services/content/utilities/content-progress-calculator/index.ts',
-        'dist/services/group/index': './src/services/group/index.ts'
+        'dist/services/group/index': './src/services/group/index.ts',
+        'dist/services/location/index': './src/services/location/index.ts',
+        'dist/services/framework/index': './src/services/framework/index.ts',
+        'dist/services/course/index': './src/services/course/index.ts',
     },
     externals: [
         // externals here
