@@ -29,6 +29,10 @@ export const InjectionTokens = {
         location: {
             LOCATION_SERVICE_API_PATH: Symbol.for('LOCATION_SERVICE_API_PATH'),
             LOCATION_SERVICE: Symbol.for('LOCATION_SERVICE')
+        },
+        course: {
+            COURSE_SERVICE_API_PATH: Symbol.for('COURSE_SERVICE_API_PATH'),
+            COURSE_SERVICE: Symbol.for('COURSE_SERVICE')
         }
     }
 };

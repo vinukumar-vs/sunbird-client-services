@@ -1,6 +1,6 @@
-import {CsFrameworkServiceConfig} from "../../../index";
-import {Observable} from "rxjs";
-import {Framework} from "../../../models/channel";
+import {CsFrameworkServiceConfig} from '../../../index';
+import {Observable} from 'rxjs';
+import {Framework} from '../../../models/channel';
 
 export interface GetFrameworkOptions {
     requiredCategories: string[];

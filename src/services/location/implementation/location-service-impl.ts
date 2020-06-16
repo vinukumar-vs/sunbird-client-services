@@ -1,11 +1,11 @@
-import {CsLocationService, SearchLocationRequests} from "../interface";
-import {CsLocationServiceConfig} from "../../../index";
-import {Observable} from "rxjs";
-import {inject, injectable} from "inversify";
-import {InjectionTokens} from "../../../injection-tokens";
-import {CsHttpRequestType, CsHttpService, CsRequest} from "../../../core/http-service/interface";
-import {Location} from "../../../models/location";
-import {map} from "rxjs/operators";
+import {CsLocationService, SearchLocationRequests} from '../interface';
+import {CsLocationServiceConfig} from '../../../index';
+import {Observable} from 'rxjs';
+import {inject, injectable} from 'inversify';
+import {InjectionTokens} from '../../../injection-tokens';
+import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
+import {Location} from '../../../models/location';
+import {map} from 'rxjs/operators';
 
 @injectable()
 export class LocationServiceImpl implements CsLocationService {
