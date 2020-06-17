@@ -11,6 +11,7 @@ interface CordovaHttpClientResponse {
     data?: string;
     error?: string;
     status: number;
+    headers?: any;
 }
 
 @injectable()
@@ -82,9 +83,15 @@ export class HttpClientCordovaAdapter implements HttpClient {
 
 
             try {
-                r.body = JSON.parse(response.error!);
+                try {
+                    r.body = JSON.parse(response.error!);
+                } catch (e) {
+                    r.body = response.error;
+                }
+
                 r.responseCode = response.status;
                 r.errorMesg = 'SERVER_ERROR';
+                r.headers = response.headers;
 
                 if (r.responseCode === CsHttpResponseCode.HTTP_UNAUTHORISED || r.responseCode === CsHttpResponseCode.HTTP_FORBIDDEN) {
                     observable.next(r);
