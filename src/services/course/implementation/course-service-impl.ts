@@ -1,4 +1,4 @@
-import {CsCourseService, GetUserEnrollmentListRequests} from '../interface';
+import {CsCourseService, GetUserEnrollmentListRequest} from '../interface';
 import {Course} from '../../../models/course';
 import {Observable} from 'rxjs';
 import {CsCourseServiceConfig} from '../../../index';
@@ -15,7 +15,7 @@ export class CourseServiceImpl implements CsCourseService {
     ) {
     }
 
-    getUserEnrollmentList(request: GetUserEnrollmentListRequests, additionalParams = {}, config?: CsCourseServiceConfig): Observable<Course[]> {
+    getUserEnrolledCourses(request: GetUserEnrollmentListRequest, additionalParams = {}, config?: CsCourseServiceConfig): Observable<Course[]> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
             .withPath((config ? config.apiPath : this.apiPath) + '/user/enrollment/list')
