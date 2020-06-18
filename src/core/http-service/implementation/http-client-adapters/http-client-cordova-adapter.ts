@@ -87,6 +87,9 @@ export class HttpClientCordovaAdapter implements HttpClient {
                     r.body = JSON.parse(response.error!);
                 } catch (e) {
                     r.body = response.error;
+                    if (response.status <= 0) {
+                      throw e;
+                    }
                 }
 
                 r.responseCode = response.status;
