@@ -2,7 +2,7 @@ import {Observable} from 'rxjs';
 import {Course} from '../../../models/course';
 import {CsCourseServiceConfig} from '../../../index';
 
-export interface GetUserEnrollmentListRequests {
+export interface GetUserEnrolledCoursesRequest {
     userId: string;
     filters?: {
         board?: string[];
@@ -13,5 +13,5 @@ export interface GetUserEnrollmentListRequests {
 }
 
 export interface CsCourseService {
-    getUserEnrollmentList(request: GetUserEnrollmentListRequests, additionalParams?: { [key: string]: string }, config?: CsCourseServiceConfig): Observable<Course[]>;
+    getUserEnrolledCourses(request: GetUserEnrolledCoursesRequest, additionalParams?: { [key: string]: string }, config?: CsCourseServiceConfig): Observable<Course[]>;
 }
