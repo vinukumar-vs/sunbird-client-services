@@ -2,7 +2,8 @@ export enum CsHttpResponseCode {
     HTTP_UNAUTHORISED = 401,
     HTTP_FORBIDDEN = 403,
     HTTP_SUCCESS = 200,
-    HTTP_BAD_REQUEST = 400
+    HTTP_BAD_REQUEST = 400,
+    HTTP_KONG_FAILURE= 447
 }
 
 export class CsResponse<T = any> {
@@ -10,6 +11,7 @@ export class CsResponse<T = any> {
     private _responseCode: CsHttpResponseCode;
     private _errorMesg: string;
     private _body: T;
+    private _headers: any;
 
 
     get responseCode(): CsHttpResponseCode {
@@ -34,5 +36,13 @@ export class CsResponse<T = any> {
 
     set body(value: T) {
         this._body = value;
+    }
+
+    get headers(): any {
+        return this._headers;
+    }
+
+    set headers(value: any) {
+        this._headers = value;
     }
 }
