@@ -1,44 +1,36 @@
 import {inject, injectable} from 'inversify';
-import {CsHttpService} from '../../../core/http-service/interface';
-import {CsGroupService} from '../interface';
+import {
+    CsGroupAddActivitiesRequest,
+    CsGroupAddActivitiesResponse,
+    CsGroupAddMembersRequest,
+    CsGroupAddMembersResponse,
+    CsGroupCreateRequest,
+    CsGroupCreateResponse,
+    CsGroupDeleteResponse,
+    CsGroupRemoveActivitiesRequest,
+    CsGroupRemoveActivitiesResponse,
+    CsGroupRemoveMembersRequest,
+    CsGroupRemoveMembersResponse,
+    CsGroupSearchCriteria,
+    CsGroupService,
+    CsGroupUpdateActivitiesRequest,
+    CsGroupUpdateActivitiesResponse,
+    CsGroupUpdateMembersRequest,
+    CsGroupUpdateMembersResponse,
+    CsGroupUpdateRequest,
+    CsGroupUpdateResponse
+} from '../interface';
+import {CsGroupServiceConfig} from '../../..';
+import {Observable, of, throwError} from 'rxjs';
+import {Group, GroupActivity, GroupEntityStatus, GroupJoinStrategy, GroupMember} from '../../../models/group';
 import {InjectionTokens} from '../../../injection-tokens';
-import {Group} from '../../../models/group';
-import {defer, Observable} from 'rxjs';
-import {User} from '../../../models/user';
+import {CsHttpClientError} from '../../../core/http-service/errors';
+import {CsResponse} from '../../../core/http-service/interface';
 
 @injectable()
 export class GroupServiceImpl implements CsGroupService {
-
-    static baseGroup: Group = {
-        identifier: '5eb81793d75f7d4061da7b95',
-        name: 'classRoom - 75',
-        description: 'Tempor amet veniam do quis id incididunt occaecat.',
-        objectType: 'Class',
-        status: 'Live',
-        versionKey: '1588778384610',
-        channel: 'b00bc992ef25f1a9a8d63291e20efc8d',
-        framework: 'tpd',
-        board: 'CBSE',
-        subject: 'Math',
-        gradeLevel: 'Grade 5',
-        medium: 'English',
-        createdOn: '2020-05-06T15:16:38.655+0000',
-        lastUpdatedOn: '2020-05-06T15:19:44.610+0000',
-        createdBy: '8454cb21-3ce9-4e30-85b5-fade097880d8',
-        members: []
-    };
-    static baseUser: Partial<User> = {
-        id: '8454cb21-3ce9-4e30-85b5-fade097880d8',
-        userId: '8454cb21-3ce9-4e30-85b5-fade097880d8',
-        identifier: '8454cb21-3ce9-4e30-85b5-fade097880d8',
-        firstName: 'Some First Name',
-        lastName: 'Some Last Name'
-    };
-    private db: Map<string, Group> = new Map<string, Group>();
-
-    constructor(
-        @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService) {
-    }
+    private mockDB: Map<string, Group> = new Map<string, Group>();
+    private userId = 'SAMPLE_CURRENT_USER_ID';
 
     static create_UUID() {
         let dt = new Date().getTime();
@@ -51,84 +43,213 @@ export class GroupServiceImpl implements CsGroupService {
         });
     }
 
-    create(
-        name: string,
-        board: string,
-        medium: string | string[],
-        gradeLevel: string | string[],
-        subject: string | string[]
-    ): Observable<Group> {
-        return defer(async () => {
-            const identifier = GroupServiceImpl.create_UUID();
 
-            const group: Group = {
-                ...GroupServiceImpl.baseGroup,
-                identifier,
-                name,
-                board,
-                medium,
-                gradeLevel,
-                subject
-            };
+    constructor(@inject(InjectionTokens.core.api.authentication.USER_TOKEN) userToken) {
+    }
 
-            this.db.set(identifier, group);
+    create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse> {
+        const newGroupId = GroupServiceImpl.create_UUID();
 
-            return group;
+        this.mockDB[newGroupId] = {
+            name: createRequest.name,
+            description: createRequest.description,
+            id: newGroupId,
+            status: GroupEntityStatus.ACTIVE,
+            joinStrategy: createRequest.joinStrategy || GroupJoinStrategy.INVITE_ONLY,
+            createdOn: new Date().toISOString(),
+            createdBy: 'SAMPLE_CURRENT_USER_ID',
+            updatedOn: new Date().toISOString(),
+            updatedBy: new Date().toISOString(),
+            activities: [],
+            members: createRequest.members ? [
+                ...createRequest.members.map<GroupMember>((m) => {
+                    return {
+                        memberId: m.memberId,
+                        name: 'SOME_MEMBER_NAME',
+                        role: m.role,
+                        status: GroupEntityStatus.ACTIVE,
+                        addedBy: this.userId,
+                        addedOn: new Date().toISOString()
+                    };
+                })
+            ] : []
+        };
+
+        return of({
+            groupId: newGroupId
         });
     }
 
-    deleteById(id: string): Observable<void> {
-        return defer(async () => {
-            this.db.delete(id);
-        });
+    updateById(id: string, updateRequest: CsGroupUpdateRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateResponse> {
+        if (!this.mockDB[id]) {
+            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
+        }
+
+        if (updateRequest.name) {
+            this.mockDB.get(id)!.name = updateRequest.name;
+        }
+
+        if (updateRequest.description) {
+            this.mockDB.get(id)!.description = updateRequest.description;
+        }
+
+        if (updateRequest.status) {
+            this.mockDB.get(id)!.status = updateRequest.status;
+        }
+
+        if (updateRequest.joinStrategy) {
+            this.mockDB.get(id)!.joinStrategy = updateRequest.joinStrategy;
+        }
+
+        return of({});
     }
 
-    getAll(): Observable<Group[]> {
-        return defer(async () => {
-            return Array.from(this.db.values());
-        });
+    addMembers(
+        groupId: string, addMembersRequest: CsGroupAddMembersRequest, config?: CsGroupServiceConfig
+    ): Observable<CsGroupAddMembersResponse> {
+        if (!this.mockDB[groupId]) {
+            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
+        }
+
+        this.mockDB.get(groupId)!.members = [
+            ...(this.mockDB.get(groupId)!.members || []),
+            ...addMembersRequest.members.map<GroupMember>((m) => {
+                return {
+                    memberId: m.memberId,
+                    name: 'SOME_MEMBER_NAME',
+                    role: m.role,
+                    status: GroupEntityStatus.ACTIVE,
+                    addedBy: this.userId,
+                    addedOn: new Date().toISOString()
+                };
+            })
+        ];
+
+        return of({errors: []});
     }
 
-    getById(id: string): Observable<Group> {
-        return defer(async () => {
-            const group = this.db.get(id);
+    removeMembers(
+        groupId: string, removeMembersRequest: CsGroupRemoveMembersRequest, config?: CsGroupServiceConfig
+    ): Observable<CsGroupRemoveMembersResponse> {
+        if (!this.mockDB[groupId]) {
+            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
+        }
 
-            if (!group) {
-                throw new Error('NO_GROUP_FOUND');
-            }
+        this.mockDB.get(groupId)!.members = [
+            ...(this.mockDB.get(groupId)!.members || []).filter((m) => !removeMembersRequest.memberIds.find(m1 => m1 === m.memberId))
+        ];
 
-            return group;
-        });
+        return of({errors: []});
     }
 
-    addMemberById(memberId: string, groupId: string): Observable<Group> {
-        return defer(async () => {
-            const group = this.db.get(groupId);
+    updateMembers(
+        groupId: string, updateMembersRequest: CsGroupUpdateMembersRequest, config?: CsGroupServiceConfig
+    ): Observable<CsGroupUpdateMembersResponse> {
+        if (!this.mockDB[groupId]) {
+            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
+        }
 
-            if (!group) {
-                throw new Error('NO_GROUP_FOUND');
-            }
+        this.mockDB.get(groupId)!.members = [
+            ...(this.mockDB.get(groupId)!.members || []).map((m) => {
+                const toUpdate = updateMembersRequest.members.find(m1 => m1.memberId === m.memberId);
 
-            const user: User = {
-                ...GroupServiceImpl.baseUser,
-                id: memberId,
-                identifier: memberId,
-                userId: memberId,
-            } as User;
-            group.members.push(user);
-            return group;
-        });
+                if (toUpdate) {
+                    return {
+                        ...m,
+                        role: toUpdate.role
+                    };
+                }
+
+                return m;
+            })
+        ];
+
+        return of({errors: []});
     }
 
-    removeMemberById(memberId: string, groupId: string): Observable<void> {
-        return defer(async () => {
-            const group = this.db.get(groupId);
+    addActivities(
+        groupId: string, addActivitiesRequest: CsGroupAddActivitiesRequest, config?: CsGroupServiceConfig
+    ): Observable<CsGroupAddActivitiesResponse> {
+        if (!this.mockDB[groupId]) {
+            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
+        }
 
-            if (!group) {
-                throw new Error('NO_GROUP_FOUND');
-            }
+        this.mockDB.get(groupId)!.activities = [
+            ...(this.mockDB.get(groupId)!.activities || []),
+            ...addActivitiesRequest.activities.map<GroupActivity>((m) => {
+                return m;
+            })
+        ];
 
-            group.members = group.members.filter((member) => member.id !== memberId);
-        });
+        return of({errors: []});
+    }
+
+    updateActivities(
+        groupId: string, updateActivitiesRequest: CsGroupUpdateActivitiesRequest, config?: CsGroupServiceConfig
+    ): Observable<CsGroupUpdateActivitiesResponse> {
+        if (!this.mockDB[groupId]) {
+            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
+        }
+
+        this.mockDB.get(groupId)!.activities = [
+            ...(this.mockDB.get(groupId)!.activities || []).map((a) => {
+                const toUpdate = updateActivitiesRequest.activities.find(a1 => a['id'] === a1['id']);
+
+                if (toUpdate) {
+                    return {
+                        ...a,
+                        ...toUpdate
+                    };
+                }
+
+                return a;
+            })
+        ];
+
+        return of({errors: []});
+    }
+
+    getById(id: string, includeMembers?: string, config?: CsGroupServiceConfig): Observable<Group> {
+        if (!this.mockDB[id]) {
+            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
+        }
+
+        return of(this.mockDB.get(id)!);
+    }
+
+    getMembers(groupId: string, config?: CsGroupServiceConfig): Observable<GroupMember[]> {
+        if (!this.mockDB[groupId]) {
+            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
+        }
+
+        return of(this.mockDB.get(groupId)!.members || []);
+    }
+
+    search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<Group[]> {
+        return of(
+            Array.from(this.mockDB.values()).filter((g) =>
+                (g.members || []).find((m) => m.memberId === searchCriteria.filters.memberId)
+            )
+        );
+    }
+
+    deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse> {
+        if (!this.mockDB[id]) {
+            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
+        }
+
+        return of({errors: []});
+    }
+
+    removeActivities(groupId: string, removeActivitiesRequest: CsGroupRemoveActivitiesRequest, config?: CsGroupServiceConfig): Observable<CsGroupRemoveActivitiesResponse> {
+        if (!this.mockDB[groupId]) {
+            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
+        }
+
+        this.mockDB.get(groupId)!.activities = [
+            ...(this.mockDB.get(groupId)!.activities || []).filter((a) => !removeActivitiesRequest.activityIds.find(a1 => a1['id'] === a['id']))
+        ];
+
+        return of({errors: []});
     }
 }
