@@ -50,14 +50,14 @@ export class GroupServiceImpl implements CsGroupService {
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse> {
         const newGroupId = GroupServiceImpl.create_UUID();
 
-        this.mockDB[newGroupId] = {
+        this.mockDB.set(newGroupId, {
             name: createRequest.name,
             description: createRequest.description,
             id: newGroupId,
             status: GroupEntityStatus.ACTIVE,
             joinStrategy: createRequest.joinStrategy || GroupJoinStrategy.INVITE_ONLY,
             createdOn: new Date().toISOString(),
-            createdBy: 'SAMPLE_CURRENT_USER_ID',
+            createdBy: (createRequest.members && createRequest.members[0].memberId) || 'SOME_RANDOM_MEMBER_ID',
             updatedOn: new Date().toISOString(),
             updatedBy: new Date().toISOString(),
             activities: [],
@@ -73,7 +73,7 @@ export class GroupServiceImpl implements CsGroupService {
                     };
                 })
             ] : []
-        };
+        });
 
         return of({
             groupId: newGroupId
@@ -81,7 +81,7 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
     updateById(id: string, updateRequest: CsGroupUpdateRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateResponse> {
-        if (!this.mockDB[id]) {
+        if (!this.mockDB.get(id)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
@@ -107,7 +107,7 @@ export class GroupServiceImpl implements CsGroupService {
     addMembers(
         groupId: string, addMembersRequest: CsGroupAddMembersRequest, config?: CsGroupServiceConfig
     ): Observable<CsGroupAddMembersResponse> {
-        if (!this.mockDB[groupId]) {
+        if (!this.mockDB.get(groupId)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
@@ -131,7 +131,7 @@ export class GroupServiceImpl implements CsGroupService {
     removeMembers(
         groupId: string, removeMembersRequest: CsGroupRemoveMembersRequest, config?: CsGroupServiceConfig
     ): Observable<CsGroupRemoveMembersResponse> {
-        if (!this.mockDB[groupId]) {
+        if (!this.mockDB.get(groupId)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
@@ -145,7 +145,7 @@ export class GroupServiceImpl implements CsGroupService {
     updateMembers(
         groupId: string, updateMembersRequest: CsGroupUpdateMembersRequest, config?: CsGroupServiceConfig
     ): Observable<CsGroupUpdateMembersResponse> {
-        if (!this.mockDB[groupId]) {
+        if (!this.mockDB.get(groupId)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
@@ -170,7 +170,7 @@ export class GroupServiceImpl implements CsGroupService {
     addActivities(
         groupId: string, addActivitiesRequest: CsGroupAddActivitiesRequest, config?: CsGroupServiceConfig
     ): Observable<CsGroupAddActivitiesResponse> {
-        if (!this.mockDB[groupId]) {
+        if (!this.mockDB.get(groupId)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
@@ -187,7 +187,7 @@ export class GroupServiceImpl implements CsGroupService {
     updateActivities(
         groupId: string, updateActivitiesRequest: CsGroupUpdateActivitiesRequest, config?: CsGroupServiceConfig
     ): Observable<CsGroupUpdateActivitiesResponse> {
-        if (!this.mockDB[groupId]) {
+        if (!this.mockDB.get(groupId)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
@@ -210,7 +210,7 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
     getById(id: string, includeMembers?: boolean, config?: CsGroupServiceConfig): Observable<Group> {
-        if (!this.mockDB[id]) {
+        if (!this.mockDB.get(id)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
@@ -221,7 +221,7 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
     getMembers(groupId: string, config?: CsGroupServiceConfig): Observable<GroupMember[]> {
-        if (!this.mockDB[groupId]) {
+        if (!this.mockDB.get(groupId)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
@@ -237,7 +237,7 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
     deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse> {
-        if (!this.mockDB[id]) {
+        if (!this.mockDB.get(id)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
@@ -245,7 +245,7 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
     removeActivities(groupId: string, removeActivitiesRequest: CsGroupRemoveActivitiesRequest, config?: CsGroupServiceConfig): Observable<CsGroupRemoveActivitiesResponse> {
-        if (!this.mockDB[groupId]) {
+        if (!this.mockDB.get(groupId)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
