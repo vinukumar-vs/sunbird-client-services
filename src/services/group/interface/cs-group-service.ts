@@ -101,7 +101,7 @@ export interface CsGroupRemoveActivitiesResponse {
 export interface CsGroupService {
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse>;
 
-    getById(id: string, includeMembers?: string, config?: CsGroupServiceConfig): Observable<Group>;
+    getById(id: string, includeMembers?: boolean, config?: CsGroupServiceConfig): Observable<Group>;
 
     search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<Group[]>;
 

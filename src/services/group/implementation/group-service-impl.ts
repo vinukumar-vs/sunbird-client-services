@@ -209,12 +209,15 @@ export class GroupServiceImpl implements CsGroupService {
         return of({errors: []});
     }
 
-    getById(id: string, includeMembers?: string, config?: CsGroupServiceConfig): Observable<Group> {
+    getById(id: string, includeMembers?: boolean, config?: CsGroupServiceConfig): Observable<Group> {
         if (!this.mockDB[id]) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
-        return of(this.mockDB.get(id)!);
+        return of({
+            ...this.mockDB.get(id)!,
+            members: includeMembers ? this.mockDB.get(id)!.members : undefined
+        });
     }
 
     getMembers(groupId: string, config?: CsGroupServiceConfig): Observable<GroupMember[]> {
