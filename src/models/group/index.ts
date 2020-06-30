@@ -1,20 +1,45 @@
-import {User} from '../user';
+export enum GroupJoinStrategy {
+    INVITE_ONLY = 'invite_only',
+    MODERATED = 'moderated'
+}
+
+export enum GroupEntityStatus {
+    ACTIVE = 'active',
+    INACTIVE = 'inactive'
+}
+
+export enum GroupMemberRole {
+    ADMIN = 'admin',
+    MEMBER = 'member'
+}
+
+export interface GroupMember {
+    memberId: string;
+    name: string;
+    role: GroupMemberRole;
+    status: GroupEntityStatus;
+    addedBy: string;
+    addedOn: string;
+    removedBy?: string;
+    removedOn?: string;
+    updatedBy?: string;
+    updatedOn?: string;
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface GroupActivity {
+}
 
 export interface Group {
-    identifier: string;
     name: string;
     description: string;
-    objectType: string,
-    status: string;
-    versionKey: string;
-    channel: string;
-    framework: string;
-    board: string;
-    subject: string | string[];
-    gradeLevel: string | string[];
-    medium: string | string[];
+    id: string;
+    status: GroupEntityStatus;
+    joinStrategy: GroupJoinStrategy;
     createdOn: string;
-    lastUpdatedOn: string;
     createdBy: string;
-    members: User[];
+    updatedOn: string;
+    updatedBy: string;
+    activities: GroupActivity[];
+    members?: GroupMember[];
 }
