@@ -241,6 +241,8 @@ export class GroupServiceImpl implements CsGroupService {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
+        this.mockDB.delete(id);
+
         return of({errors: []});
     }
 
