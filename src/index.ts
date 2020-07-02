@@ -73,6 +73,8 @@ export class CsModule {
 
     private _config: CsConfig;
 
+    private onUpdateConfigCallback?: () => void;
+
     get isInitialised(): boolean {
         return this._isInitialised;
     }
@@ -101,7 +103,11 @@ export class CsModule {
         return this._config;
     }
 
-    public async init(config: CsConfig) {
+    public async init(config: CsConfig, onConfigUpdate?: () => void) {
+        if (onConfigUpdate) {
+            this.onUpdateConfigCallback = onConfigUpdate;
+        }
+
         this._config = config;
 
         this._container = new Container();
@@ -175,6 +181,10 @@ export class CsModule {
         if (config.services.courseServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.course.COURSE_SERVICE_API_PATH)
                 .toConstantValue(config.services.courseServiceConfig.apiPath);
+        }
+
+        if (this.onUpdateConfigCallback) {
+            this.onUpdateConfigCallback();
         }
     }
 }
