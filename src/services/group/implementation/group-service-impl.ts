@@ -22,15 +22,16 @@ import {
 } from '../interface';
 import {CsGroupServiceConfig} from '../../..';
 import {Observable, of, throwError} from 'rxjs';
-import {Group, GroupActivity, GroupEntityStatus, GroupJoinStrategy, GroupMember} from '../../../models/group';
+import {Group, GroupActivity, GroupEntityStatus, GroupMember, GroupMemberRole, GroupMembershipType} from '../../../models/group';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpClientError} from '../../../core/http-service/errors';
 import {CsResponse} from '../../../core/http-service/interface';
+import jwtDecode from 'jwt-decode';
 
 @injectable()
 export class GroupServiceImpl implements CsGroupService {
     private mockDB: Map<string, Group> = new Map<string, Group>();
-    private userId = 'SAMPLE_CURRENT_USER_ID';
+    private userId: string;
 
     static create_UUID() {
         let dt = new Date().getTime();
@@ -44,7 +45,15 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
 
-    constructor(@inject(InjectionTokens.core.api.authentication.USER_TOKEN) userToken) {
+    constructor(
+        @inject(InjectionTokens.core.api.authentication.USER_TOKEN) userToken,
+    ) {
+        try {
+            const payload = jwtDecode(userToken);
+            this.userId = payload.sub.split(':').length === 3 ? <string> payload.sub.split(':').pop() : payload.sub;
+        } catch (e) {
+            this.userId = 'cb92b212-feae-4931-bb48-db4822b61fe4';
+        }
     }
 
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse> {
@@ -55,24 +64,21 @@ export class GroupServiceImpl implements CsGroupService {
             description: createRequest.description,
             id: newGroupId,
             status: GroupEntityStatus.ACTIVE,
-            joinStrategy: createRequest.joinStrategy || GroupJoinStrategy.INVITE_ONLY,
+            membershipType: createRequest.membershipType || GroupMembershipType.INVITE_ONLY,
             createdOn: new Date().toISOString(),
-            createdBy: (createRequest.members && createRequest.members[0].memberId) || 'SOME_RANDOM_MEMBER_ID',
-            updatedOn: new Date().toISOString(),
-            updatedBy: new Date().toISOString(),
+            createdBy: this.userId,
             activities: [],
-            members: createRequest.members ? [
-                ...createRequest.members.map<GroupMember>((m) => {
-                    return {
-                        memberId: m.memberId,
-                        name: 'SOME_MEMBER_NAME',
-                        role: m.role,
-                        status: GroupEntityStatus.ACTIVE,
-                        addedBy: this.userId,
-                        addedOn: new Date().toISOString()
-                    };
-                })
-            ] : []
+            members: [
+                {
+                    groupId: newGroupId,
+                    userId: this.userId,
+                    name: 'SOME_MEMBER_NAME',
+                    role: GroupMemberRole.ADMIN,
+                    status: GroupEntityStatus.ACTIVE,
+                    createdBy: this.userId,
+                    createdOn: new Date().toISOString()
+                }
+            ]
         });
 
         return of({
@@ -97,8 +103,8 @@ export class GroupServiceImpl implements CsGroupService {
             this.mockDB.get(id)!.status = updateRequest.status;
         }
 
-        if (updateRequest.joinStrategy) {
-            this.mockDB.get(id)!.joinStrategy = updateRequest.joinStrategy;
+        if (updateRequest.membershipType) {
+            this.mockDB.get(id)!.membershipType = updateRequest.membershipType;
         }
 
         return of({});
@@ -115,12 +121,13 @@ export class GroupServiceImpl implements CsGroupService {
             ...(this.mockDB.get(groupId)!.members || []),
             ...addMembersRequest.members.map<GroupMember>((m) => {
                 return {
-                    memberId: m.memberId,
+                    groupId: groupId,
+                    userId: m.userId,
                     name: 'SOME_MEMBER_NAME',
                     role: m.role,
                     status: GroupEntityStatus.ACTIVE,
-                    addedBy: this.userId,
-                    addedOn: new Date().toISOString()
+                    createdBy: this.userId,
+                    createdOn: new Date().toISOString()
                 };
             })
         ];
@@ -136,7 +143,7 @@ export class GroupServiceImpl implements CsGroupService {
         }
 
         this.mockDB.get(groupId)!.members = [
-            ...(this.mockDB.get(groupId)!.members || []).filter((m) => !removeMembersRequest.memberIds.find(m1 => m1 === m.memberId))
+            ...(this.mockDB.get(groupId)!.members || []).filter((m) => !removeMembersRequest.userIds.find(m1 => m1 === m.userId))
         ];
 
         return of({errors: []});
@@ -151,12 +158,13 @@ export class GroupServiceImpl implements CsGroupService {
 
         this.mockDB.get(groupId)!.members = [
             ...(this.mockDB.get(groupId)!.members || []).map((m) => {
-                const toUpdate = updateMembersRequest.members.find(m1 => m1.memberId === m.memberId);
+                const toUpdate = updateMembersRequest.members.find(m1 => m1.userId === m.userId);
 
                 if (toUpdate) {
                     return {
                         ...m,
-                        role: toUpdate.role
+                        role: toUpdate.role || m.role,
+                        status: toUpdate.status || m.status
                     };
                 }
 
@@ -177,7 +185,10 @@ export class GroupServiceImpl implements CsGroupService {
         this.mockDB.get(groupId)!.activities = [
             ...(this.mockDB.get(groupId)!.activities || []),
             ...addActivitiesRequest.activities.map<GroupActivity>((m) => {
-                return m;
+                return {
+                    ...m,
+                    status: GroupEntityStatus.ACTIVE
+                };
             })
         ];
 
@@ -193,12 +204,13 @@ export class GroupServiceImpl implements CsGroupService {
 
         this.mockDB.get(groupId)!.activities = [
             ...(this.mockDB.get(groupId)!.activities || []).map((a) => {
-                const toUpdate = updateActivitiesRequest.activities.find(a1 => a['id'] === a1['id']);
+                const toUpdate = updateActivitiesRequest.activities.find(a1 => a.id === a1.id);
 
                 if (toUpdate) {
                     return {
                         ...a,
-                        ...toUpdate
+                        type: toUpdate.type || a.type,
+                        status: toUpdate.status || a.status
                     };
                 }
 
@@ -209,29 +221,24 @@ export class GroupServiceImpl implements CsGroupService {
         return of({errors: []});
     }
 
-    getById(id: string, includeMembers?: boolean, config?: CsGroupServiceConfig): Observable<Group> {
+    getById(
+        id: string, options?: { includeMembers?: boolean, includeActivities?: boolean }, config?: CsGroupServiceConfig
+    ): Observable<Group> {
         if (!this.mockDB.get(id)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
 
         return of({
             ...this.mockDB.get(id)!,
-            members: includeMembers ? this.mockDB.get(id)!.members : undefined
+            members: (options && options.includeMembers) ? this.mockDB.get(id)!.members : undefined,
+            activities: (options && options.includeActivities) ? this.mockDB.get(id)!.activities : undefined,
         });
-    }
-
-    getMembers(groupId: string, config?: CsGroupServiceConfig): Observable<GroupMember[]> {
-        if (!this.mockDB.get(groupId)) {
-            return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
-        }
-
-        return of(this.mockDB.get(groupId)!.members || []);
     }
 
     search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<Group[]> {
         return of(
             Array.from(this.mockDB.values()).filter((g) =>
-                (g.members || []).find((m) => m.memberId === searchCriteria.filters.memberId)
+                (g.members || []).find((m) => m.userId === searchCriteria.filters.userId)
             )
         );
     }
@@ -246,7 +253,9 @@ export class GroupServiceImpl implements CsGroupService {
         return of({errors: []});
     }
 
-    removeActivities(groupId: string, removeActivitiesRequest: CsGroupRemoveActivitiesRequest, config?: CsGroupServiceConfig): Observable<CsGroupRemoveActivitiesResponse> {
+    removeActivities(
+        groupId: string, removeActivitiesRequest: CsGroupRemoveActivitiesRequest, config?: CsGroupServiceConfig
+    ): Observable<CsGroupRemoveActivitiesResponse> {
         if (!this.mockDB.get(groupId)) {
             return throwError(new CsHttpClientError('group with id not found', new CsResponse<any>()));
         }
