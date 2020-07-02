@@ -1,4 +1,4 @@
-export enum GroupJoinStrategy {
+export enum GroupMembershipType {
     INVITE_ONLY = 'invite_only',
     MODERATED = 'moderated'
 }
@@ -14,20 +14,25 @@ export enum GroupMemberRole {
 }
 
 export interface GroupMember {
-    memberId: string;
     name: string;
+    groupId: string;
+    userId: string;
     role: GroupMemberRole;
     status: GroupEntityStatus;
-    addedBy: string;
-    addedOn: string;
-    removedBy?: string;
-    removedOn?: string;
-    updatedBy?: string;
+    createdOn?: string;
+    createdBy?: string;
     updatedOn?: string;
+    updatedBy?: string;
 }
 
-// tslint:disable-next-line:no-empty-interface
 export interface GroupActivity {
+    id: string;
+    type: string;
+    status: GroupEntityStatus;
+    createdOn?: string; // Record created date
+    createdBy?: string; // Record created userid
+    updatedOn?: string; // Record updated date
+    updatedBy?: string; // Record updated userid
 }
 
 export interface Group {
@@ -35,11 +40,11 @@ export interface Group {
     description: string;
     id: string;
     status: GroupEntityStatus;
-    joinStrategy: GroupJoinStrategy;
-    createdOn: string;
-    createdBy: string;
-    updatedOn: string;
-    updatedBy: string;
-    activities: GroupActivity[];
+    membershipType: GroupMembershipType;
+    createdOn?: string;
+    createdBy?: string;
+    updatedOn?: string;
+    updatedBy?: string;
+    activities?: GroupActivity[];
     members?: GroupMember[];
 }

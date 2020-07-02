@@ -1,15 +1,11 @@
-import {Group, GroupEntityStatus, GroupJoinStrategy, GroupMember, GroupMemberRole} from '../../../models/group';
+import {Group, GroupEntityStatus, GroupMemberRole, GroupMembershipType} from '../../../models/group';
 import {Observable} from 'rxjs';
 import {CsGroupServiceConfig} from '../../../index';
 
 export interface CsGroupCreateRequest {
     name: string;
-    joinStrategy?: GroupJoinStrategy;
+    membershipType?: GroupMembershipType;
     description: string;
-    members: {
-        memberId: string;
-        role: GroupMemberRole
-    }[];
 }
 
 export interface CsGroupCreateResponse {
@@ -18,9 +14,9 @@ export interface CsGroupCreateResponse {
 
 export interface CsGroupUpdateRequest {
     name?: string;
+    membershipType?: GroupMembershipType;
     description?: string;
     status?: GroupEntityStatus;
-    joinStrategy?: GroupJoinStrategy;
 }
 
 // tslint:disable-next-line:no-empty-interface
@@ -29,65 +25,70 @@ export interface CsGroupUpdateResponse {
 
 export interface CsGroupAddMembersRequest {
     members: {
-        memberId: string;
+        userId: string;
         role: GroupMemberRole;
     }[];
 }
 
 export interface CsGroupAddMembersResponse {
-    errors: string[];
+    errors: any[];
 }
 
 export interface CsGroupRemoveMembersRequest {
-    memberIds: string[];
+    userIds: string[];
 }
 
 export interface CsGroupRemoveMembersResponse {
-    errors: string[];
+    errors: any[];
 }
 
 export interface CsGroupUpdateMembersRequest {
     members: {
-        memberId: string;
-        role: GroupMemberRole;
+        userId: string;
+        role?: GroupMemberRole;
+        status?: GroupEntityStatus;
     }[];
 }
 
 export interface CsGroupUpdateMembersResponse {
-    errors: string[];
+    errors: any[];
 }
 
 export interface CsGroupAddActivitiesRequest {
     activities: {
-        [key: string]: any
+        id: string;
+        type: string;
     }[];
 }
 
 export interface CsGroupAddActivitiesResponse {
-    errors: string[];
+    errors: any[];
 }
 
 export interface CsGroupUpdateActivitiesRequest {
     activities: {
-        [key: string]: any
+        id: string;
+        type?: string;
+        status?: GroupEntityStatus;
     }[];
 }
 
 export interface CsGroupUpdateActivitiesResponse {
-    errors: string[];
+    errors: any[];
 }
 
 export interface CsGroupSearchCriteria {
     filters: {
-        memberId: string;
+        userId: string;
+        groupAttribute?: { [key: string]: any | any[] }[]
     };
-    sort_by: Map<keyof Group, 'desc' | 'asc'>;
-    limit: number;
-    offset: number;
+    sort_by?: { [key: string]: 'asc' | 'desc' };
+    limit?: number;
+    offset?: number;
 }
 
 export interface CsGroupDeleteResponse {
-    errors: string[];
+    errors: any[];
 }
 
 export interface CsGroupRemoveActivitiesRequest {
@@ -95,21 +96,19 @@ export interface CsGroupRemoveActivitiesRequest {
 }
 
 export interface CsGroupRemoveActivitiesResponse {
-    errors: string[];
+    errors: any[];
 }
 
 export interface CsGroupService {
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse>;
 
-    getById(id: string, includeMembers?: boolean, config?: CsGroupServiceConfig): Observable<Group>;
+    getById(id: string, options?: { includeMembers?: boolean, includeActivities?: boolean }, config?: CsGroupServiceConfig): Observable<Group>;
 
     search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<Group[]>;
 
     updateById(id: string, updateRequest: CsGroupUpdateRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateResponse>;
 
     deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse>;
-
-    getMembers(groupId: string, config?: CsGroupServiceConfig): Observable<GroupMember[]>;
 
     addMembers(groupId: string, addMembersRequest: CsGroupAddMembersRequest, config?: CsGroupServiceConfig): Observable<CsGroupAddMembersResponse>;
 
