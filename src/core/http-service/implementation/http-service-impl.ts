@@ -15,6 +15,7 @@ import {InjectionTokens} from '../../../injection-tokens';
 import {HttpClient} from './http-client-adapters/http-client';
 import {BearerTokenInjectRequestInterceptor} from './interceptors/bearer-token-inject-request-interceptor';
 import {UserTokenInjectRequestInterceptor} from './interceptors/user-token-inject-request-interceptor';
+import { CsHttpClientError, CsHttpServerError } from '../errors';
 
 @injectable()
 export class HttpServiceImpl implements CsHttpService {
@@ -83,27 +84,48 @@ export class HttpServiceImpl implements CsHttpService {
         let response = (async () => {
             request = await this.interceptRequest(request);
 
-            switch (request.type) {
-                case CsHttpRequestType.GET:
-                    response = await this.http.get(
-                        request.host || this.host, request.path, request.headers, request.parameters
-                    ).toPromise();
-                    break;
-                case CsHttpRequestType.PATCH:
-                    response = await this.http.patch(
-                        request.host || this.host, request.path, request.headers, request.body
-                    ).toPromise();
-                    break;
-                case CsHttpRequestType.POST: {
-                    response = await this.http.post(
-                        request.host || this.host, request.path, request.headers, request.body
-                    ).toPromise();
-                    break;
+            try {
+                switch (request.type) {
+                    case CsHttpRequestType.GET:
+                        response = await this.http.get(
+                            request.host || this.host, request.path, request.headers, request.parameters
+                        ).toPromise();
+                        break;
+                    case CsHttpRequestType.PATCH:
+                        response = await this.http.patch(
+                            request.host || this.host, request.path, request.headers, request.body
+                        ).toPromise();
+                        break;
+                    case CsHttpRequestType.POST: {
+                        response = await this.http.post(
+                            request.host || this.host, request.path, request.headers, request.body
+                        ).toPromise();
+                        break;
+                    }
+                }
+
+                response = await this.interceptResponse(request, response);
+                return response;
+            } catch (e) {
+                if (CsHttpClientError.isInstance(e) || CsHttpServerError.isInstance(e)) {
+                    response = await this.interceptResponse(request, e.response);
+                    if (response.responseCode >= 400 && response.responseCode <= 499) {
+                        throw new CsHttpClientError(`
+                            ${request.host + request.path} -
+                            ${response.error || ''}
+                        `, response);
+                    } else if(response.responseCode >= 500 && response.responseCode <= 599){
+                        throw new CsHttpServerError(`
+                            ${request.host + request.path} -
+                            ${response.error || ''}
+                        `, response);
+                    }
+                    return response;
+                } else {
+                    throw e;
                 }
             }
 
-            response = await this.interceptResponse(request, response);
-            return response;
         })();
 
         return from(response as Promise<CsResponse<T>>);

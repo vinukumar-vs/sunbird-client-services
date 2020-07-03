@@ -40,13 +40,6 @@ export class HttpClientBrowserAdapter implements HttpClient {
 
         scResponse.errorMesg = 'SERVER_ERROR';
 
-        if (
-            response.status === CsHttpResponseCode.HTTP_UNAUTHORISED ||
-            response.status === CsHttpResponseCode.HTTP_FORBIDDEN
-        ) {
-            return scResponse;
-        }
-
         if (response.status >= 400 && response.status <= 499) {
             throw new CsHttpClientError(`
                 ${response.url}

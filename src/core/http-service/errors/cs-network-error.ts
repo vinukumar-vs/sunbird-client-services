@@ -10,6 +10,6 @@ export class CsNetworkError extends CsError {
     }
 
     static isInstance(obj: any): boolean {
-        return obj instanceof Error && obj['code'] && obj['code'] === CsNetworkError.code;
+        return obj['code'] && obj['code'] === CsNetworkError.code;
     }
 }

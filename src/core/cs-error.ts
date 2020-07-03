@@ -1,11 +1,8 @@
-export abstract class CsError extends Error {
+export abstract class CsError {
     private readonly _code: string;
 
     protected constructor(message: string, code: string) {
-        super(message);
         this._code = code;
-
-        Object.setPrototypeOf(this, CsError.prototype);
     }
 
     get code(): string {
