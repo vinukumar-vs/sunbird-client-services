@@ -183,7 +183,7 @@ export class CsModule {
                 .toConstantValue(config.services.courseServiceConfig.apiPath);
         }
 
-        if (this.onUpdateConfigCallback) {
+        if (mode === 'rebind' && this.onUpdateConfigCallback) {
             this.onUpdateConfigCallback();
         }
     }
