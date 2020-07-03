@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import 'whatwg-fetch';
 import {Container} from 'inversify';
 import {HttpClient} from './core/http-service/implementation/http-client-adapters/http-client';
 import {HttpClientCordovaAdapter} from './core/http-service/implementation/http-client-adapters/http-client-cordova-adapter';

@@ -1,4 +1,4 @@
-import {from, Observable} from 'rxjs';
+import {defer, Observable} from 'rxjs';
 import * as qs from 'qs';
 import {HttpClient} from './http-client';
 import {CsHttpResponseCode, CsHttpSerializer, CsResponse} from '../../interface';
@@ -81,13 +81,14 @@ export class HttpClientBrowserAdapter implements HttpClient {
             });
         }
 
-        return from(
-            window.fetch(url.toString(), {
+        return defer(() =>
+            fetch(url.toString(), {
                 method: 'GET',
                 headers: {...this.headers, ...headers},
-            }).then(HttpClientBrowserAdapter.mapResponse)
+                credentials: 'same-origin'
+            }).then((r) => HttpClientBrowserAdapter.mapResponse(r))
                 .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
-        );
+        ) as Observable<CsResponse>;
     }
 
     patch(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse> {
@@ -101,14 +102,15 @@ export class HttpClientBrowserAdapter implements HttpClient {
             body = JSON.stringify(body);
         }
 
-        return from(
-            window.fetch(url.toString(), {
+        return defer(() =>
+            fetch(url.toString(), {
                 method: 'PATCH',
                 headers: {...this.headers, ...headers},
-                body
+                body,
+                credentials: 'same-origin'
             }).then(HttpClientBrowserAdapter.mapResponse)
                 .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
-        );
+        ) as Observable<CsResponse>;
     }
 
     post(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse> {
@@ -122,13 +124,14 @@ export class HttpClientBrowserAdapter implements HttpClient {
             body = JSON.stringify(body);
         }
 
-        return from(
-            window.fetch(url.toString(), {
+        return defer(() =>
+            fetch(url.toString(), {
                 method: 'POST',
                 headers: {...this.headers, ...headers},
-                body
+                body,
+                credentials: 'same-origin'
             }).then(HttpClientBrowserAdapter.mapResponse)
                 .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
-        );
+        ) as Observable<CsResponse>;
     }
 }
