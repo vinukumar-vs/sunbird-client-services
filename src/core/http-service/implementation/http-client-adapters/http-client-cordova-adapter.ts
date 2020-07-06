@@ -96,21 +96,16 @@ export class HttpClientCordovaAdapter implements HttpClient {
                 r.errorMesg = 'SERVER_ERROR';
                 r.headers = response.headers;
 
-                if (r.responseCode === CsHttpResponseCode.HTTP_UNAUTHORISED || r.responseCode === CsHttpResponseCode.HTTP_FORBIDDEN) {
-                    observable.next(r);
-                    observable.complete();
+                if (r.responseCode >= 400 && r.responseCode <= 499) {
+                    observable.error(new CsHttpClientError(`
+                        ${url} -
+                        ${response.error || ''}
+                    `, r));
                 } else {
-                    if (r.responseCode >= 400 && r.responseCode <= 499) {
-                        observable.error(new CsHttpClientError(`
-                            ${url} -
-                            ${response.error || ''}
-                        `, r));
-                    } else {
-                        observable.error(new CsHttpServerError(`
-                            ${url} -
-                            ${response.error || ''}
-                        `, r));
-                    }
+                    observable.error(new CsHttpServerError(`
+                        ${url} -
+                        ${response.error || ''}
+                    `, r));
                 }
             } catch (e) {
                 observable.error(new CsNetworkError(`
