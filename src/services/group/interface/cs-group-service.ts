@@ -31,7 +31,13 @@ export interface CsGroupAddMembersRequest {
 }
 
 export interface CsGroupAddMembersResponse {
-    errors: any[];
+    error?: {
+        members?: {
+            userId: string;
+            errorCode: string;
+            errorMessage: string;
+        }[];
+    };
 }
 
 export interface CsGroupRemoveMembersRequest {
@@ -39,7 +45,13 @@ export interface CsGroupRemoveMembersRequest {
 }
 
 export interface CsGroupRemoveMembersResponse {
-    errors: any[];
+    error?: {
+        members?: {
+            userId: string;
+            errorCode: string;
+            errorMessage: string;
+        }[];
+    };
 }
 
 export interface CsGroupUpdateMembersRequest {
@@ -51,7 +63,13 @@ export interface CsGroupUpdateMembersRequest {
 }
 
 export interface CsGroupUpdateMembersResponse {
-    errors: any[];
+    error?: {
+        members?: {
+            userId: string;
+            errorCode: string;
+            errorMessage: string;
+        }[];
+    };
 }
 
 export interface CsGroupAddActivitiesRequest {
@@ -62,7 +80,13 @@ export interface CsGroupAddActivitiesRequest {
 }
 
 export interface CsGroupAddActivitiesResponse {
-    errors: any[];
+    error: {
+        activities: {
+            activityId: string;
+            errorCode: string;
+            errorMessage: string;
+        }[];
+    };
 }
 
 export interface CsGroupUpdateActivitiesRequest {
@@ -74,7 +98,13 @@ export interface CsGroupUpdateActivitiesRequest {
 }
 
 export interface CsGroupUpdateActivitiesResponse {
-    errors: any[];
+    error: {
+        activities: {
+            activityId: string;
+            errorCode: string;
+            errorMessage: string;
+        }[];
+    };
 }
 
 export interface CsGroupSearchCriteria {
@@ -87,8 +117,8 @@ export interface CsGroupSearchCriteria {
     offset?: number;
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface CsGroupDeleteResponse {
-    errors: any[];
 }
 
 export interface CsGroupRemoveActivitiesRequest {
@@ -96,7 +126,18 @@ export interface CsGroupRemoveActivitiesRequest {
 }
 
 export interface CsGroupRemoveActivitiesResponse {
-    errors: any[];
+    error: {
+        activities: {
+            activityId: string;
+            errorCode: string;
+            errorMessage: string;
+        }[];
+    };
+}
+
+export interface CsGroupSearchResponse {
+    count: number;
+    group: Group[];
 }
 
 export interface CsGroupService {
