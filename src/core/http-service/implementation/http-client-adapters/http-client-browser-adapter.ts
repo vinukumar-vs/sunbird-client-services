@@ -1,7 +1,7 @@
 import {defer, Observable} from 'rxjs';
 import * as qs from 'qs';
 import {HttpClient} from './http-client';
-import {CsHttpResponseCode, CsHttpSerializer, CsResponse} from '../../interface';
+import {CsHttpSerializer, CsResponse} from '../../interface';
 import {CsHttpClientError, CsHttpServerError, CsNetworkError} from '../../errors';
 import {injectable} from 'inversify';
 
@@ -77,6 +77,25 @@ export class HttpClientBrowserAdapter implements HttpClient {
         return defer(() =>
             fetch(url.toString(), {
                 method: 'GET',
+                headers: {...this.headers, ...headers},
+                credentials: 'same-origin'
+            }).then((r) => HttpClientBrowserAdapter.mapResponse(r))
+                .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
+        ) as Observable<CsResponse>;
+    }
+
+    delete(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse> {
+        const url = new URL(baseUrl + path);
+
+        if (typeof parameters === 'object') {
+            Object.keys(parameters).forEach((key) => {
+                url.searchParams.append(key, parameters[key]);
+            });
+        }
+
+        return defer(() =>
+            fetch(url.toString(), {
+                method: 'DELETE',
                 headers: {...this.headers, ...headers},
                 credentials: 'same-origin'
             }).then((r) => HttpClientBrowserAdapter.mapResponse(r))

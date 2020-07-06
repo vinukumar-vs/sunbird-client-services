@@ -1,10 +1,7 @@
 import {Observable, Subject} from 'rxjs';
 import {HttpClient} from './http-client';
-import {CsHttpRequestType, CsHttpSerializer} from '../../interface';
-import {CsNetworkError} from '../../errors';
-import {CsHttpResponseCode, CsResponse} from '../../interface';
-import {CsHttpClientError} from '../../errors';
-import {CsHttpServerError} from '../../errors';
+import {CsHttpRequestType, CsHttpSerializer, CsResponse} from '../../interface';
+import {CsHttpClientError, CsHttpServerError, CsNetworkError} from '../../errors';
 import {injectable} from 'inversify';
 
 interface CordovaHttpClientResponse {
@@ -40,6 +37,10 @@ export class HttpClientCordovaAdapter implements HttpClient {
 
     get(baseUrl: string, path: string, headers: any, parameters: { [key: string]: string }): Observable<CsResponse> {
         return this.invokeRequest(CsHttpRequestType.GET, baseUrl + path, parameters, headers);
+    }
+
+    delete(baseUrl: string, path: string, headers: any, parameters: { [key: string]: string }): Observable<CsResponse> {
+        return this.invokeRequest(CsHttpRequestType.DELETE, baseUrl + path, parameters, headers);
     }
 
     patch(baseUrl: string, path: string, headers: any, body: {}): Observable<CsResponse> {
