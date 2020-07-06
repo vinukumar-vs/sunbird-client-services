@@ -9,4 +9,6 @@ export abstract class HttpClient {
     abstract get(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse>;
     abstract post(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse>;
     abstract patch(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse>;
+
+    abstract delete(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse>;
 }
