@@ -15,7 +15,7 @@ import {InjectionTokens} from '../../../injection-tokens';
 import {HttpClient} from './http-client-adapters/http-client';
 import {BearerTokenInjectRequestInterceptor} from './interceptors/bearer-token-inject-request-interceptor';
 import {UserTokenInjectRequestInterceptor} from './interceptors/user-token-inject-request-interceptor';
-import { CsHttpClientError, CsHttpServerError } from '../errors';
+import {CsHttpClientError, CsHttpServerError} from '../errors';
 
 @injectable()
 export class HttpServiceImpl implements CsHttpService {
@@ -81,46 +81,58 @@ export class HttpServiceImpl implements CsHttpService {
 
         this.buildInterceptorsFromRequest(request);
 
-        let response = (async () => {
+        const response: Promise<CsResponse<T>> = (async () => {
+            let localResponse: CsResponse<T>;
             request = await this.interceptRequest(request);
 
             try {
                 switch (request.type) {
                     case CsHttpRequestType.GET:
-                        response = await this.http.get(
+                        localResponse = await this.http.get(
                             request.host || this.host, request.path, request.headers, request.parameters
                         ).toPromise();
                         break;
                     case CsHttpRequestType.PATCH:
-                        response = await this.http.patch(
+                        localResponse = await this.http.patch(
                             request.host || this.host, request.path, request.headers, request.body
                         ).toPromise();
                         break;
                     case CsHttpRequestType.POST: {
-                        response = await this.http.post(
+                        localResponse = await this.http.post(
                             request.host || this.host, request.path, request.headers, request.body
                         ).toPromise();
                         break;
                     }
+                    default:
+                        throw new Error('Unsupported type');
                 }
 
-                response = await this.interceptResponse(request, response);
-                return response;
+                return await this.interceptResponse(request, localResponse);
             } catch (e) {
-                if (CsHttpClientError.isInstance(e) || CsHttpServerError.isInstance(e)) {
-                    response = await this.interceptResponse(request, e.response);
-                    if (response.responseCode >= 400 && response.responseCode <= 499) {
+                const wrapError = (res: CsResponse<T>) => {
+                    if (res.responseCode >= 400 && res.responseCode <= 499) {
                         throw new CsHttpClientError(`
                             ${request.host + request.path} -
-                            ${response.error || ''}
-                        `, response);
-                    } else if(response.responseCode >= 500 && response.responseCode <= 599){
+                            ${res.errorMesg || ''}
+                        `, res);
+                    } else if (res.responseCode >= 500 && res.responseCode <= 599) {
                         throw new CsHttpServerError(`
                             ${request.host + request.path} -
-                            ${response.error || ''}
-                        `, response);
+                            ${res.errorMesg || ''}
+                        `, res);
                     }
-                    return response;
+                    return res;
+                };
+                if (CsHttpClientError.isInstance(e) || CsHttpServerError.isInstance(e)) {
+                    try {
+                        localResponse = await this.interceptResponse(request, e.response);
+                        return wrapError(localResponse);
+                    } catch (e) {
+                        if (e.responseCode) {
+                            return wrapError(e);
+                        }
+                        throw e;
+                    }
                 } else {
                     throw e;
                 }
