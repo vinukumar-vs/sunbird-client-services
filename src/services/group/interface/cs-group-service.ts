@@ -135,9 +135,8 @@ export interface CsGroupRemoveActivitiesResponse {
     };
 }
 
-export interface CsGroupSearchResponse {
-    count: number;
-    group: Group[];
+export interface CsGroupSearchResponse extends Group {
+    memberRole: GroupMemberRole;
 }
 
 export interface CsGroupService {
@@ -145,7 +144,7 @@ export interface CsGroupService {
 
     getById(id: string, options?: { includeMembers?: boolean, includeActivities?: boolean }, config?: CsGroupServiceConfig): Observable<Group>;
 
-    search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<Group[]>;
+    search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<CsGroupSearchResponse[]>;
 
     updateById(id: string, updateRequest: CsGroupUpdateRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateResponse>;
 

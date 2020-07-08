@@ -12,6 +12,7 @@ import {
     CsGroupRemoveMembersRequest,
     CsGroupRemoveMembersResponse,
     CsGroupSearchCriteria,
+    CsGroupSearchResponse,
     CsGroupService,
     CsGroupUpdateActivitiesRequest,
     CsGroupUpdateActivitiesResponse,
@@ -235,7 +236,7 @@ export class GroupServiceImpl implements CsGroupService {
         );
     }
 
-    search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<Group[]> {
+    search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<CsGroupSearchResponse[]> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
             .withPath(`${config ? config.apiPath : this.apiPath}/list`)
@@ -246,7 +247,7 @@ export class GroupServiceImpl implements CsGroupService {
             })
             .build();
 
-        return this.httpService.fetch<{ result: { count: number; group: Group[] } }>(apiRequest).pipe(
+        return this.httpService.fetch<{ result: { count: number; group: CsGroupSearchResponse[] } }>(apiRequest).pipe(
             map((r) => r.body.result.group)
         );
     }
