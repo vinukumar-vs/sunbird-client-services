@@ -318,9 +318,7 @@ describe('GroupServiceImpl', () => {
                 const response = new CsResponse();
                 response.responseCode = 200;
                 response.body = {
-                    result: {
-                        response: {}
-                    }
+                    result: {}
                 };
                 return of(response);
             });
@@ -338,9 +336,7 @@ describe('GroupServiceImpl', () => {
                 const response = new CsResponse();
                 response.responseCode = 200;
                 response.body = {
-                    result: {
-                        response: {}
-                    }
+                    result: {}
                 };
                 return of(response);
             });
@@ -361,9 +357,7 @@ describe('GroupServiceImpl', () => {
                 const response = new CsResponse();
                 response.responseCode = 200;
                 response.body = {
-                    result: {
-                        response: {}
-                    }
+                    result: {}
                 };
                 return of(response);
             });
@@ -384,9 +378,7 @@ describe('GroupServiceImpl', () => {
                 const response = new CsResponse();
                 response.responseCode = 200;
                 response.body = {
-                    result: {
-                        response: {}
-                    }
+                    result: {}
                 };
                 return of(response);
             });

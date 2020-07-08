@@ -230,8 +230,8 @@ export class GroupServiceImpl implements CsGroupService {
             .withUserToken(true)
             .build();
 
-        return this.httpService.fetch<{ result: { response: Group } }>(apiRequest).pipe(
-            map((r) => r.body.result.response)
+        return this.httpService.fetch<{ result: Group }>(apiRequest).pipe(
+            map((r) => r.body.result)
         );
     }
 
