@@ -26,6 +26,7 @@ const config = {
         'dist/services/location/index': './src/services/location/index.ts',
         'dist/services/framework/index': './src/services/framework/index.ts',
         'dist/services/course/index': './src/services/course/index.ts',
+        'dist/services/user/index': './src/services/user/index.ts',
     },
     externals: [
         // externals here
