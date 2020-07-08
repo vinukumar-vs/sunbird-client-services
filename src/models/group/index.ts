@@ -14,7 +14,7 @@ export enum GroupMemberRole {
 }
 
 export interface GroupMember {
-    name: string;
+    username: string;
     groupId: string;
     userId: string;
     role: GroupMemberRole;

@@ -38,7 +38,7 @@ export class GroupServiceImpl implements CsGroupService {
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
-            .withPath(this.apiPath + '/create')
+            .withPath(`${config ? config.apiPath : this.apiPath}/create`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
@@ -54,7 +54,7 @@ export class GroupServiceImpl implements CsGroupService {
     updateById(id: string, updateRequest: CsGroupUpdateRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.PATCH)
-            .withPath(this.apiPath + '/update')
+            .withPath(`${config ? config.apiPath : this.apiPath}/update`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
@@ -75,7 +75,7 @@ export class GroupServiceImpl implements CsGroupService {
     ): Observable<CsGroupAddMembersResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.PATCH)
-            .withPath(this.apiPath + '/update')
+            .withPath(`${config ? config.apiPath : this.apiPath}/update`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
@@ -98,7 +98,7 @@ export class GroupServiceImpl implements CsGroupService {
     ): Observable<CsGroupRemoveMembersResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.PATCH)
-            .withPath(this.apiPath + '/update')
+            .withPath(`${config ? config.apiPath : this.apiPath}/update`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
@@ -121,14 +121,14 @@ export class GroupServiceImpl implements CsGroupService {
     ): Observable<CsGroupUpdateMembersResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.PATCH)
-            .withPath(this.apiPath + '/update')
+            .withPath(`${config ? config.apiPath : this.apiPath}/update`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
                 request: {
                     groupId,
                     members: {
-                        remove: updateMembersRequest.members
+                        edit: updateMembersRequest.members
                     }
                 }
             })
@@ -144,7 +144,7 @@ export class GroupServiceImpl implements CsGroupService {
     ): Observable<CsGroupAddActivitiesResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.PATCH)
-            .withPath(this.apiPath + '/update')
+            .withPath(`${config ? config.apiPath : this.apiPath}/update`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
@@ -167,14 +167,14 @@ export class GroupServiceImpl implements CsGroupService {
     ): Observable<CsGroupUpdateActivitiesResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.PATCH)
-            .withPath(this.apiPath + '/update')
+            .withPath(`${config ? config.apiPath : this.apiPath}/update`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
                 request: {
                     groupId,
                     activities: {
-                        add: updateActivitiesRequest.activities
+                        edit: updateActivitiesRequest.activities
                     }
                 }
             })
@@ -190,7 +190,7 @@ export class GroupServiceImpl implements CsGroupService {
     ): Observable<CsGroupRemoveActivitiesResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.PATCH)
-            .withPath(this.apiPath + '/update')
+            .withPath(`${config ? config.apiPath : this.apiPath}/update`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
@@ -213,7 +213,19 @@ export class GroupServiceImpl implements CsGroupService {
     ): Observable<Group> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath(`${this.apiPath}/read/${id}`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/read/${id}`)
+            .withParameters(options ? {
+                fields: (() => {
+                    const fields: string[] = [];
+                    if (options.includeMembers) {
+                        fields.push('members');
+                    }
+                    if (options.includeActivities) {
+                        fields.push('activities');
+                    }
+                    return fields.join(',');
+                })()
+            } : {})
             .withBearerToken(true)
             .withUserToken(true)
             .build();
@@ -226,7 +238,7 @@ export class GroupServiceImpl implements CsGroupService {
     search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<Group[]> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
-            .withPath(`${this.apiPath}/list`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/list`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
