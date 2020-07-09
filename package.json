@@ -15,7 +15,8 @@
     "build": "rm -rf dist && NODE_ENV=production webpack --verbose true --progress true --cache false",
     "build:prod": "rm -rf dist && NODE_ENV=production webpack --verbose true --progress true --cache false && cp ./package.json ./LICENSE ./README.md ./dist",
     "build:analyze": "webpack --verbose true --progress true --cache false --profile --json > stats.json && npx webpack-bundle-analyzer ./stats.json",
-    "build:dev": "rm -rf tmp && mkdir tmp && cp ./package-dev.json ./tmp/package.json && tsc -w --outDir ./tmp"
+    "build:dev": "rm -rf tmp && mkdir tmp && cp ./package-dev.json ./tmp/package.json && tsc -w --outDir ./tmp",
+    "sonar-scanner": "sonar-scanner"
   },
   "dependencies": {
     "inversify": "^5.0.1",
