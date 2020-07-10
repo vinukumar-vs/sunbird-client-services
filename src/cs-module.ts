@@ -22,6 +22,7 @@ export interface CsUserServiceConfig {
 
 export interface CsGroupServiceConfig {
     apiPath: string;
+    dataApiPath: string;
 }
 
 export interface CsFrameworkServiceConfig {
@@ -106,6 +107,10 @@ export class CsModule {
 
     get courseService(): CsCourseService {
         return this._container.get<CsCourseService>(InjectionTokens.services.course.COURSE_SERVICE);
+    }
+
+    get userService(): CsUserService {
+        return this._container.get<CsUserService>(InjectionTokens.services.user.USER_SERVICE);
     }
 
     public async init(config: CsConfig, onConfigUpdate?: () => void) {
