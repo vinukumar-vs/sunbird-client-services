@@ -1,6 +1,7 @@
 import {Group, GroupEntityStatus, GroupMemberRole, GroupMembershipType} from '../../../models/group';
 import {Observable} from 'rxjs';
 import {CsGroupServiceConfig} from '../../../index';
+import {CsGroupActivityService} from '../activity/interface';
 
 export interface CsGroupCreateRequest {
     name: string;
@@ -140,6 +141,8 @@ export interface CsGroupSearchResponse extends Group {
 }
 
 export interface CsGroupService {
+    activityService: CsGroupActivityService;
+
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse>;
 
     getById(id: string, options?: { includeMembers?: boolean, includeActivities?: boolean }, config?: CsGroupServiceConfig): Observable<Group>;

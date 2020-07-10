@@ -1,4 +1,4 @@
-import {inject, injectable} from 'inversify';
+import {Container, inject, injectable} from 'inversify';
 import {
     CsGroupAddActivitiesRequest,
     CsGroupAddActivitiesResponse,
@@ -27,13 +27,25 @@ import {Group, GroupEntityStatus} from '../../../models/group';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map} from 'rxjs/operators';
+import {CsGroupActivityService} from '../activity/interface';
 
 @injectable()
 export class GroupServiceImpl implements CsGroupService {
     constructor(
         @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService,
-        @inject(InjectionTokens.services.group.GROUP_SERVICE_API_PATH) private apiPath: string
+        @inject(InjectionTokens.services.group.GROUP_SERVICE_API_PATH) private apiPath: string,
+        @inject(InjectionTokens.CONTAINER) private container: Container,
     ) {
+    }
+
+    private _activityService?: CsGroupActivityService;
+
+    get activityService(): CsGroupActivityService {
+        if (!this._activityService) {
+            this._activityService = this.container.get<CsGroupActivityService>(InjectionTokens.services.group.GROUP_ACTIVITY_SERVICE);
+        }
+
+        return this._activityService;
     }
 
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse> {

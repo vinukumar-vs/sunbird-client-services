@@ -5,17 +5,21 @@ import {InjectionTokens} from '../../../injection-tokens';
 import {GroupServiceImpl} from './group-service-impl';
 import {GroupEntityStatus, GroupMemberRole, GroupMembershipType} from '../../../models/group';
 import {of} from 'rxjs';
+import {CsGroupActivityService} from '../activity/interface';
 
 describe('GroupServiceImpl', () => {
     let groupService: CsGroupService;
     const mockHttpService: Partial<CsHttpService> = {};
     const mockApiPath = 'MOCK_API_PATH';
+    const mockGroupActivityService: Partial<CsGroupActivityService> = {};
 
     beforeAll(() => {
         const container = new Container();
 
+        container.bind<CsGroupActivityService>(InjectionTokens.services.group.GROUP_ACTIVITY_SERVICE).toConstantValue(mockGroupActivityService as CsGroupActivityService);
         container.bind<CsHttpService>(InjectionTokens.core.HTTP_SERVICE).toConstantValue(mockHttpService as CsHttpService);
         container.bind<string>(InjectionTokens.services.group.GROUP_SERVICE_API_PATH).toConstantValue(mockApiPath);
+        container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(container);
 
         container.bind<CsGroupService>(InjectionTokens.services.group.GROUP_SERVICE).to(GroupServiceImpl).inSingletonScope();
 
@@ -29,6 +33,12 @@ describe('GroupServiceImpl', () => {
 
     it('should be able to get an instance from the container', () => {
         expect(groupService).toBeTruthy();
+    });
+
+    describe('activityService', () => {
+        it('should be able to get an instance of activityService', () => {
+            expect(groupService.activityService).toBeTruthy();
+        });
     });
 
     describe('create()', () => {

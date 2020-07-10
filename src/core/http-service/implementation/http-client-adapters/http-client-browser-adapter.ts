@@ -1,7 +1,7 @@
 import {defer, Observable} from 'rxjs';
 import * as qs from 'qs';
 import {HttpClient} from './http-client';
-import {CsHttpSerializer, CsResponse} from '../../interface';
+import {CsHttpRequestType, CsHttpSerializer, CsResponse} from '../../interface';
 import {CsHttpClientError, CsHttpServerError, CsNetworkError} from '../../errors';
 import {injectable} from 'inversify';
 
@@ -11,7 +11,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
     private serializer?: CsHttpSerializer;
 
     private static async mapError(url: string, e: any): Promise<CsResponse> {
-        if (e instanceof CsHttpServerError || e instanceof CsNetworkError) {
+        if (CsHttpServerError.isInstance(e) || CsHttpClientError.isInstance(e)) {
             throw e;
         }
 
@@ -25,13 +25,12 @@ export class HttpClientBrowserAdapter implements HttpClient {
         const scResponse = new CsResponse<any>();
         scResponse.responseCode = response.status;
 
-        scResponse.body = await response.json();
+        scResponse.body = await response.text();
 
-        if (typeof scResponse.body !== 'object') {
-            throw new CsNetworkError(`
-                ${response.url} -
-                ${scResponse.body || ''}
-            `);
+        try {
+            scResponse.body = JSON.parse(scResponse.body);
+        } catch (e) {
+            scResponse.body = scResponse.body;
         }
 
         if (response.ok) {
@@ -74,14 +73,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
             });
         }
 
-        return defer(() =>
-            fetch(url.toString(), {
-                method: 'GET',
-                headers: {...this.headers, ...headers},
-                credentials: 'same-origin'
-            }).then((r) => HttpClientBrowserAdapter.mapResponse(r))
-                .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
-        ) as Observable<CsResponse>;
+        return this.invokeRequest(CsHttpRequestType.DELETE, url, headers, undefined);
     }
 
     delete(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse> {
@@ -93,14 +85,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
             });
         }
 
-        return defer(() =>
-            fetch(url.toString(), {
-                method: 'DELETE',
-                headers: {...this.headers, ...headers},
-                credentials: 'same-origin'
-            }).then((r) => HttpClientBrowserAdapter.mapResponse(r))
-                .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
-        ) as Observable<CsResponse>;
+        return this.invokeRequest(CsHttpRequestType.DELETE, url, headers, undefined);
     }
 
     patch(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse> {
@@ -113,15 +98,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
             body = JSON.stringify(body);
         }
 
-        return defer(() =>
-            fetch(url.toString(), {
-                method: 'PATCH',
-                headers: {...this.headers, ...headers},
-                body,
-                credentials: 'same-origin'
-            }).then(HttpClientBrowserAdapter.mapResponse)
-                .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
-        ) as Observable<CsResponse>;
+        return this.invokeRequest(CsHttpRequestType.PATCH, url, headers, body);
     }
 
     post(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse> {
@@ -134,9 +111,13 @@ export class HttpClientBrowserAdapter implements HttpClient {
             body = JSON.stringify(body);
         }
 
+        return this.invokeRequest(CsHttpRequestType.POST, url, headers, body);
+    }
+
+    private invokeRequest(method: CsHttpRequestType, url: URL, headers: { [key: string]: string }, body?: any): Observable<CsResponse> {
         return defer(() =>
             fetch(url.toString(), {
-                method: 'POST',
+                method,
                 headers: {...this.headers, ...headers},
                 body,
                 credentials: 'same-origin'
