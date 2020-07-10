@@ -73,7 +73,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
             });
         }
 
-        return this.invokeRequest(CsHttpRequestType.DELETE, url, headers, undefined);
+        return this.invokeRequest(CsHttpRequestType.GET, url, headers, undefined);
     }
 
     delete(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse> {
