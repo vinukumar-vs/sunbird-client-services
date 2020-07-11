@@ -29,6 +29,7 @@ export interface GroupActivity {
     id: string;
     type: string;
     status: GroupEntityStatus;
+    activityInfo?: any;
     createdOn?: string; // Record created date
     createdBy?: string; // Record created userid
     updatedOn?: string; // Record updated date
