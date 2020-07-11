@@ -14,14 +14,14 @@ export class UserServiceImpl implements CsUserService {
     ) {
     }
 
-    checkUserExists(matching: { key: string; value: string }, captchaResponseToken, config?: CsUserServiceConfig): Observable<CheckUserExistsResponse> {
+    checkUserExists(matching: { key: string; value: string }, captchaResponseToken?: string, config?: CsUserServiceConfig): Observable<CheckUserExistsResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/exists/${matching.key}/${matching.value}`)
             .withBearerToken(true)
             .withUserToken(true)
             .withParameters({
-                captchaResponse: captchaResponseToken
+                ...(captchaResponseToken ? {captchaResponse: captchaResponseToken} : {})
             })
             .build();
 

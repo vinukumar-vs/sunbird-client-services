@@ -10,5 +10,5 @@ export interface CheckUserExistsResponse {
 }
 
 export interface CsUserService {
-    checkUserExists(matching: { key: string, value: string }, captchaResponseToken: string, config?: CsUserServiceConfig): Observable<CheckUserExistsResponse>;
+    checkUserExists(matching: { key: string, value: string }, captchaResponseToken?: string, config?: CsUserServiceConfig): Observable<CheckUserExistsResponse>;
 }
