@@ -15,6 +15,8 @@ import {CsCourseService} from './services/course/interface';
 import {CourseServiceImpl} from './services/course/implementation/course-service-impl';
 import {CsUserService} from './services/user/interface';
 import {UserServiceImpl} from './services/user/implementation/user-service-impl';
+import {CsGroupActivityService} from './services/group/activity/interface';
+import {GroupActivityServiceImpl} from './services/group/activity/implementation/group-activity-service-impl';
 
 export interface CsUserServiceConfig {
     apiPath: string;
@@ -164,9 +166,13 @@ export class CsModule {
         // groupService
         this._container[mode]<CsGroupService>(InjectionTokens.services.group.GROUP_SERVICE)
             .to(GroupServiceImpl).inSingletonScope();
+        this._container[mode]<CsGroupActivityService>(InjectionTokens.services.group.GROUP_ACTIVITY_SERVICE)
+            .to(GroupActivityServiceImpl).inSingletonScope();
         if (config.services.groupServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_API_PATH)
                 .toConstantValue(config.services.groupServiceConfig.apiPath);
+            this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_DATA_API_PATH)
+                .toConstantValue(config.services.groupServiceConfig.dataApiPath);
         }
 
         // frameworkService
