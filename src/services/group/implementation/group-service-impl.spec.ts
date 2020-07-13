@@ -362,6 +362,79 @@ describe('GroupServiceImpl', () => {
             });
         });
 
+        it('should be able to get a group with members sorted by order - creator, admins, members', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    result: {
+                        members: [
+                            {
+                                // member
+                                role: 'member',
+                                userId: 'member-3',
+                                createdOn: '2020-07-11 10:16:43:649+0000',
+                                createdBy: 'creator-1',
+                                name: 'c'
+                            },
+                            {
+                                // admin
+                                role: 'admin',
+                                userId: 'admin-1',
+                                createdOn: '2020-07-11 10:16:43:649+0000',
+                                createdBy: 'creator-1',
+                                name: 'a'
+                            },
+                            {
+                                // member
+                                role: 'member',
+                                userId: 'member-1',
+                                createdOn: '2020-07-11 10:16:43:649+0000',
+                                createdBy: 'creator-1',
+                                name: 'a'
+                            },
+                            {
+                                // creator
+                                role: 'admin',
+                                userId: 'creator-1',
+                                createdOn: '2020-07-11 10:16:43:649+0000',
+                                createdBy: 'creator-1',
+                                name: 'a'
+                            },
+                            {
+                                // admin
+                                role: 'admin',
+                                userId: 'admin-2',
+                                createdOn: '2020-07-11 10:16:43:649+0000',
+                                createdBy: 'creator-1',
+                                name: 'b'
+                            },
+                            {
+                                // member
+                                role: 'member',
+                                userId: 'member-2',
+                                createdOn: '2020-07-11 10:16:43:649+0000',
+                                createdBy: 'creator-1',
+                                name: 'b'
+                            }
+                        ]
+                    }
+                };
+                return of(response);
+            });
+
+            groupService.getById('SOME_GROUP_ID', {includeMembers: true}).subscribe((r) => {
+                expect(r.members!.map(m => m.userId)).toEqual(['creator-1', 'admin-1', 'admin-2', 'member-1', 'member-2', 'member-3']);
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                    parameters: {
+                        fields: 'members'
+                    }
+                }));
+                done();
+            });
+        });
+
         it('should be able to get a group with activities only using appropriate request', (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();

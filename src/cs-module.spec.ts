@@ -5,7 +5,7 @@ describe('CsModule', () => {
         if (!CsModule.instance.isInitialised) {
             await CsModule.instance.init({
                 core: {
-                    httpAdapter: 'HttpClientCordovaAdapter',
+                    httpAdapter: 'HttpClientBrowserAdapter',
                     global: {
                         channelId: 'SAMPLE_CHANNEL_ID',
                         producerId: 'SAMPLE_PRODUCER_ID',
@@ -31,5 +31,16 @@ describe('CsModule', () => {
         expect(CsModule.instance).toBeTruthy();
 
         done();
+    });
+
+    describe('CsGroupService', () => {
+        it('should be able to access groupService singleton', () => {
+            expect(CsModule.instance.groupService).toBeTruthy();
+        });
+
+
+        it('should be able to access activity service from groupService', () => {
+            expect(CsModule.instance.groupService.activityService).toBeTruthy();
+        });
     });
 });
