@@ -261,7 +261,7 @@ export class GroupServiceImpl implements CsGroupService {
                             return -1;
                         }
 
-                        return new Date(b.createdOn!).getTime() - new Date(a.createdOn!).getTime();
+                        return a.name.localeCompare(b.name);
                     });
                 }
 

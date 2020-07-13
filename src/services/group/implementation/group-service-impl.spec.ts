@@ -373,8 +373,9 @@ describe('GroupServiceImpl', () => {
                                 // member
                                 role: 'member',
                                 userId: 'member-3',
-                                createdOn: '2020-07-13 10:16:43:649+0000',
+                                createdOn: '2020-07-11 10:16:43:649+0000',
                                 createdBy: 'creator-1',
+                                name: 'c'
                             },
                             {
                                 // admin
@@ -382,6 +383,7 @@ describe('GroupServiceImpl', () => {
                                 userId: 'admin-1',
                                 createdOn: '2020-07-11 10:16:43:649+0000',
                                 createdBy: 'creator-1',
+                                name: 'a'
                             },
                             {
                                 // member
@@ -389,6 +391,7 @@ describe('GroupServiceImpl', () => {
                                 userId: 'member-1',
                                 createdOn: '2020-07-11 10:16:43:649+0000',
                                 createdBy: 'creator-1',
+                                name: 'a'
                             },
                             {
                                 // creator
@@ -396,20 +399,23 @@ describe('GroupServiceImpl', () => {
                                 userId: 'creator-1',
                                 createdOn: '2020-07-11 10:16:43:649+0000',
                                 createdBy: 'creator-1',
+                                name: 'a'
                             },
                             {
                                 // admin
                                 role: 'admin',
                                 userId: 'admin-2',
-                                createdOn: '2020-07-12 10:16:43:649+0000',
+                                createdOn: '2020-07-11 10:16:43:649+0000',
                                 createdBy: 'creator-1',
+                                name: 'b'
                             },
                             {
                                 // member
                                 role: 'member',
                                 userId: 'member-2',
-                                createdOn: '2020-07-12 10:16:43:649+0000',
+                                createdOn: '2020-07-11 10:16:43:649+0000',
                                 createdBy: 'creator-1',
+                                name: 'b'
                             }
                         ]
                     }
@@ -418,7 +424,7 @@ describe('GroupServiceImpl', () => {
             });
 
             groupService.getById('SOME_GROUP_ID', {includeMembers: true}).subscribe((r) => {
-                expect(r.members!.map(m => m.userId)).toEqual(['creator-1', 'admin-2', 'admin-1', 'member-3', 'member-2', 'member-1']);
+                expect(r.members!.map(m => m.userId)).toEqual(['creator-1', 'admin-1', 'admin-2', 'member-1', 'member-2', 'member-3']);
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                     parameters: {
