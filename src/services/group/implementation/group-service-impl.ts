@@ -23,7 +23,7 @@ import {
 } from '../interface';
 import {CsGroupServiceConfig} from '../../..';
 import {Observable} from 'rxjs';
-import {Group, GroupEntityStatus} from '../../../models/group';
+import {Group, GroupEntityStatus, GroupMemberRole} from '../../../models/group';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map} from 'rxjs/operators';
@@ -244,7 +244,29 @@ export class GroupServiceImpl implements CsGroupService {
             .build();
 
         return this.httpService.fetch<{ result: Group }>(apiRequest).pipe(
-            map((r) => r.body.result)
+            map((r) => {
+                const result = r.body.result;
+
+                if (result.members) {
+                    result.members.sort((a, b) => {
+                        if (b.userId === b.createdBy) {
+                            return 1;
+                        } else if (a.userId === a.createdBy) {
+                            return -1;
+                        }
+
+                        if (b.role === GroupMemberRole.ADMIN && a.role === GroupMemberRole.MEMBER) {
+                            return 1;
+                        } else if (b.role === GroupMemberRole.MEMBER && a.role === GroupMemberRole.ADMIN) {
+                            return -1;
+                        }
+
+                        return new Date(b.createdOn!).getTime() - new Date(a.createdOn!).getTime();
+                    });
+                }
+
+                return result;
+            })
         );
     }
 
