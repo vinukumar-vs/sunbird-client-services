@@ -67,6 +67,8 @@ export class HttpClientBrowserAdapter implements HttpClient {
     get(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse> {
         const url = new URL(baseUrl + path);
 
+        this.addHeader('content-type', 'text/plain');
+
         if (typeof parameters === 'object') {
             Object.keys(parameters).forEach((key) => {
                 url.searchParams.append(key, parameters[key]);
@@ -78,6 +80,8 @@ export class HttpClientBrowserAdapter implements HttpClient {
 
     delete(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse> {
         const url = new URL(baseUrl + path);
+
+        this.addHeader('content-type', 'text/plain');
 
         if (typeof parameters === 'object') {
             Object.keys(parameters).forEach((key) => {
