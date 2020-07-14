@@ -362,79 +362,6 @@ describe('GroupServiceImpl', () => {
             });
         });
 
-        it('should be able to get a group with members sorted by order - creator, admins, members', (done) => {
-            mockHttpService.fetch = jest.fn(() => {
-                const response = new CsResponse();
-                response.responseCode = 200;
-                response.body = {
-                    result: {
-                        members: [
-                            {
-                                // member
-                                role: 'member',
-                                userId: 'member-3',
-                                createdOn: '2020-07-11 10:16:43:649+0000',
-                                createdBy: 'creator-1',
-                                name: 'c'
-                            },
-                            {
-                                // admin
-                                role: 'admin',
-                                userId: 'admin-1',
-                                createdOn: '2020-07-11 10:16:43:649+0000',
-                                createdBy: 'creator-1',
-                                name: 'a'
-                            },
-                            {
-                                // member
-                                role: 'member',
-                                userId: 'member-1',
-                                createdOn: '2020-07-11 10:16:43:649+0000',
-                                createdBy: 'creator-1',
-                                name: 'a'
-                            },
-                            {
-                                // creator
-                                role: 'admin',
-                                userId: 'creator-1',
-                                createdOn: '2020-07-11 10:16:43:649+0000',
-                                createdBy: 'creator-1',
-                                name: 'a'
-                            },
-                            {
-                                // admin
-                                role: 'admin',
-                                userId: 'admin-2',
-                                createdOn: '2020-07-11 10:16:43:649+0000',
-                                createdBy: 'creator-1',
-                                name: 'b'
-                            },
-                            {
-                                // member
-                                role: 'member',
-                                userId: 'member-2',
-                                createdOn: '2020-07-11 10:16:43:649+0000',
-                                createdBy: 'creator-1',
-                                name: 'b'
-                            }
-                        ]
-                    }
-                };
-                return of(response);
-            });
-
-            groupService.getById('SOME_GROUP_ID', {includeMembers: true}).subscribe((r) => {
-                expect(r.members!.map(m => m.userId)).toEqual(['creator-1', 'admin-1', 'admin-2', 'member-1', 'member-2', 'member-3']);
-                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'GET',
-                    parameters: {
-                        fields: 'members'
-                    }
-                }));
-                done();
-            });
-        });
-
         it('should be able to get a group with activities only using appropriate request', (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();
@@ -504,6 +431,72 @@ describe('GroupServiceImpl', () => {
                         request
                     }
                 }));
+                done();
+            });
+        });
+
+        it('should sort groups with order -> groups created by user, other groups -> ordered by recent first', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    result: {
+                        group: [
+                            {
+                                createdOn: '2020-07-16 10:16:43:649+0000',
+                                createdBy: 'SOME_OTHER_USER_ID'
+                            },
+                            {
+                                createdOn: '2020-07-13 10:16:43:649+0000',
+                                createdBy: 'SOME_USER_ID'
+                            },
+                            {
+                                createdOn: '2020-07-13 10:16:43:649+0000',
+                                createdBy: 'SOME_OTHER_USER_ID'
+                            },
+                            {
+                                createdOn: '2020-07-15 10:16:43:649+0000',
+                                createdBy: 'SOME_USER_ID'
+                            },
+                            {
+                                createdOn: '2020-07-16 10:16:43:649+0000',
+                                createdBy: 'SOME_USER_ID'
+                            },
+                            {
+                                createdOn: '2020-07-14 10:16:43:649+0000',
+                                createdBy: 'SOME_OTHER_USER_ID'
+                            },
+                            {
+                                createdOn: '2020-07-14 10:16:43:649+0000',
+                                createdBy: 'SOME_USER_ID'
+                            },
+                            {
+                                createdOn: '2020-07-15 10:16:43:649+0000',
+                                createdBy: 'SOME_OTHER_USER_ID'
+                            },
+                        ]
+                    }
+                };
+                return of(response);
+            });
+
+            const request = {
+                filters: {
+                    userId: 'SOME_USER_ID'
+                }
+            };
+
+            groupService.search(request).subscribe((groups) => {
+                expect(groups.map((g) => g.createdBy + '-' + g.createdOn)).toEqual([
+                    'SOME_USER_ID-2020-07-16 10:16:43:649+0000',
+                    'SOME_USER_ID-2020-07-15 10:16:43:649+0000',
+                    'SOME_USER_ID-2020-07-14 10:16:43:649+0000',
+                    'SOME_USER_ID-2020-07-13 10:16:43:649+0000',
+                    'SOME_OTHER_USER_ID-2020-07-16 10:16:43:649+0000',
+                    'SOME_OTHER_USER_ID-2020-07-15 10:16:43:649+0000',
+                    'SOME_OTHER_USER_ID-2020-07-14 10:16:43:649+0000',
+                    'SOME_OTHER_USER_ID-2020-07-13 10:16:43:649+0000',
+                ]);
                 done();
             });
         });
