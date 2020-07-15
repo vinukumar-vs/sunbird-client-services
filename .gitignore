@@ -27,12 +27,13 @@ hooks/
 platforms/
 /www/
 $RECYCLE.BIN/
+dist/
 
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
 
-sunbird-sdk-*.tgz
+*.tgz
 /buildConfig/build.json
 /buildConfig/gk.jks
 /buildConfig/secret.gradle

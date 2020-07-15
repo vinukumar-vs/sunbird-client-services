@@ -1,0 +1,7 @@
+{
+  "name": "@project-sunbird/client-services",
+  "version": "0.0.0",
+  "main": "index.js",
+  "dependencies": {
+  }
+}
