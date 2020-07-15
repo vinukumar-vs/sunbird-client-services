@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {CsGroupServiceConfig} from '../../../../cs-module';
-import {GroupActivity} from '../../../../models/group';
+import {GroupActivity, GroupEntityStatus, GroupMemberRole} from '../../../../models/group';
 
 export enum CsGroupActivityAggregationMetric {
     ENROLMENT_COUNT = 'enrolmentCount',
@@ -10,7 +10,7 @@ export enum CsGroupActivityAggregationMetric {
 export interface CsGroupActivityDataAggregation {
     groupId: string;
     activity: {
-        id: string; // activity ID
+        id: string;
         type: string;
         agg: {
             metric: CsGroupActivityAggregationMetric.ENROLMENT_COUNT,
@@ -20,7 +20,11 @@ export interface CsGroupActivityDataAggregation {
     };
     members: [
         {
-            id: string; // user ID
+            role: GroupMemberRole;
+            createdBy: string;
+            name: string;
+            userId: string;
+            status: GroupEntityStatus
             agg: {
                 metric: CsGroupActivityAggregationMetric.COMPLETED_COUNT,
                 lastUpdatedOn: number;
