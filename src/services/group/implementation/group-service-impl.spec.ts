@@ -539,7 +539,6 @@ describe('GroupServiceImpl', () => {
             };
 
             groupService.search(request).subscribe((groups) => {
-                console.log(groups.map(g => g.id));
                 expect(groups.map((g) => g.memberRole + '-' + g.createdOn)).toEqual([
                     'admin-2020-07-16 12:22:45:719+0000',
                     'admin-2020-07-16 09:12:47:833+0000',
