@@ -435,7 +435,7 @@ describe('GroupServiceImpl', () => {
             });
         });
 
-        it('should sort groups with order -> groups created by user, other groups -> ordered by recent first', (done) => {
+        it('should sort groups with order -> groups where user is admin, other groups -> ordered by recent first', (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();
                 response.responseCode = 200;
@@ -443,37 +443,89 @@ describe('GroupServiceImpl', () => {
                     result: {
                         group: [
                             {
-                                createdOn: '2020-07-16 10:16:43:649+0000',
-                                createdBy: 'SOME_OTHER_USER_ID'
+                                'id': 'c3e55271-8dc1-421e-b330-98399a22ac18',
+                                'name': 'Report course',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [{'id': 'do_2130654356933754881407', 'type': 'Course'}],
+                                'createdOn': '2020-07-16 12:22:45:719+0000',
+                                'createdBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
+                                'updatedOn': '2020-07-16 12:23:33:615+0000',
+                                'updatedBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
+                                'members': null,
+                                'memberRole': 'admin'
                             },
                             {
-                                createdOn: '2020-07-13 10:16:43:649+0000',
-                                createdBy: 'SOME_USER_ID'
+                                'id': 'cf3b680e-01da-4a81-a39c-da74c1202ab1',
+                                'name': 'Managed user group',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [],
+                                'createdOn': '2020-07-16 08:54:45:061+0000',
+                                'createdBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
+                                'updatedOn': '2020-07-16 09:05:40:622+0000',
+                                'updatedBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
+                                'members': null,
+                                'memberRole': 'admin'
                             },
                             {
-                                createdOn: '2020-07-13 10:16:43:649+0000',
-                                createdBy: 'SOME_OTHER_USER_ID'
+                                'id': 'dcbb4d49-f3be-4ffd-8de9-d09a452ea4c1',
+                                'name': 'Test 396',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [],
+                                'createdOn': '2020-07-17 10:05:25:939+0000',
+                                'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'updatedOn': '2020-07-16 10:11:33:240+0000',
+                                'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'members': null,
+                                'memberRole': 'member'
                             },
                             {
-                                createdOn: '2020-07-15 10:16:43:649+0000',
-                                createdBy: 'SOME_USER_ID'
+                                'id': 'e52a937a-02dd-4d14-903f-85febc76333f',
+                                'name': 'Logged in users',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [{'id': 'do_21303485870433894411338', 'type': 'Course'}],
+                                'createdOn': '2020-07-16 09:12:47:833+0000',
+                                'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'updatedOn': '2020-07-16 10:03:22:887+0000',
+                                'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'members': null,
+                                'memberRole': 'admin'
                             },
                             {
-                                createdOn: '2020-07-16 10:16:43:649+0000',
-                                createdBy: 'SOME_USER_ID'
+                                'id': 'ee854e1c-4e66-4ca3-a375-593b002c7f27',
+                                'name': 'Manage user with admin role',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [{'id': 'do_2130654356933754881407', 'type': 'Course'}],
+                                'createdOn': '2020-07-16 09:06:06:590+0000',
+                                'createdBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
+                                'updatedOn': '2020-07-16 12:29:54:511+0000',
+                                'updatedBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
+                                'members': null,
+                                'memberRole': 'admin'
                             },
                             {
-                                createdOn: '2020-07-14 10:16:43:649+0000',
-                                createdBy: 'SOME_OTHER_USER_ID'
-                            },
-                            {
-                                createdOn: '2020-07-14 10:16:43:649+0000',
-                                createdBy: 'SOME_USER_ID'
-                            },
-                            {
-                                createdOn: '2020-07-15 10:16:43:649+0000',
-                                createdBy: 'SOME_OTHER_USER_ID'
-                            },
+                                'id': 'dcbb4d49-f3be-4ffd-8de9-d09a452ea4c1',
+                                'name': 'Test 396',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [],
+                                'createdOn': '2020-07-16 10:05:25:939+0000',
+                                'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'updatedOn': '2020-07-16 10:11:33:240+0000',
+                                'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'members': null,
+                                'memberRole': 'member'
+                            }
                         ]
                     }
                 };
@@ -487,15 +539,13 @@ describe('GroupServiceImpl', () => {
             };
 
             groupService.search(request).subscribe((groups) => {
-                expect(groups.map((g) => g.createdBy + '-' + g.createdOn)).toEqual([
-                    'SOME_USER_ID-2020-07-16 10:16:43:649+0000',
-                    'SOME_USER_ID-2020-07-15 10:16:43:649+0000',
-                    'SOME_USER_ID-2020-07-14 10:16:43:649+0000',
-                    'SOME_USER_ID-2020-07-13 10:16:43:649+0000',
-                    'SOME_OTHER_USER_ID-2020-07-16 10:16:43:649+0000',
-                    'SOME_OTHER_USER_ID-2020-07-15 10:16:43:649+0000',
-                    'SOME_OTHER_USER_ID-2020-07-14 10:16:43:649+0000',
-                    'SOME_OTHER_USER_ID-2020-07-13 10:16:43:649+0000',
+                expect(groups.map((g) => g.memberRole + '-' + g.createdOn)).toEqual([
+                    'admin-2020-07-16 12:22:45:719+0000',
+                    'admin-2020-07-16 09:12:47:833+0000',
+                    'admin-2020-07-16 09:06:06:590+0000',
+                    'admin-2020-07-16 08:54:45:061+0000',
+                    'member-2020-07-17 10:05:25:939+0000',
+                    'member-2020-07-16 10:05:25:939+0000'
                 ]);
                 done();
             });
