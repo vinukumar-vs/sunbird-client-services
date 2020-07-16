@@ -23,7 +23,7 @@ import {
 } from '../interface';
 import {CsGroupServiceConfig} from '../../..';
 import {Observable} from 'rxjs';
-import {Group, GroupEntityStatus} from '../../../models/group';
+import {Group, GroupEntityStatus, GroupMemberRole} from '../../../models/group';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map} from 'rxjs/operators';
@@ -262,17 +262,9 @@ export class GroupServiceImpl implements CsGroupService {
         return this.httpService.fetch<{ result: { count: number; group: CsGroupSearchResponse[] } }>(apiRequest).pipe(
             map((r) =>
                 r.body.result.group.sort((a, b) => {
-                    if (a.createdBy === searchCriteria.filters.userId) {
-                        if (b.createdBy === searchCriteria.filters.userId) {
-                            return new Date(b.createdOn!).getTime() - new Date(a.createdOn!).getTime();
-                        }
-
+                    if (a.memberRole === GroupMemberRole.ADMIN && b.memberRole === GroupMemberRole.MEMBER) {
                         return -1;
-                    } else if (b.createdBy === searchCriteria.filters.userId) {
-                        if (a.createdBy === searchCriteria.filters.userId) {
-                            return new Date(a.createdOn!).getTime() - new Date(b.createdOn!).getTime();
-                        }
-
+                    } else if (a.memberRole === GroupMemberRole.MEMBER && b.memberRole === GroupMemberRole.ADMIN) {
                         return 1;
                     }
 
