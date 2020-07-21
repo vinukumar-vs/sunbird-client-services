@@ -16,7 +16,12 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
     ) {
     }
 
-    getDataAggregation(groupId: string, activity: Pick<GroupActivity, 'id' | 'type'>, mergeGroup?: Group, config?: CsGroupServiceConfig): Observable<CsGroupActivityDataAggregation> {
+    getDataAggregation(
+        groupId: string,
+        activity: Pick<GroupActivity, 'id' | 'type'>,
+        mergeGroup?: Group,
+        config?: CsGroupServiceConfig
+    ): Observable<CsGroupActivityDataAggregation> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
             .withPath(`${config ? config.dataApiPath : this.dataApiPath}/activity/agg`)
@@ -79,26 +84,40 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                     });
                 }
 
-                response.members = (mergeGroup.members || []).map((member) => {
-                    const responseMember = response.members.find((rm) => rm.userId === member.userId);
+                response.members = (mergeGroup.members || [])
+                    .map((member) => {
+                        const responseMember = response.members.find((rm) => rm.userId === member.userId);
 
-                    if (responseMember) {
-                        return responseMember;
-                    }
+                        if (responseMember) {
+                            return responseMember;
+                        }
 
-                    return {
-                        role: member.role,
-                        createdBy: member.createdBy!,
-                        name: member.name,
-                        userId: member.userId,
-                        status: member.status,
-                        agg: [{
-                            metric: CsGroupActivityAggregationMetric.COMPLETED_COUNT as any,
-                            lastUpdatedOn: Date.now(),
-                            value: 0
-                        }]
-                    };
-                });
+                        return {
+                            role: member.role,
+                            createdBy: member.createdBy!,
+                            name: member.name,
+                            userId: member.userId,
+                            status: member.status,
+                            agg: [{
+                                metric: CsGroupActivityAggregationMetric.COMPLETED_COUNT as any,
+                                lastUpdatedOn: Date.now(),
+                                value: 0
+                            }]
+                        };
+                    })
+                    .sort((a, b) => {
+                        if (!a.agg[0] && b.agg[0]) {
+                            return 1;
+                        } else if (a.agg[0] && !b.agg[0]) {
+                            return -1;
+                        }
+
+                        if (a.agg[0].value === b.agg[0].value) {
+                            return a.name.localeCompare(b.name);
+                        }
+
+                        return b.agg[0].value - a.agg[0].value;
+                    });
 
                 return response;
             })

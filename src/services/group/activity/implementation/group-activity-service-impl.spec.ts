@@ -344,5 +344,150 @@ describe('GroupActivityServiceImpl', () => {
                 done();
             });
         });
+
+        it('should sort members by order - aggregation value descending order, name ascending order if equal', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    result: {
+                        'activity': {
+                            'agg': [
+                                {
+                                    'metric': 'enrolmentCount',
+                                    'lastUpdatedOn': '1594734425894',
+                                    'value': 1
+                                }
+                            ],
+                            'id': 'do_11305913172235878411827',
+                            'type': 'course'
+                        },
+                        'groupId': 'f5fd09d5-7697-4c54-bb25-28758c9a2a45',
+                        'members': [
+                            {
+                                'agg': [
+                                    {
+                                        'metric': 'completedCount',
+                                        'lastUpdatedOn': 1594734198,
+                                        'value': 90
+                                    }
+                                ],
+                                'role': 'admin',
+                                'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                'name': 'c',
+                                'userId': 'c',
+                                'status': 'active'
+                            },
+                            {
+                                'agg': [
+                                    {
+                                        'metric': 'completedCount',
+                                        'lastUpdatedOn': 1594734198,
+                                        'value': 100
+                                    }
+                                ],
+                                'role': 'admin',
+                                'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                'name': 'a',
+                                'userId': 'a',
+                                'status': 'active'
+                            },
+                            {
+                                'agg': [
+                                    {
+                                        'metric': 'completedCount',
+                                        'lastUpdatedOn': 1594734198,
+                                        'value': 80
+                                    }
+                                ],
+                                'role': 'admin',
+                                'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                'name': 'd',
+                                'userId': 'd',
+                                'status': 'active'
+                            },
+                            {
+                                'agg': [
+                                    {
+                                        'metric': 'completedCount',
+                                        'lastUpdatedOn': 1594734198,
+                                        'value': 100
+                                    }
+                                ],
+                                'role': 'admin',
+                                'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                'name': 'b',
+                                'userId': 'b',
+                                'status': 'active'
+                            }
+                        ]
+                    }
+                };
+                return of(response);
+            });
+
+            const activity = {
+                id: 'SOME_ACTIVITY_ID',
+                type: 'SOME_ACTIVITY_TYPE'
+            };
+
+            const mergeGroup = {
+                'activities': [],
+                'members': [
+                    {
+                        'userId': 'c',
+                        'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                        'role': 'admin',
+                        'status': 'active',
+                        'createdOn': '2020-07-15 11:44:07:291+0000',
+                        'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                        'name': 'c'
+                    },
+                    {
+                        'userId': 'a',
+                        'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                        'role': 'admin',
+                        'status': 'active',
+                        'createdOn': '2020-07-15 11:44:07:291+0000',
+                        'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                        'name': 'a'
+                    },
+                    {
+                        'userId': 'd',
+                        'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                        'role': 'admin',
+                        'status': 'active',
+                        'createdOn': '2020-07-15 11:44:07:291+0000',
+                        'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                        'name': 'd'
+                    },
+                    {
+                        'userId': 'b',
+                        'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                        'role': 'admin',
+                        'status': 'active',
+                        'createdOn': '2020-07-15 11:44:07:291+0000',
+                        'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                        'name': 'b'
+                    },
+                    {
+                        'userId': 'e',
+                        'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                        'role': 'admin',
+                        'status': 'active',
+                        'createdOn': '2020-07-15 11:44:07:291+0000',
+                        'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                        'name': 'e'
+                    }
+                ]
+            } as Partial<Group>;
+
+            activityService.getDataAggregation('SOME_GROUP_ID', activity, mergeGroup as Group).subscribe((response) => {
+                expect(response.members.map((m) => m.name + '-' + m.agg[0].value)).toEqual(
+                    ['a-100', 'b-100', 'c-90', 'd-80', 'e-0']
+                );
+                done();
+            });
+        });
     });
 });
