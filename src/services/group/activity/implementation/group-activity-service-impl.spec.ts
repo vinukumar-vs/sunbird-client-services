@@ -393,6 +393,14 @@ describe('GroupActivityServiceImpl', () => {
                                 'status': 'active'
                             },
                             {
+                                'agg': [],
+                                'role': 'admin',
+                                'createdBy': 'creator',
+                                'name': 'f',
+                                'userId': 'f',
+                                'status': 'active'
+                            },
+                            {
                                 'agg': [
                                     {
                                         'metric': 'completedCount',
@@ -476,6 +484,15 @@ describe('GroupActivityServiceImpl', () => {
                         'name': 'd'
                     },
                     {
+                        'userId': 'f',
+                        'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                        'role': 'admin',
+                        'status': 'active',
+                        'createdOn': '2020-07-15 11:44:07:291+0000',
+                        'createdBy': 'creator',
+                        'name': 'f'
+                    },
+                    {
                         'userId': 'b',
                         'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
                         'role': 'admin',
@@ -506,10 +523,19 @@ describe('GroupActivityServiceImpl', () => {
             } as Partial<Group>;
 
             activityService.getDataAggregation('SOME_GROUP_ID', activity, mergeGroup as Group).subscribe((response) => {
-                expect(response.members.map((m) => m.name + '-' + m.agg[0].value)).toEqual(
-                    ['creator-0', 'a-100', 'b-100', 'c-90', 'd-80', 'e-0']
+                expect(response.members.map((m) => m.name + '-' + (m.agg[0] ? m.agg[0].value : null))).toEqual(
+                    ['creator-0', 'a-100', 'b-100', 'c-90', 'd-80', 'e-0', 'f-null']
                 );
-                done();
+
+                activityService.getDataAggregation('SOME_GROUP_ID', activity, {
+                    ...mergeGroup,
+                    members: mergeGroup.members!.reverse()
+                } as Group).subscribe((response) => {
+                    expect(response.members.map((m) => m.name + '-' + (m.agg[0] ? m.agg[0].value : null))).toEqual(
+                        ['creator-0', 'a-100', 'b-100', 'c-90', 'd-80', 'e-0', 'f-null']
+                    );
+                    done();
+                });
             });
         });
     });
