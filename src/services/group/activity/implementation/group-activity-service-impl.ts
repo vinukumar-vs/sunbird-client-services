@@ -104,25 +104,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                                 value: 0
                             }]
                         };
-                    })
-                    .sort((a, b) => {
-                        if (a.userId === a.createdBy) {
-                            return -1;
-                        } else if (b.userId === b.createdBy) {
-                            return 1;
-                        }
-
-                        if (!a.agg[0] && b.agg[0]) {
-                            return 1;
-                        } else if (a.agg[0] && !b.agg[0]) {
-                            return -1;
-                        }
-
-                        if (a.agg[0].value === b.agg[0].value) {
-                            return a.name.localeCompare(b.name);
-                        }
-
-                        return b.agg[0].value - a.agg[0].value;
                     });
 
                 return response;
