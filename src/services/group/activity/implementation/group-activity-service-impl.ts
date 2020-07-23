@@ -86,7 +86,24 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
 
                 response.members = (mergeGroup.members || [])
                     .map((member) => {
-                        const responseMember = response.members.find((rm) => rm.userId === member.userId);
+                        const responseMember = response.members
+                            .filter((rm) => rm.userId === member.userId)
+                            .sort((a, b) => {
+                                const aCompletedCount = a.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
+                                const bCompletedCount = b.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
+
+                                if (!aCompletedCount && !bCompletedCount) {
+                                    return 0;
+                                }
+
+                                if (!aCompletedCount && bCompletedCount) {
+                                    return 1;
+                                } else if (aCompletedCount && !bCompletedCount) {
+                                    return -1;
+                                }
+
+                                return bCompletedCount!.value - aCompletedCount!.value;
+                            })[0];
 
                         if (responseMember) {
                             return responseMember;
