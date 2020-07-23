@@ -203,6 +203,131 @@ describe('GroupActivityServiceImpl', () => {
             });
         });
 
+        it('should exclude duplicate metrics, taking higher value with precedence', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    result: {
+                        'activity': {
+                            'agg': [
+                                {
+                                    'metric': 'enrolmentCount',
+                                    'lastUpdatedOn': '1594734425894',
+                                    'value': 1
+                                }
+                            ],
+                            'id': 'do_11305913172235878411827',
+                            'type': 'course'
+                        },
+                        'groupId': 'f5fd09d5-7697-4c54-bb25-28758c9a2a45',
+                        'members': [
+                            {
+                                'agg': [
+                                    {
+                                        'metric': 'completedCount',
+                                        'lastUpdatedOn': 1594734198,
+                                        'value': 10
+                                    }
+                                ],
+                                'role': 'admin',
+                                'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                'name': 'member2',
+                                'userId': 'member2',
+                                'status': 'active'
+                            },
+                            {
+                                'agg': [
+                                    {
+                                        'metric': 'completedCount',
+                                        'lastUpdatedOn': 1594734198,
+                                        'value': 20
+                                    }
+                                ],
+                                'role': 'admin',
+                                'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                'name': 'member2',
+                                'userId': 'member2',
+                                'status': 'active'
+                            },
+                            {
+                                'agg': [
+                                    {
+                                        'metric': 'completedCount',
+                                        'lastUpdatedOn': 1594734198,
+                                        'value': 0
+                                    }
+                                ],
+                                'role': 'admin',
+                                'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                'name': 'member3',
+                                'userId': 'member3',
+                                'status': 'active'
+                            },
+                            {
+                                'agg': [
+                                    {
+                                        'metric': 'completedCount',
+                                        'lastUpdatedOn': 1594734198,
+                                        'value': 40
+                                    }
+                                ],
+                                'role': 'admin',
+                                'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                'name': 'member3',
+                                'userId': 'member3',
+                                'status': 'active'
+                            }
+                        ]
+                    }
+                };
+                return of(response);
+            });
+
+            const activity = {
+                id: 'SOME_ACTIVITY_ID',
+                type: 'SOME_ACTIVITY_TYPE'
+            };
+
+            const mergeGroup = {
+                'activities': [],
+                'members': [
+                    {
+                        'userId': 'member3',
+                        'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                        'role': 'admin',
+                        'status': 'active',
+                        'createdOn': '2020-07-15 11:44:07:291+0000',
+                        'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                        'name': 'member3'
+                    },
+                    {
+                        'userId': 'member1',
+                        'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                        'role': 'admin',
+                        'status': 'active',
+                        'createdOn': '2020-07-15 11:44:07:291+0000',
+                        'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                        'name': 'member1'
+                    },
+                    {
+                        'userId': 'member2',
+                        'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                        'role': 'admin',
+                        'status': 'active',
+                        'createdOn': '2020-07-15 11:44:07:291+0000',
+                        'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                        'name': 'member2'
+                    }
+                ]
+            } as Partial<Group>;
+
+            activityService.getDataAggregation('SOME_GROUP_ID', activity, mergeGroup as Group).subscribe((response) => {
+                expect(response.members.map((m) => m.name + '-' + m.agg[0].value)).toEqual(['member3-40', 'member1-0', 'member2-20']);
+                done();
+            });
+        });
+
         it('should merge missing metric leafNodesCount into response when mergeGroup provided', (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();
