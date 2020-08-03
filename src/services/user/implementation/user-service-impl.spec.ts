@@ -31,41 +31,119 @@ describe('UserServiceImpl', () => {
     });
 
     describe('checkUserExists()', () => {
-        it('should be able to check if user exists with matching fields in request', (done) => {
-            mockHttpService.fetch = jest.fn(() => {
-                const response = new CsResponse();
-                response.responseCode = 200;
-                response.body = {
-                    result: {
+        describe('when captchaResponse is not passed', () => {
+            it('should be able to check if user exists with matching fields in request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            exists: true,
+                            id: 'SOME_USER_ID',
+                            userId: 'SOME_USER_ID',
+                            name: 'SOME_NAME',
+                            managedBy: 'SOME_OTHER_USER_ID'
+                        }
+                    };
+                    return of(response);
+                });
+
+                userService.checkUserExists({
+                    key: 'userId',
+                    value: 'SOME_USER_ID'
+                }).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: expect.stringContaining('/exists/userId/SOME_USER_ID')
+                    }));
+                    expect(r).toEqual({
                         exists: true,
                         id: 'SOME_USER_ID',
                         userId: 'SOME_USER_ID',
                         name: 'SOME_NAME',
                         managedBy: 'SOME_OTHER_USER_ID'
-                    }
-                };
-                return of(response);
+                    });
+                    done();
+                });
+            });
+        });
+
+        describe('when captchaResponse is passed', () => {
+            it('should be able to check if user exists with matching fields in request with only token', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            exists: true,
+                            id: 'SOME_USER_ID',
+                            userId: 'SOME_USER_ID',
+                            name: 'SOME_NAME',
+                            managedBy: 'SOME_OTHER_USER_ID'
+                        }
+                    };
+                    return of(response);
+                });
+
+                userService.checkUserExists({
+                    key: 'userId',
+                    value: 'SOME_USER_ID'
+                }, {token: 'SOME_CAPTCHA_RESPONSE_TOKEN'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: expect.stringContaining('/exists/userId/SOME_USER_ID'),
+                        parameters: {
+                            captchaResponse: 'SOME_CAPTCHA_RESPONSE_TOKEN',
+                        }
+                    }));
+                    expect(r).toEqual({
+                        exists: true,
+                        id: 'SOME_USER_ID',
+                        userId: 'SOME_USER_ID',
+                        name: 'SOME_NAME',
+                        managedBy: 'SOME_OTHER_USER_ID'
+                    });
+                    done();
+                });
             });
 
-            userService.checkUserExists({
-                key: 'userId',
-                value: 'SOME_USER_ID'
-            }, 'SOME_CAPTCHA_RESPONSE_TOKEN').subscribe((r) => {
-                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'GET',
-                    path: expect.stringContaining('/exists/userId/SOME_USER_ID'),
-                    parameters: {
-                        captchaResponse: 'SOME_CAPTCHA_RESPONSE_TOKEN'
-                    }
-                }));
-                expect(r).toEqual({
-                    exists: true,
-                    id: 'SOME_USER_ID',
-                    userId: 'SOME_USER_ID',
-                    name: 'SOME_NAME',
-                    managedBy: 'SOME_OTHER_USER_ID'
+            it('should be able to check if user exists with matching fields in request with token and app type', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            exists: true,
+                            id: 'SOME_USER_ID',
+                            userId: 'SOME_USER_ID',
+                            name: 'SOME_NAME',
+                            managedBy: 'SOME_OTHER_USER_ID'
+                        }
+                    };
+                    return of(response);
                 });
-                done();
+
+                userService.checkUserExists({
+                    key: 'userId',
+                    value: 'SOME_USER_ID'
+                }, {token: 'SOME_CAPTCHA_RESPONSE_TOKEN', app: '1'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: expect.stringContaining('/exists/userId/SOME_USER_ID'),
+                        parameters: expect.objectContaining({
+                            captchaResponse: 'SOME_CAPTCHA_RESPONSE_TOKEN',
+                            app: '1'
+                        })
+                    }));
+                    expect(r).toEqual({
+                        exists: true,
+                        id: 'SOME_USER_ID',
+                        userId: 'SOME_USER_ID',
+                        name: 'SOME_NAME',
+                        managedBy: 'SOME_OTHER_USER_ID'
+                    });
+                    done();
+                });
             });
         });
     });
