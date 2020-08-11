@@ -2,6 +2,7 @@ import {Group, GroupEntityStatus, GroupMemberRole, GroupMembershipType} from '..
 import {Observable} from 'rxjs';
 import {CsGroupServiceConfig} from '../../../index';
 import {CsGroupActivityService} from '../activity/interface';
+import {Form} from '../../../models/form';
 
 export interface CsGroupCreateRequest {
     name: string;
@@ -140,6 +141,16 @@ export interface CsGroupSearchResponse extends Group {
     memberRole: GroupMemberRole;
 }
 
+export interface CsGroupSupportedActivitiesFormField {
+    index: number;
+    title: string;
+    activityType: string;
+    objectType: string;
+    sortBy: {
+        [key: string]: 'asc' | 'desc'
+    }[];
+}
+
 export interface CsGroupService {
     activityService: CsGroupActivityService;
 
@@ -164,4 +175,6 @@ export interface CsGroupService {
     updateActivities(groupId: string, updateActivitiesRequest: CsGroupUpdateActivitiesRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateActivitiesResponse>;
 
     removeActivities(groupId: string, removeActivitiesRequest: CsGroupRemoveActivitiesRequest, config?: CsGroupServiceConfig): Observable<CsGroupRemoveActivitiesResponse>;
+
+    getSupportedActivities(config?: CsGroupServiceConfig): Observable<Form<CsGroupSupportedActivitiesFormField>>;
 }

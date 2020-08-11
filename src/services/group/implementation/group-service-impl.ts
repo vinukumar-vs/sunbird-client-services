@@ -14,6 +14,7 @@ import {
     CsGroupSearchCriteria,
     CsGroupSearchResponse,
     CsGroupService,
+    CsGroupSupportedActivitiesFormField,
     CsGroupUpdateActivitiesRequest,
     CsGroupUpdateActivitiesResponse,
     CsGroupUpdateMembersRequest,
@@ -29,6 +30,7 @@ import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-se
 import {map, mergeMap} from 'rxjs/operators';
 import {CsGroupActivityService} from '../activity/interface';
 import {CsFormService} from '../../form/interface/cs-form-service';
+import {Form} from '../../../models/form';
 
 @injectable()
 export class GroupServiceImpl implements CsGroupService {
@@ -252,25 +254,12 @@ export class GroupServiceImpl implements CsGroupService {
                     return result;
                 }
 
-                const request = {
-                    'type': 'group',
-                    'subType': 'activities_v2',
-                    'action': 'list'
-                };
+                const supportedActivitiesConfig = await this.getSupportedActivities().toPromise();
 
-                const groupConfig = await this.formService.getForm<{
-                    index: number;
-                    title: string;
-                    activityType: string;
-                    objectType: string;
-                    sortBy: {
-                        [key: string]: 'asc' | 'desc'
-                    }[];
-                }>(request).toPromise();
-
-                const fields = groupConfig.data.fields.sort((f, g) => f.index - g.index);
+                const fields = supportedActivitiesConfig.data.fields.sort((f, g) => f.index - g.index);
 
                 const activities = result.activities;
+                delete result.activities;
 
                 result.activitiesGrouped = fields.map((field) => {
                     const activitiesByActivityType = activities!.filter((activity) => activity.type === field.activityType)
@@ -335,5 +324,23 @@ export class GroupServiceImpl implements CsGroupService {
 
     deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse> {
         return this.updateById(id, {status: GroupEntityStatus.INACTIVE}, config);
+    }
+
+    getSupportedActivities(config?: CsGroupServiceConfig): Observable<Form<CsGroupSupportedActivitiesFormField>> {
+        const request = {
+            'type': 'group',
+            'subType': 'activities_v2',
+            'action': 'list'
+        };
+
+        return this.formService.getForm<{
+            index: number;
+            title: string;
+            activityType: string;
+            objectType: string;
+            sortBy: {
+                [key: string]: 'asc' | 'desc'
+            }[];
+        }>(request);
     }
 }

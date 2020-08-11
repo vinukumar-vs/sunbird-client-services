@@ -499,6 +499,7 @@ describe('GroupServiceImpl', () => {
 
             groupService.getById('SOME_GROUP_ID', {includeActivities: true, groupActivities: true}).subscribe((response) => {
                 expect(response.activitiesGrouped).toBeTruthy();
+                expect(response.activities).toBeFalsy();
                 expect(response.activitiesGrouped).toEqual([
                     expect.objectContaining({
                         title: 'ACTIVITY_COURSE_TITLE',
