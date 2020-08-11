@@ -58,6 +58,8 @@ export interface Content {
     origin?: string;
     totalQuestions?: number;
     itemSetPreviewUrl?: string;
+    leafNodes?: string[];
+    leafNodesCount?: number;
 }
 
 export interface LicenseDetails {

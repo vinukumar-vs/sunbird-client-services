@@ -26,8 +26,9 @@ import {Observable} from 'rxjs';
 import {Group, GroupEntityStatus, GroupMemberRole} from '../../../models/group';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
-import {map} from 'rxjs/operators';
+import {map, mergeMap} from 'rxjs/operators';
 import {CsGroupActivityService} from '../activity/interface';
+import {CsFormService} from '../../form/interface/cs-form-service';
 
 @injectable()
 export class GroupServiceImpl implements CsGroupService {
@@ -35,6 +36,7 @@ export class GroupServiceImpl implements CsGroupService {
         @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService,
         @inject(InjectionTokens.services.group.GROUP_SERVICE_API_PATH) private apiPath: string,
         @inject(InjectionTokens.CONTAINER) private container: Container,
+        @inject(InjectionTokens.services.form.FORM_SERVICE) private formService: CsFormService,
     ) {
     }
 
@@ -222,7 +224,7 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
     getById(
-        id: string, options?: { includeMembers?: boolean, includeActivities?: boolean }, config?: CsGroupServiceConfig
+        id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig
     ): Observable<Group> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
@@ -244,7 +246,64 @@ export class GroupServiceImpl implements CsGroupService {
             .build();
 
         return this.httpService.fetch<{ result: Group }>(apiRequest).pipe(
-            map((r) => r.body.result)
+            map((r) => r.body.result),
+            mergeMap(async (result) => {
+                if (!options || !options.groupActivities || !options.includeActivities) {
+                    return result;
+                }
+
+                const request = {
+                    'type': 'group',
+                    'subType': 'activities_v2',
+                    'action': 'list'
+                };
+
+                const groupConfig = await this.formService.getForm<{
+                    index: number;
+                    title: string;
+                    activityType: string;
+                    objectType: string;
+                    sortBy: {
+                        [key: string]: 'asc' | 'desc'
+                    }[];
+                }>(request).toPromise();
+
+                const fields = groupConfig.data.fields.sort((f, g) => f.index - g.index);
+
+                const activities = result.activities;
+
+                result.activitiesGrouped = fields.map((field) => {
+                    const activitiesByActivityType = activities!.filter((activity) => activity.type === field.activityType)
+                        .sort((a, b) => {
+                            let comparison = 0;
+
+                            for (const sortBy of field.sortBy) {
+                                if (comparison !== 0) {
+                                    break;
+                                }
+
+                                for (const key in sortBy) {
+                                    if (!(key in sortBy)) {
+                                        continue;
+                                    }
+
+                                    comparison = String(a.activityInfo[key]).localeCompare(String(b.activityInfo[key]));
+                                    comparison = sortBy[key] === 'asc' ? comparison : -comparison;
+                                }
+                            }
+
+                            return comparison;
+                        });
+
+                    return {
+                        title: field.title,
+                        count: activitiesByActivityType.length,
+                        items: activitiesByActivityType
+                    };
+                });
+
+                return result;
+            })
         );
     }
 

@@ -36,6 +36,12 @@ export interface GroupActivity {
     updatedBy?: string; // Record updated userid
 }
 
+export interface ActivitiesGrouped {
+    title: string;
+    count: number;
+    items: GroupActivity[];
+}
+
 export interface Group {
     name: string;
     description: string;
@@ -47,5 +53,6 @@ export interface Group {
     updatedOn?: string;
     updatedBy?: string;
     activities?: GroupActivity[];
+    activitiesGrouped?: ActivitiesGrouped[];
     members?: GroupMember[];
 }

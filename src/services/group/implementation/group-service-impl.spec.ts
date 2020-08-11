@@ -6,12 +6,15 @@ import {GroupServiceImpl} from './group-service-impl';
 import {GroupEntityStatus, GroupMemberRole, GroupMembershipType} from '../../../models/group';
 import {of} from 'rxjs';
 import {CsGroupActivityService} from '../activity/interface';
+import {CsFormService} from '../../form/interface/cs-form-service';
+import {Form} from '../../../models/form';
 
 describe('GroupServiceImpl', () => {
     let groupService: CsGroupService;
     const mockHttpService: Partial<CsHttpService> = {};
     const mockApiPath = 'MOCK_API_PATH';
     const mockGroupActivityService: Partial<CsGroupActivityService> = {};
+    const mockFormService: Partial<CsFormService> = {};
 
     beforeAll(() => {
         const container = new Container();
@@ -19,6 +22,7 @@ describe('GroupServiceImpl', () => {
         container.bind<CsGroupActivityService>(InjectionTokens.services.group.GROUP_ACTIVITY_SERVICE).toConstantValue(mockGroupActivityService as CsGroupActivityService);
         container.bind<CsHttpService>(InjectionTokens.core.HTTP_SERVICE).toConstantValue(mockHttpService as CsHttpService);
         container.bind<string>(InjectionTokens.services.group.GROUP_SERVICE_API_PATH).toConstantValue(mockApiPath);
+        container.bind<CsFormService>(InjectionTokens.services.form.FORM_SERVICE).toConstantValue(mockFormService as CsFormService);
         container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(container);
 
         container.bind<CsGroupService>(InjectionTokens.services.group.GROUP_SERVICE).to(GroupServiceImpl).inSingletonScope();
@@ -400,6 +404,147 @@ describe('GroupServiceImpl', () => {
                         fields: 'members,activities'
                     }
                 }));
+                done();
+            });
+        });
+
+        it('should be able to get a group with activities grouped using appropriate request', (done) => {
+            mockFormService.getForm = jest.fn(() => {
+                return of({
+                    'type': 'group',
+                    'subtype': 'activities_v2',
+                    'action': 'list',
+                    'component': '*',
+                    'framework': '*',
+                    'data': {
+                        'templateName': 'activities_v2',
+                        'action': 'list',
+                        'fields': [
+                            {
+                                'index': 0,
+                                'title': 'ACTIVITY_COURSE_TITLE',
+                                'activityType': 'Course',
+                                'objectType': 'Content',
+                                'sortBy': [
+                                    {
+                                        'name': 'asc'
+                                    }
+                                ],
+                            },
+                            {
+                                'index': 1,
+                                'title': 'ACTIVITY_TEXTBOOK_TITLE',
+                                'activityType': 'TextBook',
+                                'objectType': 'Content',
+                                'sortBy': [
+                                    {
+                                        'name': 'desc'
+                                    },
+                                    {
+                                        'identifier': 'asc'
+                                    }
+                                ],
+                            }
+                        ]
+                    },
+                    'created_on': '2020-08-07T10:18:13.697Z',
+                    'last_modified_on': '2020-08-11T06:46:05.838Z',
+                    'rootOrgId': '*'
+                } as Form<any>);
+            });
+
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    result: {
+                        activities: [
+                            {
+                                type: 'TextBook',
+                                activityInfo: {name: 'TC'}
+                            },
+                            {
+                                type: 'Course',
+                                activityInfo: {name: 'CB'}
+                            },
+                            {
+                                type: 'TextBook',
+                                activityInfo: {name: 'TE', identifier: 'b'}
+                            },
+                            {
+                                type: 'TextBook',
+                                activityInfo: {name: 'TA'}
+                            },
+                            {
+                                type: 'Course',
+                                activityInfo: {name: 'CC'}
+                            },
+                            {
+                                type: 'TextBook',
+                                activityInfo: {name: 'TE', identifier: 'a'}
+                            },
+                            {
+                                type: 'Course',
+                                activityInfo: {name: 'CA'}
+                            },
+                            {
+                                type: 'TextBook',
+                                activityInfo: {name: 'TB'}
+                            },
+                        ]
+                    }
+                };
+                return of(response);
+            });
+
+            groupService.getById('SOME_GROUP_ID', {includeActivities: true, groupActivities: true}).subscribe((response) => {
+                expect(response.activitiesGrouped).toBeTruthy();
+                expect(response.activitiesGrouped).toEqual([
+                    expect.objectContaining({
+                        title: 'ACTIVITY_COURSE_TITLE',
+                        count: 3,
+                        items: [
+                            {
+                                type: 'Course',
+                                activityInfo: {name: 'CA'}
+                            },
+                            {
+                                type: 'Course',
+                                activityInfo: {name: 'CB'}
+                            },
+                            {
+                                type: 'Course',
+                                activityInfo: {name: 'CC'}
+                            },
+                        ]
+                    }),
+                    expect.objectContaining({
+                        title: 'ACTIVITY_TEXTBOOK_TITLE',
+                        count: 5,
+                        items: [
+                            {
+                                type: 'TextBook',
+                                activityInfo: {name: 'TE', identifier: 'a'}
+                            },
+                            {
+                                type: 'TextBook',
+                                activityInfo: {name: 'TE', identifier: 'b'}
+                            },
+                            {
+                                type: 'TextBook',
+                                activityInfo: {name: 'TC'}
+                            },
+                            {
+                                type: 'TextBook',
+                                activityInfo: {name: 'TB'}
+                            },
+                            {
+                                type: 'TextBook',
+                                activityInfo: {name: 'TA'}
+                            }
+                        ]
+                    })
+                ]);
                 done();
             });
         });
