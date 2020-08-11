@@ -17,6 +17,8 @@ import {CsUserService} from './services/user/interface';
 import {UserServiceImpl} from './services/user/implementation/user-service-impl';
 import {CsGroupActivityService} from './services/group/activity/interface';
 import {GroupActivityServiceImpl} from './services/group/activity/implementation/group-activity-service-impl';
+import {CsFormService} from './services/form/interface/cs-form-service';
+import {FormServiceImpl} from './services/form/implementation/form-service-impl';
 
 export interface CsUserServiceConfig {
     apiPath: string;
@@ -36,6 +38,10 @@ export interface CsLocationServiceConfig {
 }
 
 export interface CsCourseServiceConfig {
+    apiPath: string;
+}
+
+export interface CsFormServiceConfig {
     apiPath: string;
 }
 
@@ -61,7 +67,8 @@ export interface CsConfig {
         groupServiceConfig?: CsGroupServiceConfig,
         frameworkServiceConfig?: CsFrameworkServiceConfig,
         locationServiceConfig?: CsLocationServiceConfig,
-        courseServiceConfig?: CsCourseServiceConfig
+        courseServiceConfig?: CsCourseServiceConfig,
+        formServiceConfig?: CsFormServiceConfig,
     };
 }
 
@@ -113,6 +120,10 @@ export class CsModule {
 
     get userService(): CsUserService {
         return this._container.get<CsUserService>(InjectionTokens.services.user.USER_SERVICE);
+    }
+
+    get formService(): CsFormService {
+        return this._container.get<CsFormService>(InjectionTokens.services.form.FORM_SERVICE);
     }
 
     public async init(config: CsConfig, onConfigUpdate?: () => void) {
@@ -205,6 +216,14 @@ export class CsModule {
         if (config.services.userServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.user.USER_SERVICE_API_PATH)
                 .toConstantValue(config.services.userServiceConfig.apiPath);
+        }
+
+        // formService
+        this._container[mode]<CsFormService>(InjectionTokens.services.form.FORM_SERVICE)
+            .to(FormServiceImpl).inSingletonScope();
+        if (config.services.formServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.form.FORM_SERVICE_API_PATH)
+                .toConstantValue(config.services.formServiceConfig.apiPath);
         }
 
         if (mode === 'rebind' && this.onUpdateConfigCallback) {

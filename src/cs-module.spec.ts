@@ -24,6 +24,9 @@ describe('CsModule', () => {
                         apiPath: '/api/group/v1',
                         dataApiPath: '/api/data/v1/group/activity/agg',
                     },
+                    formServiceConfig: {
+                        apiPath: '/api/data/v1/form'
+                    }
                 }
             });
         }
