@@ -10,6 +10,7 @@ export interface CheckUserExistsResponse {
     managedBy?: string;
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface CsUpdateUserDeclarationsResponse {}
 
 export interface CsUserService {
