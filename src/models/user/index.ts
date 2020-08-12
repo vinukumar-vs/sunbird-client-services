@@ -20,7 +20,7 @@ export interface User {
         idType: string;
         provider: string;
     }[];
-    declarations: UserDeclaration[];
+    declarations?: UserDeclaration[];
 }
 
 export enum UserDeclarationOperation {
