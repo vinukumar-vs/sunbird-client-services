@@ -20,6 +20,32 @@ export interface User {
         idType: string;
         provider: string;
     }[];
+    declarations: UserDeclaration[];
+}
+
+export enum UserDeclarationOperation {
+    EDIT = 'edit',
+    ADD = 'add',
+    REMOVE = 'remove'
+}
+
+export enum UserDeclarationStatus {
+    PENDING = 'PENDING',
+    VALIDATED = 'VALIDATED',
+    REJECTED = 'REJECTED',
+    ERROR = 'ERROR'
+}
+
+export interface UserDeclaration {
+    errorType?: string;
+    status?: UserDeclarationStatus;
+    operation: UserDeclarationOperation;
+    userId: string;
+    orgId: string;
+    persona: string;
+    info: {
+        [key: string]: any
+    };
 }
 
 export interface RootOrg {
