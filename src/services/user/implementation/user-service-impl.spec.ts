@@ -4,6 +4,7 @@ import {Container} from 'inversify';
 import {InjectionTokens} from '../../../injection-tokens';
 import {UserServiceImpl} from './user-service-impl';
 import {of} from 'rxjs';
+import {UserDeclarationOperation} from '../../../models/user';
 
 describe('UserServiceImpl', () => {
     let userService: CsUserService;
@@ -144,6 +145,54 @@ describe('UserServiceImpl', () => {
                     });
                     done();
                 });
+            });
+        });
+    });
+
+    describe('updateUserDeclarations()', () => {
+        it('should be able update user declarations providing appropriate http request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    result: {}
+                };
+                return of(response);
+            });
+
+            userService.updateUserDeclarations([
+                {
+                    operation: UserDeclarationOperation.ADD,
+                    userId: 'SOME_USER_ID',
+                    orgId: 'SOME_ORG_ID',
+                    persona: 'SOME_PERSONA',
+                    info: {}
+                },
+                {
+                    operation: UserDeclarationOperation.EDIT,
+                    userId: 'SOME_USER_ID',
+                    orgId: 'SOME_ORG_ID',
+                    persona: 'SOME_PERSONA',
+                    info: {}
+                }
+            ]).subscribe(() => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'PATCH',
+                    path: expect.stringContaining('/declarations'),
+                    body: {
+                        request: {
+                            declarations: expect.arrayContaining([
+                                expect.objectContaining({
+                                    operation: UserDeclarationOperation.ADD,
+                                }),
+                                expect.objectContaining({
+                                    operation: UserDeclarationOperation.EDIT,
+                                })
+                            ])
+                        }
+                    }
+                }));
+                done();
             });
         });
     });

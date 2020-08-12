@@ -1,10 +1,11 @@
-import {CheckUserExistsResponse, CsUserService} from '../interface';
+import {CheckUserExistsResponse, CsUserService, CsUpdateUserDeclarationsResponse} from '../interface';
 import {inject, injectable} from 'inversify';
 import {Observable} from 'rxjs';
 import {CsUserServiceConfig} from '../../../index';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map} from 'rxjs/operators';
+import {UserDeclaration} from 'src/models';
 
 @injectable()
 export class UserServiceImpl implements CsUserService {
@@ -31,6 +32,24 @@ export class UserServiceImpl implements CsUserService {
                         app: captchaResponse.app
                     } : {})
                 } : {}),
+            })
+            .build();
+
+        return this.httpService.fetch<{ result: CheckUserExistsResponse }>(apiRequest).pipe(
+            map((r) => r.body.result)
+        );
+    }
+
+    updateUserDeclarations(declarations: UserDeclaration[], config?: CsUserServiceConfig): Observable<CsUpdateUserDeclarationsResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+            .withType(CsHttpRequestType.PATCH)
+            .withPath(`${config ? config.apiPath : this.apiPath}/declarations`)
+            .withBearerToken(true)
+            .withUserToken(true)
+            .withBody({
+                request: {
+                    declarations
+                }
             })
             .build();
 
