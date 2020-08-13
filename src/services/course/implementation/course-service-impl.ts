@@ -1,4 +1,4 @@
-import {CsCourseService, GetUserEnrolledCoursesRequest} from '../interface';
+import {CertificateUrlRequest, CertificateUrlResponse, CsCourseService, GetUserEnrolledCoursesRequest} from '../interface';
 import {Course} from '../../../models/course';
 import {Observable} from 'rxjs';
 import {CsCourseServiceConfig} from '../../../index';
@@ -11,7 +11,8 @@ import {map} from 'rxjs/operators';
 export class CourseServiceImpl implements CsCourseService {
     constructor(
         @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService,
-        @inject(InjectionTokens.services.course.COURSE_SERVICE_API_PATH) private apiPath: string
+        @inject(InjectionTokens.services.course.COURSE_SERVICE_API_PATH) private apiPath: string,
+        @inject(InjectionTokens.services.course.COURSE_SERVICE_CERT_REGISTRATION_API_PATH) private certRegistrationApiPath: string
     ) {
     }
 
@@ -31,5 +32,20 @@ export class CourseServiceImpl implements CsCourseService {
                     return response.body.result.courses;
                 })
             );
+    }
+
+    getSignedCourseCertificate(request: CertificateUrlRequest, config?: CsCourseServiceConfig): Observable<CertificateUrlResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+            .withType(CsHttpRequestType.POST)
+            .withPath((config ? config.certRegistrationApiPath : this.certRegistrationApiPath) + '/certs/download')
+            .withBearerToken(true)
+            .withUserToken(true)
+            .withBody({request})
+            .build();
+        return this.httpService.fetch<{result: {signedUrl: string}}>(apiRequest).pipe(
+            map((response) => {
+                return response.body.result;
+            })
+        );
     }
 }

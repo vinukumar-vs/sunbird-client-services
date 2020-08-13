@@ -39,6 +39,7 @@ export interface CsLocationServiceConfig {
 
 export interface CsCourseServiceConfig {
     apiPath: string;
+    certRegistrationApiPath: string;
 }
 
 export interface CsFormServiceConfig {
@@ -208,6 +209,8 @@ export class CsModule {
         if (config.services.courseServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.course.COURSE_SERVICE_API_PATH)
                 .toConstantValue(config.services.courseServiceConfig.apiPath);
+            this._container[mode]<string>(InjectionTokens.services.course.COURSE_SERVICE_CERT_REGISTRATION_API_PATH)
+                .toConstantValue(config.services.courseServiceConfig.certRegistrationApiPath);
         }
 
         // userService

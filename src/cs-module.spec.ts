@@ -18,7 +18,8 @@ describe('CsModule', () => {
                 },
                 services: {
                     courseServiceConfig: {
-                        apiPath: '/api/course/v1'
+                        apiPath: '/api/course/v1',
+                        certRegistrationApiPath: '/api/certreg/v1'
                     },
                     groupServiceConfig: {
                         apiPath: '/api/group/v1',
