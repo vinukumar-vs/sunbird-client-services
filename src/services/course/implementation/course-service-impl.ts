@@ -1,18 +1,18 @@
-import { CertificateUrlResponse, CsCourseService, GetUserEnrolledCoursesRequest} from '../interface';
+import {CertificateUrlResponse, CsCourseService, GetUserEnrolledCoursesRequest} from '../interface';
 import {Course} from '../../../models/course';
 import {Observable} from 'rxjs';
 import {CsCourseServiceConfig} from '../../../index';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
-import {inject, injectable} from 'inversify';
+import {inject, injectable, optional} from 'inversify';
 import {InjectionTokens} from '../../../injection-tokens';
 import {map} from 'rxjs/operators';
 
 @injectable()
 export class CourseServiceImpl implements CsCourseService {
     constructor(
-        @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService,
-        @inject(InjectionTokens.services.course.COURSE_SERVICE_API_PATH) private apiPath: string,
-        @inject(InjectionTokens.services.course.COURSE_SERVICE_CERT_REGISTRATION_API_PATH) private certRegistrationApiPath: string
+      @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService,
+      @inject(InjectionTokens.services.course.COURSE_SERVICE_API_PATH) private apiPath: string,
+      @optional() @inject(InjectionTokens.services.course.COURSE_SERVICE_CERT_REGISTRATION_API_PATH) private certRegistrationApiPath?: string
     ) {
     }
 
@@ -35,15 +35,19 @@ export class CourseServiceImpl implements CsCourseService {
     }
 
     getSignedCourseCertificate(certificateId: string, config?: CsCourseServiceConfig): Observable<CertificateUrlResponse> {
+        if (!this.certRegistrationApiPath && (!config || !config.certRegistrationApiPath)) {
+            throw new Error('Required certRegistrationApiPath configuration');
+        }
+
         const apiRequest: CsRequest = new CsRequest.Builder()
-            .withType(CsHttpRequestType.GET)
-            .withPath((config ? config.certRegistrationApiPath : this.certRegistrationApiPath) + '/download/' + certificateId)
-            .withBearerToken(true)
-            .withUserToken(true)
-            .build();
-        return this.httpService.fetch<{result: {printUri: string}}>(apiRequest).pipe(
-            map((response) => {
-                return response.body.result;
+        .withType(CsHttpRequestType.GET)
+        .withPath((config ? config.certRegistrationApiPath : this.certRegistrationApiPath) + '/download/' + certificateId)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .build();
+        return this.httpService.fetch<{ result: { printUri: string } }>(apiRequest).pipe(
+          map((response) => {
+              return response.body.result;
             })
         );
     }

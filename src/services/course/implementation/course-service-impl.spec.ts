@@ -71,18 +71,18 @@ describe('CourseServiceImpl', () => {
                 response.responseCode = 200;
                 response.body = {
                     result: {
-                        signedUrl: 'https://'
+                        printUri: 'SAMPLE_PRINT_URI'
                     }
                 };
                 return of(response);
             });
-            const request = {
-                pdfUrl: 'https://'
-            };
             // act
-            courseService.getSignedCourseCertificate('').subscribe(() => {
+            courseService.getSignedCourseCertificate('CERTIFICATE_ID').subscribe(() => {
                 // assert
-                expect(mockHttpService.fetch).toHaveBeenCalledWith();
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                    path: 'MOCK_API_PATH/download/CERTIFICATE_ID'
+                }));
                 done();
             });
         });
