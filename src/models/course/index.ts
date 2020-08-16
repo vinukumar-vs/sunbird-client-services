@@ -28,9 +28,10 @@ export interface Batch {
 }
 
 export interface CourseCertificate {
+    identifier?: string;
     name: string;
     lastIssuedOn: string;
-    url: string;
+    url?: string;
     token: string;
     id: string;
 }
