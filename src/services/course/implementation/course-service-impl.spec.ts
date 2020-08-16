@@ -80,14 +80,9 @@ describe('CourseServiceImpl', () => {
                 pdfUrl: 'https://'
             };
             // act
-            courseService.getSignedCourseCertificate(request, ).subscribe(() => {
+            courseService.getSignedCourseCertificate('').subscribe(() => {
                 // assert
-                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'POST',
-                    body: {
-                        request
-                    }
-                }));
+                expect(mockHttpService.fetch).toHaveBeenCalledWith();
                 done();
             });
         });
