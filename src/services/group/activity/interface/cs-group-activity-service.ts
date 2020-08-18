@@ -6,6 +6,7 @@ export enum CsGroupActivityAggregationMetric {
     ENROLMENT_COUNT = 'enrolmentCount',
     COMPLETED_COUNT = 'completedCount',
     LEAF_NODES_COUNT = 'leafNodesCount',
+    PROGRESS = 'progress',
 }
 
 export interface CsGroupActivityDataAggregation {
@@ -24,9 +25,9 @@ export interface CsGroupActivityDataAggregation {
         createdBy: string;
         name: string;
         userId: string;
-        status: GroupEntityStatus
+        status: GroupEntityStatus;
         agg: {
-            metric: CsGroupActivityAggregationMetric.COMPLETED_COUNT,
+            metric: CsGroupActivityAggregationMetric.COMPLETED_COUNT | CsGroupActivityAggregationMetric.PROGRESS,
             lastUpdatedOn: number;
             value: number;
         }[],
@@ -34,5 +35,5 @@ export interface CsGroupActivityDataAggregation {
 }
 
 export interface CsGroupActivityService {
-    getDataAggregation(groupId: string, activity: Pick<GroupActivity, 'id' | 'type'>, mergeGroup?: Group, config?: CsGroupServiceConfig): Observable<CsGroupActivityDataAggregation>;
+    getDataAggregation(groupId: string, activity: Pick<GroupActivity, 'id' | 'type'>, mergeGroup?: Group, leafNodesCount?: number, config?: CsGroupServiceConfig): Observable<CsGroupActivityDataAggregation>;
 }

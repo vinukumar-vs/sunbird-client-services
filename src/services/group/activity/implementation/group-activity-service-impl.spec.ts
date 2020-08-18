@@ -328,6 +328,384 @@ describe('GroupActivityServiceImpl', () => {
             });
         });
 
+        describe('when leafNodeCount available', () => {
+            it('should add progress metric when leafNodeCount available via mergeGroup only', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            'activity': {
+                                'agg': [
+                                    {
+                                        'metric': 'enrolmentCount',
+                                        'lastUpdatedOn': '1594734425894',
+                                        'value': 1
+                                    }
+                                ],
+                                'id': 'do_11305913172235878411827',
+                                'type': 'course'
+                            },
+                            'groupId': 'f5fd09d5-7697-4c54-bb25-28758c9a2a45',
+                            'members': [
+                                {
+                                    'agg': [
+                                        {
+                                            'metric': 'completedCount',
+                                            'lastUpdatedOn': 1594734198,
+                                            'value': 110
+                                        }
+                                    ],
+                                    'role': 'admin',
+                                    'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                    'name': 'member1',
+                                    'userId': 'member1',
+                                    'status': 'active'
+                                },
+                                {
+                                    'agg': [
+                                        {
+                                            'metric': 'completedCount',
+                                            'lastUpdatedOn': 1594734198,
+                                            'value': 10
+                                        }
+                                    ],
+                                    'role': 'admin',
+                                    'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                    'name': 'member2',
+                                    'userId': 'member2',
+                                    'status': 'active'
+                                },
+                                {
+                                    'agg': [
+                                        {
+                                            'metric': 'completedCount',
+                                            'lastUpdatedOn': 1594734198,
+                                            'value': 20
+                                        }
+                                    ],
+                                    'role': 'admin',
+                                    'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                    'name': 'member2',
+                                    'userId': 'member2',
+                                    'status': 'active'
+                                },
+                                {
+                                    'agg': [
+                                        {
+                                            'metric': 'completedCount',
+                                            'lastUpdatedOn': 1594734198,
+                                            'value': 0
+                                        }
+                                    ],
+                                    'role': 'admin',
+                                    'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                    'name': 'member3',
+                                    'userId': 'member3',
+                                    'status': 'active'
+                                },
+                                {
+                                    'agg': [
+                                        {
+                                            'metric': 'completedCount',
+                                            'lastUpdatedOn': 1594734198,
+                                            'value': 40
+                                        }
+                                    ],
+                                    'role': 'admin',
+                                    'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                    'name': 'member3',
+                                    'userId': 'member3',
+                                    'status': 'active'
+                                }
+                            ]
+                        }
+                    };
+                    return of(response);
+                });
+
+                const activity = {
+                    id: 'do_11305913172235878411827',
+                    type: 'Course'
+                };
+
+                const mergeGroup = {
+                    'activities': [
+                        {
+                            id: 'do_11305913172235878411827',
+                            type: 'Course',
+                            activityInfo: {
+                                identifier: 'do_21301074192677273611434',
+                                appIcon: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_2127814568517795841477/artifact/100x100_1560236432219.jpg',
+                                name: ' "Courses Batches" ',
+                                organisation: ['Odisha'],
+                                topic: ['Teaching and Classroom Management', 'Leadership Management', 'ICT'],
+                                language: ['English'],
+                                mimeType: 'application/vnd.ekstep.content-collection',
+                                contentType: 'Course',
+                                objectType: 'Content',
+                                resourceType: 'Course',
+                                leafNodesCount: 100
+                            }
+                        }
+                    ],
+                    'members': [
+                        {
+                            'userId': 'member3',
+                            'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                            'role': 'admin',
+                            'status': 'active',
+                            'createdOn': '2020-07-15 11:44:07:291+0000',
+                            'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                            'name': 'member3'
+                        },
+                        {
+                            'userId': 'member1',
+                            'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                            'role': 'admin',
+                            'status': 'active',
+                            'createdOn': '2020-07-15 11:44:07:291+0000',
+                            'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                            'name': 'member1'
+                        },
+                        {
+                            'userId': 'member2',
+                            'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                            'role': 'admin',
+                            'status': 'active',
+                            'createdOn': '2020-07-15 11:44:07:291+0000',
+                            'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                            'name': 'member2'
+                        }
+                    ]
+                } as Partial<Group>;
+
+                activityService.getDataAggregation('SOME_GROUP_ID', activity, mergeGroup as Group).subscribe((response) => {
+                    expect(response.members).toEqual([
+                        expect.objectContaining({
+                            name: 'member3',
+                            agg: expect.arrayContaining([
+                                expect.objectContaining({
+                                    metric: CsGroupActivityAggregationMetric.PROGRESS,
+                                    lastUpdatedOn: expect.anything(),
+                                    value: 40
+                                }),
+                            ]),
+                        }),
+                        expect.objectContaining({
+                            name: 'member1',
+                            agg: expect.arrayContaining([
+                                expect.objectContaining({
+                                    metric: CsGroupActivityAggregationMetric.PROGRESS,
+                                    lastUpdatedOn: expect.anything(),
+                                    value: 100
+                                }),
+                            ]),
+                        }),
+                        expect.objectContaining({
+                            name: 'member2',
+                            agg: expect.arrayContaining([
+                                expect.objectContaining({
+                                    metric: CsGroupActivityAggregationMetric.PROGRESS,
+                                    lastUpdatedOn: expect.anything(),
+                                    value: 20
+                                }),
+                            ]),
+                        })
+                    ]);
+                    done();
+                });
+            });
+
+            it('should add progress metric when leafNodeCount available via request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            'activity': {
+                                'agg': [
+                                    {
+                                        'metric': 'enrolmentCount',
+                                        'lastUpdatedOn': '1594734425894',
+                                        'value': 1
+                                    }
+                                ],
+                                'id': 'do_11305913172235878411827',
+                                'type': 'course'
+                            },
+                            'groupId': 'f5fd09d5-7697-4c54-bb25-28758c9a2a45',
+                            'members': [
+                                {
+                                    'agg': [
+                                        {
+                                            'metric': 'completedCount',
+                                            'lastUpdatedOn': 1594734198,
+                                            'value': 110
+                                        }
+                                    ],
+                                    'role': 'admin',
+                                    'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                    'name': 'member1',
+                                    'userId': 'member1',
+                                    'status': 'active'
+                                },
+                                {
+                                    'agg': [
+                                        {
+                                            'metric': 'completedCount',
+                                            'lastUpdatedOn': 1594734198,
+                                            'value': 10
+                                        }
+                                    ],
+                                    'role': 'admin',
+                                    'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                    'name': 'member2',
+                                    'userId': 'member2',
+                                    'status': 'active'
+                                },
+                                {
+                                    'agg': [
+                                        {
+                                            'metric': 'completedCount',
+                                            'lastUpdatedOn': 1594734198,
+                                            'value': 20
+                                        }
+                                    ],
+                                    'role': 'admin',
+                                    'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                    'name': 'member2',
+                                    'userId': 'member2',
+                                    'status': 'active'
+                                },
+                                {
+                                    'agg': [
+                                        {
+                                            'metric': 'completedCount',
+                                            'lastUpdatedOn': 1594734198,
+                                            'value': 0
+                                        }
+                                    ],
+                                    'role': 'admin',
+                                    'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                    'name': 'member3',
+                                    'userId': 'member3',
+                                    'status': 'active'
+                                },
+                                {
+                                    'agg': [
+                                        {
+                                            'metric': 'completedCount',
+                                            'lastUpdatedOn': 1594734198,
+                                            'value': 40
+                                        }
+                                    ],
+                                    'role': 'admin',
+                                    'createdBy': 'ec861024-c55f-4ca0-80fa-17e1575718d9',
+                                    'name': 'member3',
+                                    'userId': 'member3',
+                                    'status': 'active'
+                                }
+                            ]
+                        }
+                    };
+                    return of(response);
+                });
+
+                const activity = {
+                    id: 'do_11305913172235878411827',
+                    type: 'Course'
+                };
+
+                const mergeGroup = {
+                    'activities': [
+                        {
+                            id: 'do_11305913172235878411827',
+                            type: 'Course',
+                            activityInfo: {
+                                identifier: 'do_21301074192677273611434',
+                                appIcon: 'https://ntpstagingall.blob.core.windows.net/ntp-content-staging/content/do_2127814568517795841477/artifact/100x100_1560236432219.jpg',
+                                name: ' "Courses Batches" ',
+                                organisation: ['Odisha'],
+                                topic: ['Teaching and Classroom Management', 'Leadership Management', 'ICT'],
+                                language: ['English'],
+                                mimeType: 'application/vnd.ekstep.content-collection',
+                                contentType: 'Course',
+                                objectType: 'Content',
+                                resourceType: 'Course',
+                                leafNodesCount: 1000
+                            }
+                        }
+                    ],
+                    'members': [
+                        {
+                            'userId': 'member3',
+                            'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                            'role': 'admin',
+                            'status': 'active',
+                            'createdOn': '2020-07-15 11:44:07:291+0000',
+                            'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                            'name': 'member3'
+                        },
+                        {
+                            'userId': 'member1',
+                            'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                            'role': 'admin',
+                            'status': 'active',
+                            'createdOn': '2020-07-15 11:44:07:291+0000',
+                            'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                            'name': 'member1'
+                        },
+                        {
+                            'userId': 'member2',
+                            'groupId': 'fee4fc21-dbef-4b32-bc31-de6f7b07c587',
+                            'role': 'admin',
+                            'status': 'active',
+                            'createdOn': '2020-07-15 11:44:07:291+0000',
+                            'createdBy': '1c8b6384-27aa-4dcf-a7e7-c2cecb7db26a',
+                            'name': 'member2'
+                        }
+                    ]
+                } as Partial<Group>;
+
+                activityService.getDataAggregation('SOME_GROUP_ID', activity, mergeGroup as Group, 100).subscribe((response) => {
+                    expect(response.members).toEqual([
+                        expect.objectContaining({
+                            name: 'member3',
+                            agg: expect.arrayContaining([
+                                expect.objectContaining({
+                                    metric: CsGroupActivityAggregationMetric.PROGRESS,
+                                    lastUpdatedOn: expect.anything(),
+                                    value: 40
+                                }),
+                            ]),
+                        }),
+                        expect.objectContaining({
+                            name: 'member1',
+                            agg: expect.arrayContaining([
+                                expect.objectContaining({
+                                    metric: CsGroupActivityAggregationMetric.PROGRESS,
+                                    lastUpdatedOn: expect.anything(),
+                                    value: 100
+                                }),
+                            ]),
+                        }),
+                        expect.objectContaining({
+                            name: 'member2',
+                            agg: expect.arrayContaining([
+                                expect.objectContaining({
+                                    metric: CsGroupActivityAggregationMetric.PROGRESS,
+                                    lastUpdatedOn: expect.anything(),
+                                    value: 20
+                                }),
+                            ]),
+                        })
+                    ]);
+                    done();
+                });
+            });
+        });
+
         it('should merge missing metric leafNodesCount into response when mergeGroup provided', (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();
