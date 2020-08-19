@@ -1,7 +1,7 @@
-import {from, Observable} from 'rxjs';
+import {defer, Observable} from 'rxjs';
 import * as qs from 'qs';
 import {HttpClient} from './http-client';
-import {CsHttpResponseCode, CsHttpSerializer, CsResponse} from '../../interface';
+import {CsHttpRequestType, CsHttpSerializer, CsResponse} from '../../interface';
 import {CsHttpClientError, CsHttpServerError, CsNetworkError} from '../../errors';
 import {injectable} from 'inversify';
 
@@ -11,7 +11,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
     private serializer?: CsHttpSerializer;
 
     private static async mapError(url: string, e: any): Promise<CsResponse> {
-        if (e instanceof CsHttpServerError || e instanceof CsNetworkError) {
+        if (CsHttpServerError.isInstance(e) || CsHttpClientError.isInstance(e)) {
             throw e;
         }
 
@@ -25,13 +25,12 @@ export class HttpClientBrowserAdapter implements HttpClient {
         const scResponse = new CsResponse<any>();
         scResponse.responseCode = response.status;
 
-        scResponse.body = await response.json();
+        scResponse.body = await response.text();
 
-        if (typeof scResponse.body !== 'object') {
-            throw new CsNetworkError(`
-                ${response.url} -
-                ${scResponse.body || ''}
-            `);
+        try {
+            scResponse.body = JSON.parse(scResponse.body);
+        } catch (e) {
+            scResponse.body = scResponse.body;
         }
 
         if (response.ok) {
@@ -39,13 +38,6 @@ export class HttpClientBrowserAdapter implements HttpClient {
         }
 
         scResponse.errorMesg = 'SERVER_ERROR';
-
-        if (
-            response.status === CsHttpResponseCode.HTTP_UNAUTHORISED ||
-            response.status === CsHttpResponseCode.HTTP_FORBIDDEN
-        ) {
-            return scResponse;
-        }
 
         if (response.status >= 400 && response.status <= 499) {
             throw new CsHttpClientError(`
@@ -75,19 +67,29 @@ export class HttpClientBrowserAdapter implements HttpClient {
     get(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse> {
         const url = new URL(baseUrl + path);
 
+        this.addHeader('content-type', 'text/plain');
+
         if (typeof parameters === 'object') {
             Object.keys(parameters).forEach((key) => {
                 url.searchParams.append(key, parameters[key]);
             });
         }
 
-        return from(
-            window.fetch(url.toString(), {
-                method: 'GET',
-                headers: {...this.headers, ...headers},
-            }).then(HttpClientBrowserAdapter.mapResponse)
-                .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
-        );
+        return this.invokeRequest(CsHttpRequestType.GET, url, headers, undefined);
+    }
+
+    delete(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse> {
+        const url = new URL(baseUrl + path);
+
+        this.addHeader('content-type', 'text/plain');
+
+        if (typeof parameters === 'object') {
+            Object.keys(parameters).forEach((key) => {
+                url.searchParams.append(key, parameters[key]);
+            });
+        }
+
+        return this.invokeRequest(CsHttpRequestType.DELETE, url, headers, undefined);
     }
 
     patch(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse> {
@@ -97,18 +99,11 @@ export class HttpClientBrowserAdapter implements HttpClient {
             this.addHeader('content-type', 'application/x-www-form-urlencoded');
             body = qs.stringify(body);
         } else if (typeof body === 'object') {
-            this.addHeader('content-type', 'application/x-www-form-urlencoded');
+            delete this.headers['content-type'];
             body = JSON.stringify(body);
         }
 
-        return from(
-            window.fetch(url.toString(), {
-                method: 'PATCH',
-                headers: {...this.headers, ...headers},
-                body
-            }).then(HttpClientBrowserAdapter.mapResponse)
-                .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
-        );
+        return this.invokeRequest(CsHttpRequestType.PATCH, url, headers, body);
     }
 
     post(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse> {
@@ -118,17 +113,22 @@ export class HttpClientBrowserAdapter implements HttpClient {
             this.addHeader('content-type', 'application/x-www-form-urlencoded');
             body = qs.stringify(body);
         } else if (typeof body === 'object') {
-            this.addHeader('content-type', 'application/x-www-form-urlencoded');
+            delete this.headers['content-type'];
             body = JSON.stringify(body);
         }
 
-        return from(
-            window.fetch(url.toString(), {
-                method: 'POST',
+        return this.invokeRequest(CsHttpRequestType.POST, url, headers, body);
+    }
+
+    private invokeRequest(method: CsHttpRequestType, url: URL, headers: { [key: string]: string }, body?: any): Observable<CsResponse> {
+        return defer(() =>
+            fetch(url.toString(), {
+                method,
                 headers: {...this.headers, ...headers},
-                body
+                body,
+                credentials: 'same-origin'
             }).then(HttpClientBrowserAdapter.mapResponse)
                 .catch((e) => HttpClientBrowserAdapter.mapError(url.toString(), e))
-        );
+        ) as Observable<CsResponse>;
     }
 }

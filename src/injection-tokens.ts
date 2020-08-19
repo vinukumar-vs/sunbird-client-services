@@ -18,9 +18,27 @@ export const InjectionTokens = {
         HTTP_SERVICE: Symbol.for('HTTP_SERVICE'),
     },
     services: {
+        user: {
+            USER_SERVICE_API_PATH: Symbol.for('USER_SERVICE_API_PATH'),
+            USER_SERVICE: Symbol.for('USER_SERVICE')
+        },
         group: {
             GROUP_SERVICE_API_PATH: Symbol.for('GROUP_SERVICE_API_PATH'),
-            GROUP_SERVICE: Symbol.for('GROUP_SERVICE')
+            GROUP_SERVICE_DATA_API_PATH: Symbol.for('GROUP_SERVICE_DATA_API_PATH'),
+            GROUP_SERVICE: Symbol.for('GROUP_SERVICE'),
+            GROUP_ACTIVITY_SERVICE: Symbol.for('GROUP_ACTIVITY_SERVICE'),
+        },
+        framework: {
+            FRAMEWORK_SERVICE_API_PATH: Symbol.for('FRAMEWORK_SERVICE_API_PATH'),
+            FRAMEWORK_SERVICE: Symbol.for('FRAMEWORK_SERVICE')
+        },
+        location: {
+            LOCATION_SERVICE_API_PATH: Symbol.for('LOCATION_SERVICE_API_PATH'),
+            LOCATION_SERVICE: Symbol.for('LOCATION_SERVICE')
+        },
+        course: {
+            COURSE_SERVICE_API_PATH: Symbol.for('COURSE_SERVICE_API_PATH'),
+            COURSE_SERVICE: Symbol.for('COURSE_SERVICE')
         }
     }
 };
