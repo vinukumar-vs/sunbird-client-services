@@ -161,6 +161,15 @@ const group = await groupService.getById(
 This service deals with user group management and has the following interface -
 
 ```
+CsModule.instance.init({
+    ...
+    services: {
+        groupServiceConfig: { // optional
+            apiPath: '/api/v1/group'
+        }
+    }
+);
+
 interface CsGroupService {
     create(
         name: string,
@@ -180,5 +189,56 @@ interface CsGroupService {
     addMemberById(memberId: string, groupId: string, config?: CsGroupServiceConfig): Observable<Group>;
 
     removeMemberById(memberId: string, groupId: string, config?: CsGroupServiceConfig): Observable<void>;
+}
+```
+
+### CsFrameworkService
+
+```
+CsModule.instance.init({
+    ...
+    services: {
+        frameworkServiceConfig: { // optional
+            apiPath: '<path>'
+        }
+    }
+);
+
+export interface CsFrameworkService {
+    getFramework(id: string, options?: GetFrameworkOptions, config?: CsFrameworkServiceConfig): Observable<Framework>;
+}
+```
+
+### CsLocationService
+
+```
+CsModule.instance.init({
+    ...
+    services: {
+        locationServiceConfig: { // optional
+            apiPath: '<path>'
+        }
+    }
+);
+
+export interface CsLocationService {
+    searchLocations(request?: SearchLocationRequests, config?: CsLocationServiceConfig): Observable<Location[]>;
+}
+```
+
+### CsLocationService
+
+```
+CsModule.instance.init({
+    ...
+    services: {
+        courseServiceConfig: { // optional
+            apiPath: '<path>'
+        }
+    }
+);
+
+export interface CsCourseService {
+    getUserEnrollmentList(request: GetUserEnrollmentListRequests, additionalParams?: { [key: string]: string }, config?: CsCourseServiceConfig): Observable<Course[]>;
 }
 ```

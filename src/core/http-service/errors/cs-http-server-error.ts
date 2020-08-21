@@ -11,6 +11,6 @@ export class CsHttpServerError extends CsError {
     }
 
     static isInstance(obj: any): boolean {
-        return obj instanceof Error && obj['code'] && obj['code'] === CsHttpServerError.code;
+        return obj['code'] && obj['code'] === CsHttpServerError.code;
     }
 }

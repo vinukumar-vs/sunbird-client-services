@@ -3,7 +3,8 @@ export enum CsHttpResponseCode {
     HTTP_FORBIDDEN = 403,
     HTTP_SUCCESS = 200,
     HTTP_BAD_REQUEST = 400,
-    HTTP_KONG_FAILURE= 447
+    HTTP_KONG_FAILURE = 447,
+    HTTP_INTERNAL_SERVER_ERROR = 500,
 }
 
 export class CsResponse<T = any> {

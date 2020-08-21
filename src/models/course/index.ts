@@ -1,3 +1,5 @@
+import {Content} from '../content';
+
 export interface Batch {
     identifier: string;
     id: string;
@@ -45,6 +47,8 @@ export interface Course {
     courseLogoUrl?: string;
     batchId?: string;
     userId?: string;
+    content?: Content;
+    contentStatus?: string;
     courseName?: string;
     leafNodesCount?: number;
     progress?: number;
@@ -53,8 +57,8 @@ export interface Course {
     courseId?: string;
     status?: number;
     contentsPlayedOffline?: string[];
-    batch?: {[key: string]: any};
+    batch?: { [key: string]: any };
     completionPercentage?: number;
     certificates?: CourseCertificate[];
+    batches?: (Partial<Batch>)[];
 }
-
