@@ -70,11 +70,11 @@ export class CsGroupAddableBloc {
     this._state$ = new BehaviorSubject<CsGroupAddableState | undefined>(
       this._groupAddableContextFactory.provide(this.pageContextBloc.state)
     );
-
     this.pageContextBlocSubscription = this.pageContextBloc.state$.pipe(
       map((pageContextState) => this._groupAddableContextFactory.provide(pageContextState)),
       tap((groupAddableState) => this._state$.next(groupAddableState))
     ).subscribe();
+    this._initialised = true;
   }
 
   setContextFactory(factory: CsGroupAddableContextFactory) {
@@ -82,8 +82,32 @@ export class CsGroupAddableBloc {
     this._state$.next(this._groupAddableContextFactory.provide(this.pageContextBloc.state));
   }
 
+  setGroupAddablePages(pageIds: string[]) {
+    this.setContextFactory(new class implements CsGroupAddableContextFactory {
+      provide(pageContextState?: CsPageContextState): CsGroupAddableState | undefined {
+        if (!pageContextState) {
+          return undefined;
+        }
+
+        if (pageIds.find(p => p === pageContextState.pageId)) {
+          return {
+            pageContextState,
+            addable: true
+          };
+        }
+
+        return {
+          pageContextState,
+          addable: false
+        };
+      }
+    }());
+  }
+
   dispose() {
     this.pageContextBlocSubscription.unsubscribe();
+    this._groupAddableContextFactory = new DefaultGroupAddableContextFactory();
     this._state$.complete();
+    this._initialised = false;
   }
 }
