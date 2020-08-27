@@ -82,7 +82,7 @@ export class CsGroupAddableBloc {
     this._state$.next(this._groupAddableContextFactory.provide(this.pageContextBloc.state));
   }
 
-  setGroupAddablePages(pageIds: string[]) {
+  setGroupAddablePages(pageIds: string[], params?: { [key: string]: any }) {
     this.setContextFactory(new class implements CsGroupAddableContextFactory {
       provide(pageContextState?: CsPageContextState): CsGroupAddableState | undefined {
         if (!pageContextState) {
@@ -92,13 +92,15 @@ export class CsGroupAddableBloc {
         if (pageIds.find(p => p === pageContextState.pageId)) {
           return {
             pageContextState,
-            addable: true
+            addable: true,
+            params
           };
         }
 
         return {
           pageContextState,
-          addable: false
+          addable: false,
+          params
         };
       }
     }());
