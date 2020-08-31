@@ -333,14 +333,6 @@ export class GroupServiceImpl implements CsGroupService {
             'action': 'list'
         };
 
-        return this.formService.getForm<{
-            index: number;
-            title: string;
-            activityType: string;
-            objectType: string;
-            sortBy: {
-                [key: string]: 'asc' | 'desc'
-            }[];
-        }>(request);
+        return this.formService.getForm<CsGroupSupportedActivitiesFormField>(request);
     }
 }

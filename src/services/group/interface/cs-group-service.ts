@@ -146,6 +146,7 @@ export interface CsGroupSupportedActivitiesFormField {
     title: string;
     activityType: string;
     objectType: string;
+    searchQuery: string;
     sortBy: {
         [key: string]: 'asc' | 'desc'
     }[];
