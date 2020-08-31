@@ -1,35 +1,12 @@
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {CsPageContextBloc, CsPageContextState} from '..';
-import {distinctUntilChanged, map, tap} from 'rxjs/operators';
+import {BehaviorSubject, Observable, of} from 'rxjs';
+import {distinctUntilChanged} from 'rxjs/operators';
 
 export interface CsGroupAddableState {
-  pageContextState: CsPageContextState;
-  addable: boolean;
+  pageIds: string[];
   params?: { [key: string]: any };
 }
 
-export interface CsGroupAddableContextFactory {
-  provide(pageContextState?: CsPageContextState): CsGroupAddableState | undefined;
-}
-
-class DefaultGroupAddableContextFactory implements CsGroupAddableContextFactory {
-  provide(pageContextState?: CsPageContextState): CsGroupAddableState | undefined {
-    if (!pageContextState) {
-      return undefined;
-    }
-
-    return {
-      pageContextState: pageContextState,
-      addable: true,
-      params: {}
-    };
-  }
-}
-
 export class CsGroupAddableBloc {
-  private pageContextBloc: CsPageContextBloc;
-  private pageContextBlocSubscription: Subscription;
-
   private static _instance: CsGroupAddableBloc;
 
   static get instance(): CsGroupAddableBloc {
@@ -41,21 +18,15 @@ export class CsGroupAddableBloc {
   }
 
   public get state(): CsGroupAddableState | undefined {
-    return this._state$.getValue();
+    return this._state$ ? this._state$.getValue() : undefined;
   }
 
-  private _groupAddableContextFactory: CsGroupAddableContextFactory;
-
-  public get groupAddableContextFactory(): CsGroupAddableContextFactory {
-    return this._groupAddableContextFactory;
-  }
-
-  private _state$: BehaviorSubject<CsGroupAddableState | undefined>;
+  private _state$?: BehaviorSubject<CsGroupAddableState | undefined>;
 
   public get state$(): Observable<CsGroupAddableState | undefined> {
-    return this._state$.asObservable().pipe(
-      distinctUntilChanged()
-    );
+    return this._state$ ? this._state$.asObservable().pipe(
+        distinctUntilChanged()
+    ) : of(undefined);
   }
 
   private _initialised = false;
@@ -65,51 +36,21 @@ export class CsGroupAddableBloc {
   }
 
   init() {
-    this.pageContextBloc = CsPageContextBloc.instance;
-    this._groupAddableContextFactory = new DefaultGroupAddableContextFactory();
-    this._state$ = new BehaviorSubject<CsGroupAddableState | undefined>(
-      this._groupAddableContextFactory.provide(this.pageContextBloc.state)
-    );
-    this.pageContextBlocSubscription = this.pageContextBloc.state$.pipe(
-      map((pageContextState) => this._groupAddableContextFactory.provide(pageContextState)),
-      tap((groupAddableState) => this._state$.next(groupAddableState))
-    ).subscribe();
+    this._state$ = new BehaviorSubject<CsGroupAddableState | undefined>(undefined);
     this._initialised = true;
   }
 
-  setContextFactory(factory: CsGroupAddableContextFactory) {
-    this._groupAddableContextFactory = factory;
-    this._state$.next(this._groupAddableContextFactory.provide(this.pageContextBloc.state));
-  }
-
-  setGroupAddablePages(pageIds: string[], params?: { [key: string]: any }) {
-    this.setContextFactory(new class implements CsGroupAddableContextFactory {
-      provide(pageContextState?: CsPageContextState): CsGroupAddableState | undefined {
-        if (!pageContextState) {
-          return undefined;
-        }
-
-        if (pageIds.find(p => p === pageContextState.pageId)) {
-          return {
-            pageContextState,
-            addable: true,
-            params
-          };
-        }
-
-        return {
-          pageContextState,
-          addable: false,
-          params
-        };
-      }
-    }());
+  updateState(state: CsGroupAddableState) {
+    if (this._state$) {
+      this._state$.next(state);
+    }
   }
 
   dispose() {
-    this.pageContextBlocSubscription.unsubscribe();
-    this._groupAddableContextFactory = new DefaultGroupAddableContextFactory();
-    this._state$.complete();
+    if (this._state$) {
+      this._state$.next(undefined);
+      this._state$.complete();
+    }
     this._initialised = false;
   }
 }
