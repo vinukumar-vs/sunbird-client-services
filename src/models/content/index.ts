@@ -60,6 +60,9 @@ export interface Content {
     itemSetPreviewUrl?: string;
     leafNodes?: string[];
     leafNodesCount?: number;
+    primaryCategory: string;
+    trackable?: Trackable;
+    userConsent: UserConsent;
 }
 
 export interface LicenseDetails {
@@ -79,4 +82,24 @@ export interface OriginData {
     author?: string;
     license?: string;
     organisation?: string;
+}
+
+export enum TrackingEnabled {
+    YES = 'Yes',
+    NO = 'No'
+}
+
+export enum AutoBatch {
+    YES = 'Yes',
+    NO = 'No'
+}
+
+export enum UserConsent {
+    YES = 'Yes',
+    NO = 'No'
+}
+
+export interface Trackable {
+    enable: TrackingEnabled;
+    autoBatch: AutoBatch;
 }
