@@ -1,5 +1,6 @@
 import {Content} from '../../../../models/content';
 import {CsContentSortCriteria, CsSortOrder} from '../../interface';
+import {Aggregator} from '../../../../utilities/aggregator';
 
 export interface CsContentSection {
     name: string;
@@ -19,12 +20,12 @@ export class CsContentsGroupGenerator {
     static generate(
         contents: Content[],
         groupBy: keyof Content,
-        sortCriteria: CsContentSortCriteria,
+        sortCriteria: CsContentSortCriteria | CsContentSortCriteria[],
         combination?: {
             [key in keyof Content]?: string[]
         }
     ): CsContentSection {
-        CsContentsGroupGenerator.sortItems(contents, sortCriteria);
+        CsContentsGroupGenerator.sortItems(contents, Array.isArray(sortCriteria) ? sortCriteria : [sortCriteria]);
 
         let resultingCombination: {
             [key in keyof Content]?: string
@@ -81,7 +82,7 @@ export class CsContentsGroupGenerator {
             };
         });
 
-        CsContentsGroupGenerator.sortItems(sections, sortCriteria);
+        CsContentsGroupGenerator.sortItems(sections, Array.isArray(sortCriteria) ? sortCriteria : [sortCriteria]);
 
         return {
             name: groupBy,
@@ -102,16 +103,9 @@ export class CsContentsGroupGenerator {
 
     private static isMultiValueAttribute = (content, attr) => Array.isArray(content[attr]);
 
-    private static uniquelyAddValue = (list: any[], value: any) => !(list.indexOf(value) >= 0) && list.push(value);
-
-    private static sortItems<T>(items: T[], sortCriteria: CsContentSortCriteria): void {
-        items.sort((a, b) => {
-            if (!a[sortCriteria.sortAttribute] || !b[sortCriteria.sortAttribute]) {
-                return 0;
-            }
-            const comparison = String(a[sortCriteria.sortAttribute]).localeCompare(b[sortCriteria.sortAttribute]);
-
-            return sortCriteria.sortOrder === CsSortOrder.ASC ? comparison : (comparison * -1);
-        });
+    private static sortItems<T>(items: T[], sortCriteria: CsContentSortCriteria[]): void {
+        Aggregator.sorted(items, sortCriteria.map((c) => ({
+            [c.sortAttribute]: c.sortOrder === CsSortOrder.ASC ? 'asc' : 'desc'
+        })));
     }
 }
