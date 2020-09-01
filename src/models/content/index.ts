@@ -60,9 +60,9 @@ export interface Content {
     itemSetPreviewUrl?: string;
     leafNodes?: string[];
     leafNodesCount?: number;
-    primaryCategory: string;
+    primaryCategory?: string;
     trackable?: Trackable;
-    userConsent: UserConsent;
+    userConsent?: UserConsent;
 }
 
 export interface LicenseDetails {
