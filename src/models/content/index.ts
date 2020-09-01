@@ -63,6 +63,7 @@ export interface Content {
     primaryCategory?: string;
     trackable?: Trackable;
     userConsent?: UserConsent;
+    additionalCategories?: string[];
 }
 
 export interface LicenseDetails {
