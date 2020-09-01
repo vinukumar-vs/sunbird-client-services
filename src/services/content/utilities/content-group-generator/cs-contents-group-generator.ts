@@ -106,6 +106,6 @@ export class CsContentsGroupGenerator {
     private static sortItems<T>(items: T[], sortCriteria: CsContentSortCriteria[]): void {
         Aggregator.sorted(items, sortCriteria.map((c) => ({
             [c.sortAttribute]: c.sortOrder === CsSortOrder.ASC ? 'asc' : 'desc'
-        })));
+        })) as { [key: string]: 'asc' | 'desc' }[]);
     }
 }
