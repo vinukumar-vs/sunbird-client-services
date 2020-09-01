@@ -3,9 +3,9 @@ export enum CsPrimaryCategory {
     LEARNING_RESOURCE = 'LearningResource',
     ONLINE_COURSE = 'OnlineCourse',
     QUESTION_SET = 'QuestionSet',
-    ETEXTBOOK = 'eTextBook',
+    E_TEXTBOOK = 'eTextBook',
     TEACHER_RESOURCE = 'TeacherResource',
-    COURSE_ASSESMENT = 'CourseAssessment',
+    COURSE_ASSESSMENT = 'CourseAssessment',
     ETB = 'ETB',
     CONTENT_PLAYLIST = 'ContentPlayList',
     GENERIC_COLLECTION = 'GenericCollection'
