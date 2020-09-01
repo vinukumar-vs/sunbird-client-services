@@ -26,6 +26,7 @@ describe('CsContentContextBloc', () => {
                 undefined,
                 {
                     pageIds: ['page-id-1', 'page-id-2'],
+                    groupId: 'some_group_id',
                     params: {sample: 'param'}
                 },
                 undefined
@@ -35,6 +36,7 @@ describe('CsContentContextBloc', () => {
 
         csGroupAddableBloc.updateState({
             pageIds: ['page-id-1', 'page-id-2'],
+            groupId: 'some_group_id',
             params: {sample: 'param'}
         });
 

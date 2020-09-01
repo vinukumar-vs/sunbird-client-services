@@ -3,6 +3,7 @@ import {distinctUntilChanged} from 'rxjs/operators';
 
 export interface CsGroupAddableState {
   pageIds: string[];
+  groupId: string;
   params?: { [key: string]: any };
 }
 
