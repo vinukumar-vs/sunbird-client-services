@@ -43,3 +43,27 @@ export interface IEventInput {
     'edata'?: {};
     'mid': String;
 }
+export interface ITelemetry {
+    'pdata': IProducerdata;
+    'env': string;
+    'apislug': string;
+    'channel': string;
+    'uid'?: string;
+    'endpoint': string;
+    'did'?: string;
+    'authtoken'?: string;
+    'sid'?: string;
+    'batchsize'?: Number;
+    'runningEnv'?: string;
+    'mode'?: string;
+    'host'?: string;
+    'tags'?: Array<string>;
+    'cdata'?: Array<{}>;
+    'dispatcher'?: undefined;
+    'enableValidation': boolean;
+    'timeDiff'?: Number;
+  }
+  export interface ITelemetryContext {
+    'config': ITelemetry;
+    'userOrgDetails': any;
+  }
