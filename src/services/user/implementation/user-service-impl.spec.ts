@@ -147,6 +147,45 @@ describe('UserServiceImpl', () => {
                 });
             });
         });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to check if user exists with matching fields in request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            exists: true,
+                            id: 'SOME_USER_ID',
+                            userId: 'SOME_USER_ID',
+                            name: 'SOME_NAME',
+                            managedBy: 'SOME_OTHER_USER_ID'
+                        }
+                    };
+                    return of(response);
+                });
+
+                userService.checkUserExists({
+                    key: 'userId',
+                    value: 'SOME_USER_ID'
+                }, undefined, {
+                    apiPath: '/some_path'
+                }).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: expect.stringContaining('/some_path')
+                    }));
+                    expect(r).toEqual({
+                        exists: true,
+                        id: 'SOME_USER_ID',
+                        userId: 'SOME_USER_ID',
+                        name: 'SOME_NAME',
+                        managedBy: 'SOME_OTHER_USER_ID'
+                    });
+                    done();
+                });
+            });
+        });
     });
 
     describe('updateUserDeclarations()', () => {
@@ -193,6 +232,56 @@ describe('UserServiceImpl', () => {
                     }
                 }));
                 done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should be able update user declarations providing appropriate http request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {}
+                    };
+                    return of(response);
+                });
+
+                userService.updateUserDeclarations([
+                    {
+                        operation: UserDeclarationOperation.ADD,
+                        userId: 'SOME_USER_ID',
+                        orgId: 'SOME_ORG_ID',
+                        persona: 'SOME_PERSONA',
+                        info: {}
+                    },
+                    {
+                        operation: UserDeclarationOperation.EDIT,
+                        userId: 'SOME_USER_ID',
+                        orgId: 'SOME_ORG_ID',
+                        persona: 'SOME_PERSONA',
+                        info: {}
+                    },
+                ], {
+                    apiPath: '/some_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_path'),
+                        body: {
+                            request: {
+                                declarations: expect.arrayContaining([
+                                    expect.objectContaining({
+                                        operation: UserDeclarationOperation.ADD,
+                                    }),
+                                    expect.objectContaining({
+                                        operation: UserDeclarationOperation.EDIT,
+                                    })
+                                ])
+                            }
+                        }
+                    }));
+                    done();
+                });
             });
         });
     });

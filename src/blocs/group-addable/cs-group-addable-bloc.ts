@@ -51,6 +51,7 @@ export class CsGroupAddableBloc {
     if (this._state$) {
       this._state$.next(undefined);
       this._state$.complete();
+      this._state$ = undefined;
     }
     this._initialised = false;
   }

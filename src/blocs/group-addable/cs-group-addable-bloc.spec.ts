@@ -31,6 +31,7 @@ describe('CsContentContextBloc', () => {
                 },
                 undefined
             ]);
+            expect(csGroupAddableBloc.state).toEqual(undefined);
             done();
         });
 
@@ -43,4 +44,40 @@ describe('CsContentContextBloc', () => {
         csGroupAddableBloc.dispose();
     });
   });
+
+    describe('without init()', () => {
+        it('should have undefined state', async (done) => {
+            expect(csGroupAddableBloc.initialised).toEqual(false);
+            expect(csGroupAddableBloc.state).toEqual(undefined);
+            expect(await csGroupAddableBloc.state$.toPromise()).toEqual(undefined);
+            done();
+        });
+
+        describe('updateState()', () => {
+            it('should have no effect on state', async (done) => {
+                // act
+                csGroupAddableBloc.updateState({
+                    pageIds: ['page-id-1'],
+                    groupId: 'group-id'
+                });
+                // assert
+                expect(csGroupAddableBloc.initialised).toEqual(false);
+                expect(csGroupAddableBloc.state).toEqual(undefined);
+                expect(await csGroupAddableBloc.state$.toPromise()).toEqual(undefined);
+                done();
+            });
+        });
+
+        describe('dispose()', () => {
+            it('should have no effect on state', async (done) => {
+                // act
+                csGroupAddableBloc.dispose();
+                // assert
+                expect(csGroupAddableBloc.initialised).toEqual(false);
+                expect(csGroupAddableBloc.state).toEqual(undefined);
+                expect(await csGroupAddableBloc.state$.toPromise()).toEqual(undefined);
+                done();
+            });
+        });
+    });
 });
