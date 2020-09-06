@@ -29,11 +29,11 @@ export interface Batch {
 
 export interface CourseCertificate {
     identifier?: string;
+    url?: string;
+    id?: string;
     name: string;
     lastIssuedOn: string;
-    url?: string;
     token: string;
-    id: string;
 }
 
 export interface Course {
@@ -61,5 +61,6 @@ export interface Course {
     batch?: { [key: string]: any };
     completionPercentage?: number;
     certificates?: CourseCertificate[];
+    issuedCertificates?: CourseCertificate[];
     batches?: (Partial<Batch>)[];
 }
