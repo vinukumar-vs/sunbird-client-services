@@ -5,8 +5,17 @@ export interface IProducerdata {
 }
 
 export interface IRollup {
-    'l1': string;
-    'l2': string;
+    'l1'?: string;
+    'l2'?: string;
+    "l3"?: string;
+    "l4"?: string;
+}
+
+export interface ITelemetryObject {
+    "id"?: string;
+    "type"?: string;
+    "ver"?: string;
+    "rollup"?: IRollup;
 }
 
 export interface IContext {
@@ -14,17 +23,13 @@ export interface IContext {
     'sid': string;
     'did': string;
     'channel'?: string;
-    'cdata'?: Array<object>;
+    'cdata'?: Array<ICDataEntry>;
     'pdata'?: IProducerdata;
-    'rollup'?: IRollup | any;
+    'rollup'?: IRollup;
 }
-
-export interface IObject {
-    'id'?: string;
-    'type'?: string;
-    'ver'?: string;
-    'section'?: string;
-    'rollup'?: IRollup | any;
+export interface ICDataEntry {
+    'type': string;
+    'id': string;
 }
 
 export interface IActor {
@@ -37,8 +42,8 @@ export interface IEventInput {
     'ets': string;
     'ver'?: string;
     'actor'?: IActor;
-    'context': IContext | any;
-    'object'?: IObject | any;
+    'context': IContext;
+    'object'?: ITelemetryObject;
     'tags'?: Array<String>;
     'edata'?: {};
     'mid': String;
@@ -58,7 +63,7 @@ export interface ITelemetry {
     'mode'?: string;
     'host'?: string;
     'tags'?: Array<string>;
-    'cdata'?: Array<{}>;
+    'cdata'?: Array<ICDataEntry>;
     'dispatcher'?: undefined;
     'enableValidation': boolean;
     'timeDiff'?: Number;
