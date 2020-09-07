@@ -1,7 +1,6 @@
 import {
     CsHttpRequestType,
     CsHttpResponseCode,
-    CsHttpSerializer,
     CsHttpService,
     CsRequest,
     CsRequestInterceptor,
@@ -10,7 +9,6 @@ import {
 } from '../interface';
 import {from, Observable} from 'rxjs';
 import {Container, inject, injectable} from 'inversify';
-import * as qs from 'qs';
 import {InjectionTokens} from '../../../injection-tokens';
 import {HttpClient} from './http-client-adapters/http-client';
 import {BearerTokenInjectRequestInterceptor} from './interceptors/bearer-token-inject-request-interceptor';
@@ -103,6 +101,11 @@ export class HttpServiceImpl implements CsHttpService {
                         ).toPromise();
                         break;
                     }
+                    case CsHttpRequestType.DELETE:
+                        localResponse = await this.http.delete(
+                            request.host || this.host, request.path, request.headers, request.parameters
+                        ).toPromise();
+                        break;
                     default:
                         throw new Error('Unsupported type');
                 }
@@ -190,10 +193,6 @@ export class HttpServiceImpl implements CsHttpService {
 
         if (request.withUserToken && request.requestInterceptors.indexOf(this.userTokenInjectRequestInterceptor) === -1) {
             request.requestInterceptors.push(this.userTokenInjectRequestInterceptor);
-        }
-
-        if (this.http.setSerializer(request.serializer) === CsHttpSerializer.URLENCODED) {
-            request.body = qs.stringify(request.body);
         }
 
         this.http.setSerializer(request.serializer);
