@@ -53,6 +53,24 @@ export interface CsConfig {
             channelId?: string;
             producerId?: string;
             deviceId?: string;
+            telemetry?: {
+                ver?: string;
+                pdata?:{
+                    id?: string;
+                    pid?: string;
+                    ver?: string;
+                },
+                actor?: { //Overridable
+                    type?:string;
+                    id?: string;
+                },
+                channel?: '',//Overriable
+                context?: {
+                    sid?: string;
+                    did?: string;
+                }
+                
+            };
         },
         api: {
             host: string;
