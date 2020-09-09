@@ -14,7 +14,7 @@ describe('CsPrimaryCategoryMapper', () => {
 
     it('should return primaryCaterory = LEARNING_RESOURCE if contentType = Resource , mimeType is PDF and  resourceType is EXPERIMENT', () => {
         expect(CsPrimaryCategoryMapper.getPrimaryCategory(
-          CsContentType.RESOURCE, CsMimeType.PDF, CsResourceType.EXPERIMENT)).toEqual(CsPrimaryCategory.LEARNING_RESOURCE);
+          CsContentType.RESOURCE, CsMimeType.EPUB, CsResourceType.EXPERIMENT)).toEqual(CsPrimaryCategory.LEARNING_RESOURCE);
     });
 
     it('should return primaryCaterory = TEACHER_RESOURCE if contentType = Resource , mimeType is PDF and  resourceType is LESSON_PLAN', () => {

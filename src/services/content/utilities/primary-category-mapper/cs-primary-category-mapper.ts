@@ -48,10 +48,8 @@ export class CsPrimaryCategoryMapper {
         case  CsMimeType.HTML:
         case  CsMimeType.APK:
           return CsPrimaryCategory.LEARNING_RESOURCE;
-        case  CsMimeType.PDF:
-        case  CsMimeType.H5P:
-        case  CsMimeType.HTML:
         case  CsMimeType.EPUB:
+        case  CsMimeType.PDF:
         case  CsMimeType.ECML:
         case  CsMimeType.TXT_X_URL:
           return CsPrimaryCategoryMapper.getResourcePrimaryCategory(respurceType);
