@@ -28,7 +28,7 @@ export interface Content {
     osId: string;
     contentType: string;
     resourceType: string;
-    mimeType: string;
+    mimeType: ContentMimeType;
     artifactMimeType: string;
     versionKey: string;
     contentEncoding: string;
@@ -103,4 +103,47 @@ export enum UserConsent {
 export interface Trackable {
     enable: TrackingEnabled;
     autoBatch: AutoBatch;
+}
+
+export type ContentMimeType =
+    'application/vnd.ekstep.content-collection' |
+    'video/avi' | 'video/mpeg' | 'video/quicktime' | 'video/3gpp' | 'video/mp4' | 'video/ogg' | 'video/webm' |
+    'audio/mp3' | 'audio/mp4' | 'audio/mpeg' | 'audio/ogg' | 'audio/webm' | 'audio/x-wav' | 'audio/wav' |
+    'application/vnd.ekstep.ecml-archive' | 'application/vnd.ekstep.html-archive' |
+    'application/vnd.android.package-archive' | 'application/vnd.ekstep.content-archive' |
+    'application/vnd.ekstep.plugin-archive' | 'application/vnd.ekstep.h5p-archive' |
+    'application/pdf' | 'application/epub' | 'application/msword' | 'video/x-youtube' | 'text/x-url';
+
+export enum MimeTypeCategory {
+    COLLECTION = 'COLLECTION',
+    VIDEO = 'VIDEO',
+    AUDIO = 'AUDIO',
+    INTERACTION = 'INTERACTION',
+    DOCS = 'DOCS',
+    ALL = 'ALL'
+}
+
+export class MimeTypeCategoryMapping {
+    public static readonly [MimeTypeCategory.COLLECTION]: ContentMimeType[] = [
+        'application/vnd.ekstep.content-collection'
+    ];
+    public static readonly [MimeTypeCategory.VIDEO]: ContentMimeType[] = [
+        'video/avi', 'video/mpeg', 'video/quicktime', 'video/3gpp', 'video/mpeg', 'video/mp4', 'video/ogg', 'video/webm'
+    ];
+    public static readonly [MimeTypeCategory.AUDIO]: ContentMimeType[] = [
+        'audio/mp3', 'audio/mp4', 'audio/mpeg', 'audio/ogg', 'audio/webm', 'audio/x-wav', 'audio/wav'
+    ];
+    public static readonly [MimeTypeCategory.INTERACTION]: ContentMimeType[] = [
+        'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.html-archive',
+        'application/vnd.android.package-archive', 'application/vnd.ekstep.content-archive',
+        'application/vnd.ekstep.plugin-archive', 'application/vnd.ekstep.h5p-archive'
+    ];
+    public static readonly [MimeTypeCategory.DOCS]: ContentMimeType[] = [
+        'application/pdf', 'application/epub', 'application/msword'
+    ];
+    public static readonly [MimeTypeCategory.ALL]: ContentMimeType[] = [
+        'video/mp4', 'video/x-youtube', 'video/webm', 'application/pdf', 'application/epub',
+        'application/pdf', 'application/epub', 'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.h5p-archive',
+        'application/vnd.ekstep.html-archive', 'text/x-url'
+    ];
 }
