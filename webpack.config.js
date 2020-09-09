@@ -31,7 +31,7 @@ const config = {
         'dist/services/user/index': './src/services/user/index.ts',
         'dist/blocs/index': './src/blocs/index.ts',
         'dist/utilities/aggregator/index': './src/utilities/aggregator/index.ts',
-        'dist/core/telemetry-service/index': './src/core/telemetry-service/index.ts',
+        'dist/telemetry/index': './src/telemetry/index.ts',
     },
     externals: [
         // externals here
