@@ -1,4 +1,4 @@
-import {ICDataEntry, ITelemetryObject, IProducerdata, IActor} from '../interface/cs-telemetry-request';
+import {IActor, ICDataEntry, IProducerdata, ITelemetryObject} from './cs-telemetry-request';
 
 export abstract class TelemetryService {
     public abstract initTelemetry(telemetryConfig: any);

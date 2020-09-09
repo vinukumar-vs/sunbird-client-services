@@ -27,6 +27,7 @@ export interface IContext {
     'pdata'?: IProducerdata;
     'rollup'?: IRollup;
 }
+
 export interface ICDataEntry {
     'type': string;
     'id': string;
@@ -48,6 +49,7 @@ export interface IEventInput {
     'edata'?: {};
     'mid': string;
 }
+
 export interface ITelemetry {
     'pdata': IProducerdata;
     'env': string;
@@ -67,8 +69,9 @@ export interface ITelemetry {
     'dispatcher'?: undefined;
     'enableValidation': boolean;
     'timeDiff'?: Number;
-  }
-  export interface ITelemetryContext {
+}
+
+export interface ITelemetryContext {
     'config': ITelemetry;
     'userOrgDetails': any;
-  }
+}

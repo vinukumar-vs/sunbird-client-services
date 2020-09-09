@@ -1,7 +1,7 @@
-import { TelemetryService } from '../interface/cs-telemetry-service';
-import { ITelemetry, ITelemetryContext, IProducerdata, IActor, IContext, ICDataEntry, ITelemetryObject } from "../interface/cs-telemetry-request";
+import {TelemetryService} from '../interface';
+import {IActor, ICDataEntry, IProducerdata, ITelemetry, ITelemetryContext, ITelemetryObject} from '../interface/cs-telemetry-request';
 import * as EkTelemetry from '@project-sunbird/telemetry-sdk';
-import { injectable } from 'inversify';
+import {injectable} from 'inversify';
 
 @injectable()
 export class TelemetryServiceImpl implements TelemetryService {

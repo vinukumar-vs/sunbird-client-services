@@ -22,6 +22,7 @@ const config = {
         'dist/services/content/index': './src/services/content/index.ts',
         'dist/services/content/utilities/content-group-generator/index': './src/services/content/utilities/content-group-generator/index.ts',
         'dist/services/content/utilities/content-progress-calculator/index': './src/services/content/utilities/content-progress-calculator/index.ts',
+        'dist/services/content/utilities/mime-type-facet-to-mime-type-category-aggregator/index': './src/services/content/utilities/mime-type-facet-to-mime-type-category-aggregator/index.ts',
         'dist/services/group/index': './src/services/group/index.ts',
         'dist/services/group/activity/index': './src/services/group/activity/index.ts',
         'dist/services/location/index': './src/services/location/index.ts',
@@ -30,7 +31,7 @@ const config = {
         'dist/services/user/index': './src/services/user/index.ts',
         'dist/blocs/index': './src/blocs/index.ts',
         'dist/utilities/aggregator/index': './src/utilities/aggregator/index.ts',
-        'dist/core/telemetry-service/index': './src/core/telemetry-service/index.ts',
+        'dist/telemetry/index': './src/telemetry/index.ts',
     },
     externals: [
         // externals here

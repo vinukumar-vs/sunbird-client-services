@@ -1,9 +1,12 @@
-import { PlayerTelemetryService } from '../interface/cs-player-telemetry-service';
-import { TelemetryService } from '../interface/cs-telemetry-service';
+import {PlayerTelemetryService, TelemetryService} from '../interface';
+import {injectable} from 'inversify';
 
+@injectable()
 export class PlayerTelemetryServiceImpl implements PlayerTelemetryService {
-
-    telemetryService: TelemetryService;
+    constructor(
+        protected telemetryService: TelemetryService
+    ) {
+    }
 
     onStartEvent(event: any, data: any) {
         this.telemetryService.raiseStartTelemetry({});
