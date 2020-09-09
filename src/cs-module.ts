@@ -1,3 +1,4 @@
+import { TelemetryServiceImpl } from './core/telemetry-service/implementation/cs-telemetry-serviceImpl';
 import {Container} from 'inversify';
 import {HttpClient} from './core/http-service/implementation/http-client-adapters/http-client';
 import {HttpClientCordovaAdapter} from './core/http-service/implementation/http-client-adapters/http-client-cordova-adapter';
@@ -19,6 +20,7 @@ import {CsGroupActivityService} from './services/group/activity/interface';
 import {GroupActivityServiceImpl} from './services/group/activity/implementation/group-activity-service-impl';
 import {CsFormService} from './services/form/interface/cs-form-service';
 import {FormServiceImpl} from './services/form/implementation/form-service-impl';
+import { TelemetryService } from './core/telemetry-service';
 
 export interface CsUserServiceConfig {
     apiPath: string;
@@ -55,21 +57,20 @@ export interface CsConfig {
             deviceId?: string;
             telemetry?: {
                 ver?: string;
-                pdata?:{
+                pdata?: {
                     id?: string;
                     pid?: string;
                     ver?: string;
                 },
-                actor?: { //Overridable
-                    type?:string;
+                actor?: { // Override
+                    type?: string;
                     id?: string;
                 },
-                channel?: '',//Overriable
+                channel?: '', // Overriable
                 context?: {
                     sid?: string;
                     did?: string;
                 }
-                
             };
         },
         api: {
@@ -95,6 +96,7 @@ export class CsModule {
     private _container: Container;
     private onUpdateConfigCallback?: () => void;
 
+    // tslint:disable-next-line:member-ordering
     private static _instance?: CsModule;
 
     public static get instance(): CsModule {
@@ -143,6 +145,10 @@ export class CsModule {
 
     get formService(): CsFormService {
         return this._container.get<CsFormService>(InjectionTokens.services.form.FORM_SERVICE);
+    }
+
+    get telemetryService(): TelemetryService {
+        return this._container.get<TelemetryService>(InjectionTokens.services.telemetry.TELEMETRY_SERVICE);
     }
 
     public async init(config: CsConfig, onConfigUpdate?: () => void) {
@@ -248,6 +254,9 @@ export class CsModule {
             this._container[mode]<string>(InjectionTokens.services.form.FORM_SERVICE_API_PATH)
                 .toConstantValue(config.services.formServiceConfig.apiPath);
         }
+
+        this._container.bind<TelemetryService>(InjectionTokens.services.telemetry.TELEMETRY_SERVICE)
+        .to(TelemetryServiceImpl).inSingletonScope();
 
         if (mode === 'rebind' && this.onUpdateConfigCallback) {
             this.onUpdateConfigCallback();

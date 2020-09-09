@@ -1,5 +1,5 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const config = {
     entry: {
@@ -30,6 +30,7 @@ const config = {
         'dist/services/user/index': './src/services/user/index.ts',
         'dist/blocs/index': './src/blocs/index.ts',
         'dist/utilities/aggregator/index': './src/utilities/aggregator/index.ts',
+        'dist/core/telemetry-service/index': './src/core/telemetry-service/index.ts',
     },
     externals: [
         // externals here
@@ -53,9 +54,10 @@ const config = {
         extensions: ['.tsx', '.ts', '.js']
     },
     optimization: {
-        minimizer: [new UglifyJsPlugin({
-            sourceMap: true
-        })],
+        minimize: true,
+        minimizer: [new TerserPlugin({
+            sourceMap: true,
+          })],
     },
     performance: {
         hints: false

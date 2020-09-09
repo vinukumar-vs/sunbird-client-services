@@ -44,6 +44,9 @@ export const InjectionTokens = {
         form: {
             FORM_SERVICE_API_PATH: Symbol.for('FORM_SERVICE_API_PATH'),
             FORM_SERVICE: Symbol.for('FORM_SERVICE')
+        },
+        telemetry: {
+            TELEMETRY_SERVICE: Symbol.for('TELEMETRY_SERVICE')
         }
     }
 };
