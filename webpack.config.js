@@ -23,6 +23,7 @@ const config = {
         'dist/services/content/utilities/content-group-generator/index': './src/services/content/utilities/content-group-generator/index.ts',
         'dist/services/content/utilities/content-progress-calculator/index': './src/services/content/utilities/content-progress-calculator/index.ts',
         'dist/services/content/utilities/mime-type-facet-to-mime-type-category-aggregator/index': './src/services/content/utilities/mime-type-facet-to-mime-type-category-aggregator/index.ts',
+        'dist/services/content/utilities/primary-category-mapper/index': './src/services/content/utilities/primary-category-mapper/index.ts',
         'dist/services/group/index': './src/services/group/index.ts',
         'dist/services/group/activity/index': './src/services/group/activity/index.ts',
         'dist/services/location/index': './src/services/location/index.ts',
