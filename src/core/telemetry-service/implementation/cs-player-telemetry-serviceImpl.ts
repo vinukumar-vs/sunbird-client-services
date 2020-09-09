@@ -2,7 +2,7 @@ import { PlayerTelemetryService } from '../interface/cs-player-telemetry-service
 import { TelemetryService } from '../interface/cs-telemetry-service';
 
 export class PlayerTelemetryServiceImpl implements PlayerTelemetryService {
-    
+
     telemetryService: TelemetryService;
 
     onStartEvent(event: any, data: any) {
@@ -17,10 +17,10 @@ export class PlayerTelemetryServiceImpl implements PlayerTelemetryService {
         this.telemetryService.raiseErrorTelemetry({});
     }
 
-    onHeartBeatEvent(event,data?) {
-        if(event.type =="LOADED") {
+    onHeartBeatEvent(event, data?) {
+        if (event.type === 'LOADED') {
 
-        } else if (event.type == "PLAY") {
+        } else if (event.type === 'PLAY') {
 
         } else {
             this.telemetryService.raiseLogTelemetry({});
