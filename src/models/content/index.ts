@@ -106,13 +106,40 @@ export interface Trackable {
 }
 
 export type ContentMimeType =
+    'application/vnd.ekstep.ecml-archive' |
+    'application/vnd.ekstep.html-archive' |
+    'application/vnd.android.package-archive' |
+    'application/vnd.ekstep.content-archive' |
     'application/vnd.ekstep.content-collection' |
-    'video/avi' | 'video/mpeg' | 'video/quicktime' | 'video/3gpp' | 'video/mp4' | 'video/ogg' | 'video/webm' |
-    'audio/mp3' | 'audio/mp4' | 'audio/mpeg' | 'audio/ogg' | 'audio/webm' | 'audio/x-wav' | 'audio/wav' |
-    'application/vnd.ekstep.ecml-archive' | 'application/vnd.ekstep.html-archive' |
-    'application/vnd.android.package-archive' | 'application/vnd.ekstep.content-archive' |
-    'application/vnd.ekstep.plugin-archive' | 'application/vnd.ekstep.h5p-archive' |
-    'application/pdf' | 'application/epub' | 'application/msword' | 'video/x-youtube' | 'text/x-url';
+    'application/vnd.ekstep.plugin-archive' |
+    'application/vnd.ekstep.h5p-archive' |
+    'application/epub' |
+    'text/x-url' |
+    'video/x-youtube' |
+    'application/octet-stream' |
+    'application/msword' |
+    'application/pdf' |
+    'image/jpeg' |
+    'image/jpg' |
+    'image/png' |
+    'image/tiff' |
+    'image/bmp' |
+    'image/gif' |
+    'image/svg+xml' |
+    'video/avi' |
+    'video/mpeg' |
+    'video/quicktime' |
+    'video/3gpp' |
+    'video/mp4' |
+    'video/ogg' |
+    'video/webm' |
+    'audio/mp3' |
+    'audio/mp4' |
+    'audio/mpeg' |
+    'audio/ogg' |
+    'audio/webm' |
+    'audio/x-wav' |
+    'audio/wav';
 
 export enum MimeTypeCategory {
     COLLECTION = 'COLLECTION',
@@ -128,22 +155,71 @@ export class MimeTypeCategoryMapping {
         'application/vnd.ekstep.content-collection'
     ];
     public static readonly [MimeTypeCategory.VIDEO]: ContentMimeType[] = [
-        'video/avi', 'video/mpeg', 'video/quicktime', 'video/3gpp', 'video/mpeg', 'video/mp4', 'video/ogg', 'video/webm'
+        'video/avi',
+        'video/mpeg',
+        'video/quicktime',
+        'video/3gpp',
+        'video/mpeg',
+        'video/mp4',
+        'video/ogg',
+        'video/webm',
+        'video/x-youtube'
     ];
     public static readonly [MimeTypeCategory.AUDIO]: ContentMimeType[] = [
-        'audio/mp3', 'audio/mp4', 'audio/mpeg', 'audio/ogg', 'audio/webm', 'audio/x-wav', 'audio/wav'
+        'audio/mp3',
+        'audio/mp4',
+        'audio/mpeg',
+        'audio/ogg',
+        'audio/webm',
+        'audio/x-wav',
+        'audio/wav'
     ];
     public static readonly [MimeTypeCategory.INTERACTION]: ContentMimeType[] = [
-        'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.html-archive',
-        'application/vnd.android.package-archive', 'application/vnd.ekstep.content-archive',
-        'application/vnd.ekstep.plugin-archive', 'application/vnd.ekstep.h5p-archive'
+        'application/vnd.ekstep.ecml-archive',
+        'application/vnd.ekstep.html-archive',
+        'application/vnd.ekstep.content-archive',
+        'application/vnd.ekstep.h5p-archive'
     ];
     public static readonly [MimeTypeCategory.DOCS]: ContentMimeType[] = [
-        'application/pdf', 'application/epub', 'application/msword'
+        'application/pdf',
+        'application/epub',
+        'application/msword'
     ];
     public static readonly [MimeTypeCategory.ALL]: ContentMimeType[] = [
-        'video/mp4', 'video/x-youtube', 'video/webm', 'application/pdf', 'application/epub',
-        'application/pdf', 'application/epub', 'application/vnd.ekstep.ecml-archive', 'application/vnd.ekstep.h5p-archive',
-        'application/vnd.ekstep.html-archive', 'text/x-url'
+        'application/vnd.ekstep.ecml-archive',
+        'application/vnd.ekstep.html-archive',
+        'application/vnd.android.package-archive',
+        'application/vnd.ekstep.content-archive',
+        'application/vnd.ekstep.content-collection',
+        'application/vnd.ekstep.plugin-archive',
+        'application/vnd.ekstep.h5p-archive',
+        'application/epub',
+        'text/x-url',
+        'video/x-youtube',
+        'application/octet-stream',
+        'application/msword',
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/tiff',
+        'image/bmp',
+        'image/gif',
+        'image/svg+xml',
+        'video/avi',
+        'video/mpeg',
+        'video/quicktime',
+        'video/3gpp',
+        'video/mpeg',
+        'video/mp4',
+        'video/ogg',
+        'video/webm',
+        'audio/mp3',
+        'audio/mp4',
+        'audio/mpeg',
+        'audio/ogg',
+        'audio/webm',
+        'audio/x-wav',
+        'audio/wav'
     ];
 }
