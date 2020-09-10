@@ -21,6 +21,7 @@ export class TelemetryServiceImpl implements TelemetryService {
     public initTelemetry(telemetryContext: ITelemetryContext) {
         this.telemetryProvider = EkTelemetry;
         this._isInitialsed = true;
+        this.context = telemetryContext;
         this.telemetryProvider.initialize(telemetryContext.config);
     }
     public initTelmetry(pdata: IProducerdata, actor: IActor, channel: string , sid: string, did: string) {
@@ -96,7 +97,11 @@ export class TelemetryServiceImpl implements TelemetryService {
 
     }
     public raiseStartTelemetry(startEventObject: any) {
-        throw new Error('Method not implemented.');
+        if (this.isTelemetryInitialised()) {
+            this.telemetryProvider.start(this.context.config, startEventObject.options.object.id, startEventObject.options.object.ver,
+                startEventObject.edata, startEventObject.options
+                    );
+        }
     }
     public raiseEndTelemetry(endEventObject: any) {
         if (this.isTelemetryInitialised()) {
