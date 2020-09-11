@@ -3,18 +3,20 @@ import {ContentMimeType, MimeTypeCategory, MimeTypeCategoryMapping} from '../../
 export interface MimeTypeFacet {
     name: ContentMimeType;
     count: number;
+    apply?: boolean;
 }
 
 export interface MimeTypeCategoryAggregation {
     name: MimeTypeCategory;
     count: number;
     values: MimeTypeFacet[];
+    apply?: boolean;
 }
 
 export class CsMimeTypeFacetToMimeTypeCategoryAggregator {
     public static aggregate(mimeTypeFacets: MimeTypeFacet[]): MimeTypeCategoryAggregation[] {
         interface Mapping {
-            [key: string]: { count: number; values: MimeTypeFacet[] };
+            [key: string]: { count: number; values: MimeTypeFacet[], apply?: boolean };
         }
 
         const mapping = mimeTypeFacets.reduce<Mapping>((acc, facet) => {
@@ -27,11 +29,26 @@ export class CsMimeTypeFacetToMimeTypeCategoryAggregator {
                     if (acc[category]) {
                         acc[category].count = acc[category].count + facet.count;
                         acc[category].values = acc[category].values.concat(facet);
+                        if (facet.apply !== undefined) {
+                            if (acc[category].apply !== undefined) {
+                                acc[category].apply = acc[category].apply || facet.apply;
+                            } else {
+                                acc[category].apply = facet.apply;
+                            }
+                        }
                     } else {
-                        acc[category] = {
-                            count: facet.count,
-                            values: [facet]
-                        };
+                        if (facet.apply !== undefined) {
+                            acc[category] = {
+                                count: facet.count,
+                                values: [facet],
+                                apply: facet.apply
+                            };
+                        } else {
+                            acc[category] = {
+                                count: facet.count,
+                                values: [facet],
+                            };
+                        }
                     }
                 }
             }
