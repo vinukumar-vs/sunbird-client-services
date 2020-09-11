@@ -56,9 +56,16 @@ const config = {
     },
     optimization: {
         minimize: true,
-        minimizer: [new TerserPlugin({
-            sourceMap: true,
-        })],
+        minimizer: [
+            new TerserPlugin({
+                sourceMap: true,
+                terserOptions: {
+                    compress: {
+                        unused: false
+                    }
+                }
+            })
+        ],
     },
     performance: {
         hints: false
