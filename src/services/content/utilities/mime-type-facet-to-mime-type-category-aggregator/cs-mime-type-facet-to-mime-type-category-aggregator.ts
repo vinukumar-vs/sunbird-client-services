@@ -14,14 +14,14 @@ export interface MimeTypeCategoryAggregation {
 }
 
 export class CsMimeTypeFacetToMimeTypeCategoryAggregator {
-    public static aggregate(mimeTypeFacets: MimeTypeFacet[]): MimeTypeCategoryAggregation[] {
+    public static aggregate(mimeTypeFacets: MimeTypeFacet[], exclude: MimeTypeCategory[] = []): MimeTypeCategoryAggregation[] {
         interface Mapping {
             [key: string]: { count: number; values: MimeTypeFacet[], apply?: boolean };
         }
 
         const mapping = mimeTypeFacets.reduce<Mapping>((acc, facet) => {
             for (const category in MimeTypeCategory) {
-                if (!(category in MimeTypeCategory)) {
+                if (!(category in MimeTypeCategory) || exclude.indexOf(category as any) >= 0) {
                     continue;
                 }
 
