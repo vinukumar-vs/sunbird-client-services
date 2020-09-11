@@ -78,7 +78,7 @@ describe('CsMimeTypeFacetToMimeTypeCategoryAggregator', () => {
 
         expect(CsMimeTypeFacetToMimeTypeCategoryAggregator.aggregate(facetValues)).toEqual([
             {
-                'name': 'DOCS',
+                'name': 'DOC',
                 'count': 15,
                 'values': [
                     {
@@ -252,7 +252,7 @@ describe('CsMimeTypeFacetToMimeTypeCategoryAggregator', () => {
                 'apply': true
             },
             {
-                'name': 'DOCS',
+                'name': 'DOC',
                 'count': 15,
                 'values': [
                     {
@@ -312,7 +312,7 @@ describe('CsMimeTypeFacetToMimeTypeCategoryAggregator', () => {
         ];
         expect(CsMimeTypeFacetToMimeTypeCategoryAggregator.aggregate(facetValues, [MimeTypeCategory.ALL])).toEqual([
             {
-                'name': 'DOCS',
+                'name': 'DOC',
                 'count': 15,
                 'values': [
                     {

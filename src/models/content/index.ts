@@ -146,7 +146,7 @@ export enum MimeTypeCategory {
     VIDEO = 'VIDEO',
     AUDIO = 'AUDIO',
     INTERACTION = 'INTERACTION',
-    DOCS = 'DOCS',
+    DOC = 'DOC',
     ALL = 'ALL'
 }
 
@@ -180,7 +180,7 @@ export class MimeTypeCategoryMapping {
         'application/vnd.ekstep.content-archive',
         'application/vnd.ekstep.h5p-archive'
     ];
-    public static readonly [MimeTypeCategory.DOCS]: ContentMimeType[] = [
+    public static readonly [MimeTypeCategory.DOC]: ContentMimeType[] = [
         'application/pdf',
         'application/epub',
         'application/msword'
