@@ -76,3 +76,13 @@ export interface Feed {
         prospectChannels: string[];
     };
 }
+
+export interface Consent {
+    userId: string;
+    objectId: string;
+    objectType?: string;
+    subjectId: string;
+    subjectType: string;
+    consented?: boolean;
+    lastUpdatedOn?: string;
+}
