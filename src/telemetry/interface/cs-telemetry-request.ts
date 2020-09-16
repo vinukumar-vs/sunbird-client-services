@@ -7,15 +7,15 @@ export interface IProducerdata {
 export interface IRollup {
     'l1'?: string;
     'l2'?: string;
-    "l3"?: string;
-    "l4"?: string;
+    'l3'?: string;
+    'l4'?: string;
 }
 
 export interface ITelemetryObject {
-    "id"?: string;
-    "type"?: string;
-    "ver"?: string;
-    "rollup"?: IRollup;
+    'id'?: string;
+    'type'?: string;
+    'ver'?: string;
+    'rollup'?: IRollup;
 }
 
 export interface IContext {
@@ -27,6 +27,7 @@ export interface IContext {
     'pdata'?: IProducerdata;
     'rollup'?: IRollup;
 }
+
 export interface ICDataEntry {
     'type': string;
     'id': string;
@@ -44,10 +45,11 @@ export interface IEventInput {
     'actor'?: IActor;
     'context': IContext;
     'object'?: ITelemetryObject;
-    'tags'?: Array<String>;
+    'tags'?: Array<string>;
     'edata'?: {};
-    'mid': String;
+    'mid': string;
 }
+
 export interface ITelemetry {
     'pdata': IProducerdata;
     'env': string;
@@ -67,8 +69,9 @@ export interface ITelemetry {
     'dispatcher'?: undefined;
     'enableValidation': boolean;
     'timeDiff'?: Number;
-  }
-  export interface ITelemetryContext {
+}
+
+export interface ITelemetryContext {
     'config': ITelemetry;
     'userOrgDetails': any;
-  }
+}

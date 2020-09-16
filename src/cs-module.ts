@@ -53,24 +53,6 @@ export interface CsConfig {
             channelId?: string;
             producerId?: string;
             deviceId?: string;
-            telemetry?: {
-                ver?: string;
-                pdata?:{
-                    id?: string;
-                    pid?: string;
-                    ver?: string;
-                },
-                actor?: { //Overridable
-                    type?:string;
-                    id?: string;
-                },
-                channel?: '',//Overriable
-                context?: {
-                    sid?: string;
-                    did?: string;
-                }
-                
-            };
         },
         api: {
             host: string;
@@ -95,7 +77,8 @@ export class CsModule {
     private _container: Container;
     private onUpdateConfigCallback?: () => void;
 
-    private static _instance?: CsModule;
+    // tslint:disable-next-line:member-ordering
+    static _instance?: CsModule;
 
     public static get instance(): CsModule {
         if (!CsModule._instance) {
