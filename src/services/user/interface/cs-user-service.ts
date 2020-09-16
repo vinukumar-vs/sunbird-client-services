@@ -11,7 +11,9 @@ export interface CheckUserExistsResponse {
 }
 
 export interface UpdateConsentResponse {
-    userId?: string;
+    consent: {
+        userId: string;
+    };
     message?: string;
 }
 

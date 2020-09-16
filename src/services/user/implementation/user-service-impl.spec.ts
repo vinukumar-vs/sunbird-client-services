@@ -4,7 +4,7 @@ import {Container} from 'inversify';
 import {InjectionTokens} from '../../../injection-tokens';
 import {UserServiceImpl} from './user-service-impl';
 import {of} from 'rxjs';
-import {UserDeclarationOperation} from '../../../models/user';
+import {ConsentStatus, UserDeclarationOperation} from '../../../models/user';
 
 describe('UserServiceImpl', () => {
   let userService: CsUserService;
@@ -293,28 +293,32 @@ describe('UserServiceImpl', () => {
         response.responseCode = 200;
         response.body = {
           result: {
-            message: 'Consent updated successfully.',
-            userId: 'SOME_USER_ID'
+            consent: {
+              userId: 'SOME_USER_ID'
+            },
+            message: 'User Consent updated successfully',
           }
         };
         return of(response);
       });
 
       userService.updateConsent({
+        status: ConsentStatus.ACTIVE,
         userId: 'userId',
         objectId: 'SOME_USER_ID',
-        objectType: 'SOME_USER_ID',
-        subjectId: 'SOME_USER_ID',
-        subjectType: 'SOME_USER_ID',
-        consented: true
+        objectType: 'SOME_OBJECT_TYPE',
+        consumerId: 'SOME_CONSUMER_ID',
+        expiry: ''
       }).subscribe((r) => {
         expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
           type: 'POST',
           path: expect.stringContaining('consent/update')
         }));
         expect(r).toEqual({
-          message: 'Consent updated successfully.',
-          userId: 'SOME_USER_ID'
+          consent: {
+            userId: 'SOME_USER_ID'
+          },
+          message: 'User Consent updated successfully',
         });
         done();
       });
@@ -326,20 +330,22 @@ describe('UserServiceImpl', () => {
         response.responseCode = 200;
         response.body = {
           result: {
-            message: 'Consent updated successfully.',
-            userId: 'SOME_USER_ID'
+            consent: {
+              userId: 'SOME_USER_ID'
+            },
+            message: 'User Consent updated successfully',
           }
         };
         return of(response);
       });
 
       userService.updateConsent({
+        status: ConsentStatus.ACTIVE,
         userId: 'userId',
         objectId: 'SOME_USER_ID',
-        objectType: 'SOME_USER_ID',
-        subjectId: 'SOME_USER_ID',
-        subjectType: 'SOME_USER_ID',
-        consented: true
+        objectType: 'SOME_OBJECT_TYPE',
+        consumerId: 'SOME_CONSUMER_ID',
+        expiry: ''
       }, {
         apiPath: '/some_path'
       }).subscribe((r) => {
@@ -348,8 +354,10 @@ describe('UserServiceImpl', () => {
           path: expect.stringContaining('consent/update')
         }));
         expect(r).toEqual({
-          message: 'Consent updated successfully.',
-          userId: 'SOME_USER_ID'
+          consent: {
+            userId: 'SOME_USER_ID'
+          },
+          message: 'User Consent updated successfully'
         });
         done();
       });
@@ -364,12 +372,12 @@ describe('UserServiceImpl', () => {
         response.body = {
           result: {
             consents: [{
+              status: ConsentStatus.ACTIVE,
               userId: 'SOME_USER_ID',
+              consumerId: 'SOME_CONSUMER_ID',
               objectId: 'SOME_OBJECT_ID',
-              subjectId: 'SOME_SUBJECT_ID',
-              subjectType: 'SOME_SUBJECT_TYPE',
-              consented: true,
-              lastUpdatedOn: 0
+              objectType: 'SOME_OBJECT_TYPE',
+              expiry: 0
             }
             ]
           }
@@ -380,22 +388,19 @@ describe('UserServiceImpl', () => {
       userService.getConsent({
         userId: 'userId',
         objectId: 'SOME_USER_ID',
-        objectType: 'SOME_USER_ID',
-        subjectId: 'SOME_USER_ID',
-        subjectType: 'SOME_USER_ID',
-        consented: true
+        consumerId: 'SOME_CONSUMER_ID'
       }).subscribe((r) => {
         expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
           type: 'POST',
           path: expect.stringContaining('consent/read')
         }));
         expect(r.consents).toEqual([{
-            userId: 'SOME_USER_ID',
-            objectId: 'SOME_OBJECT_ID',
-            subjectId: 'SOME_SUBJECT_ID',
-            subjectType: 'SOME_SUBJECT_TYPE',
-            consented: true,
-            lastUpdatedOn: 0
+          status: ConsentStatus.ACTIVE,
+          userId: 'SOME_USER_ID',
+          consumerId: 'SOME_CONSUMER_ID',
+          objectId: 'SOME_OBJECT_ID',
+          objectType: 'SOME_OBJECT_TYPE',
+          expiry: 0
         }
         ]);
         done();
@@ -409,12 +414,12 @@ describe('UserServiceImpl', () => {
         response.body = {
           result: {
             consents: [{
+              status: ConsentStatus.ACTIVE,
               userId: 'SOME_USER_ID',
+              consumerId: 'SOME_CONSUMER_ID',
               objectId: 'SOME_OBJECT_ID',
-              subjectId: 'SOME_SUBJECT_ID',
-              subjectType: 'SOME_SUBJECT_TYPE',
-              consented: true,
-              lastUpdatedOn: 0
+              objectType: 'SOME_OBJECT_TYPE',
+              expiry: 0
             }
             ]
           }
@@ -425,10 +430,7 @@ describe('UserServiceImpl', () => {
       userService.getConsent({
         userId: 'userId',
         objectId: 'SOME_USER_ID',
-        objectType: 'SOME_USER_ID',
-        subjectId: 'SOME_USER_ID',
-        subjectType: 'SOME_USER_ID',
-        consented: true
+        consumerId: 'SOME_CONSUMER_ID'
       }, {
         apiPath: '/some_path'
       }).subscribe((r) => {
@@ -437,12 +439,12 @@ describe('UserServiceImpl', () => {
           path: expect.stringContaining('consent/read')
         }));
         expect(r.consents).toEqual([{
+          status: ConsentStatus.ACTIVE,
           userId: 'SOME_USER_ID',
+          consumerId: 'SOME_CONSUMER_ID',
           objectId: 'SOME_OBJECT_ID',
-          subjectId: 'SOME_SUBJECT_ID',
-          subjectType: 'SOME_SUBJECT_TYPE',
-          consented: true,
-          lastUpdatedOn: 0
+          objectType: 'SOME_OBJECT_TYPE',
+          expiry: 0
         }
         ]);
         done();

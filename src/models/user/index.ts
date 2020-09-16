@@ -77,12 +77,16 @@ export interface Feed {
     };
 }
 
+export enum ConsentStatus {
+    ACTIVE = 'ACTIVE',
+    REVOKED = 'REVOKED'
+}
+
 export interface Consent {
+    status?: ConsentStatus;
     userId: string;
+    consumerId: string;
     objectId: string;
     objectType?: string;
-    subjectId: string;
-    subjectType: string;
-    consented?: boolean;
-    lastUpdatedOn?: string;
+    expiry?: string;
 }
