@@ -9,62 +9,13 @@ export class PlayerTelemetryServiceImpl implements PlayerTelemetryService {
     }
 
     onStartEvent(event: any, data: any) {
-        console.log(event);
-        const startEvent = {
-                options: {
-                    object: {
-                        id: data.id,
-                        ver: data.ver
-                    }
-                },
-            context: {
-                env: 'ContentPlayer'
-            },
-            edata: {
-                'type': 'content',
-                'mode': 'play',
-                'pageid': '',
-                'duration':  Number((event.edata.duration / 1000).toFixed(2))
-            }
-        }
-    ;
-        this.telemetryService.raiseStartTelemetry(startEvent);
+
     }
 
     onEndEvent(event: any, data: any) {
-        const endEvent = {
-            edata: {
-            'type': 'content',
-            'mode': 'play',
-            'pageid': 'sunbird-player-Endpage',
-            'summary': [
-              {
-                'numberOfPagesVisited': event.numberOfPagesVisited
-              },
-              {
-                'duration': event.duration
-              },
-              {
-                'zoom': event.zoom
-              },
-              {
-                'rotation': event.rotation
-              },
-              {
-                'totalseekedlength': 193
-              },
-              {
-                'endpageseen': true
-              }
-            ],
-            'duration': Number((event.edata.duration / 1000).toFixed(2))
-          } };
-       this.telemetryService.raiseEndTelemetry(endEvent);
     }
 
     onErrorEvent(event: any, data: any) {
-        console.log(event);
-       // this.telemetryService.raiseErrorTelemetry({});
     }
 
     onHeartBeatEvent(event, data?) {

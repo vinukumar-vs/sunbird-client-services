@@ -12,18 +12,6 @@ export class PdfPlayerTelemetryServiceImpl extends PlayerTelemetryServiceImpl {
     }
 
     onHeartBeatEvent(event: any, data: any) {
-        if (event.edata.type === 'PAGE_CHANGE') {
-            const length = event.metaData.duration.length > 0 ? event.metaData.duration.length - 1 : 0;
-            const duration = event.metaData.duration[length];
-            this.telemetryService.raiseImpressionTelemetry({
-                edata: {
-                        'type': 'workflow',
-                        'subtype': '',
-                        'pageid': event.edata.currentPage + '',
-                        'uri': '1',
-                        'duration': Number((duration / 1000).toFixed(2))
-                }
-            });
-        }
+
     }
 }

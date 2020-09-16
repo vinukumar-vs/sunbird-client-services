@@ -1,13 +1,10 @@
 {
   "name": "@project-sunbird/client-services",
-  "version": "3.3.11",
+  "version": "3.3.15",
   "description": "Type definitions and models for Sunbird platform clients",
   "main": "dist/index.js",
   "module": "src/index.ts",
   "scripts": {
-    "preversion": "rm -rf dist",
-    "version": "npm run build && git add -A dist && git commit -m \"RELEASE\"",
-    "postversion": "git push && git push --tags",
     "test": "jest",
     "test:coverage": "jest --coverage --collectCoverageFrom=src/**/*.{ts,tsx} --coverageReporters=lcov",
     "test:ci": "jest --silent --ci --w 2 --collectCoverage=true --collectCoverageFrom=src/**/*.{ts,tsx} --coverageReporters=lcov",
@@ -43,7 +40,6 @@
     "ts-loader": "^5.4.5",
     "tslint": "^5.12.0",
     "typescript": "2.9.1",
-    "uglifyjs-webpack-plugin": "^2.1.1",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
