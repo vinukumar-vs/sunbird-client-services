@@ -9,6 +9,7 @@ export class PlayerTelemetryServiceImpl implements PlayerTelemetryService {
     }
 
     onStartEvent(event: any, data: any) {
+        console.log(event);
         const startEvent = {
                 options: {
                     object: {
