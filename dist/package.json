@@ -1,87 +1,28 @@
 {
   "name": "@project-sunbird/client-services",
-  "version": "3.3.15",
+  "version": "2.10.0",
   "description": "Type definitions and models for Sunbird platform clients",
   "main": "dist/index.js",
-  "module": "src/index.ts",
   "scripts": {
-    "test": "jest",
-    "test:coverage": "jest --coverage --collectCoverageFrom=src/**/*.{ts,tsx} --coverageReporters=lcov",
-    "test:ci": "jest --silent --ci --w 2 --collectCoverage=true --collectCoverageFrom=src/**/*.{ts,tsx} --coverageReporters=lcov",
-    "test:ci-json": "jest --ci --w 2 --collectCoverage=true --coverageReporters=json",
+    "preversion": "rm -rf dist",
+    "version": "npm run build && git add -A dist && git commit -m \"RELEASE\"",
+    "postversion": "git push && git push --tags",
     "build": "rm -rf dist && NODE_ENV=production webpack --verbose true --progress true --cache false",
-    "build:prod": "rm -rf dist && NODE_ENV=production webpack --verbose true --progress true --cache false && cp ./package.json ./LICENSE ./README.md ./dist",
-    "build:analyze": "webpack --verbose true --progress true --cache false --profile --json > stats.json && npx webpack-bundle-analyzer ./stats.json",
-    "build:dev": "rm -rf tmp && mkdir tmp && cp ./package-dev.json ./tmp/package.json && tsc -w --outDir ./tmp",
-    "sonar-scanner": "sonar-scanner"
+    "build:prod": "rm -rf dist && NODE_ENV=production webpack --verbose true --progress true --cache false && cp ./package.json ./LICENSE ./README.md ./dist"
   },
-  "dependencies": {
-    "@project-sunbird/telemetry-sdk": "0.0.26",
-    "inversify": "^5.0.1",
-    "qs": "^6.9.4",
-    "reflect-metadata": "^0.1.13",
-    "whatwg-fetch": "^3.1.0"
-  },
+  "dependencies": {},
   "author": "",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Sunbird-Ed/sunbird-client-services/issues"
   },
   "homepage": "https://github.com/Sunbird-Ed/sunbird-client-services#readme",
-  "peerDependencies": {
-    "rxjs": "6.x.x"
-  },
   "devDependencies": {
-    "@types/jest": "^25.1.1",
-    "jest": "^25.1.0",
-    "rxjs": "^6.5.3",
-    "terser-webpack-plugin": "^4.1.0",
-    "ts-jest": "^25.2.0",
-    "ts-loader": "^5.4.5",
     "tslint": "^5.12.0",
+    "ts-loader": "^5.3.2",
     "typescript": "2.9.1",
-    "webpack": "^4.41.5",
+    "uglifyjs-webpack-plugin": "^2.1.1",
+    "webpack": "^4.28.3",
     "webpack-cli": "^3.3.10"
-  },
-  "jest": {
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "tsconfig.spec.json"
-      }
-    },
-    "browser": false,
-    "rootDir": "./",
-    "roots": [
-      "<rootDir>/src/"
-    ],
-    "moduleDirectories": [
-      "node_modules"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/"
-    ],
-    "coveragePathIgnorePatterns": [],
-    "testMatch": [
-      "**/?(*.)(spec).ts"
-    ],
-    "restoreMocks": true,
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "json",
-      "ts",
-      "tsx"
-    ],
-    "setupFiles": [
-      "./src/__test__/setup.ts"
-    ],
-    "transform": {
-      "^.+\\.(ts)$": "ts-jest"
-    },
-    "coverageReporters": [
-      "text",
-      "json"
-    ],
-    "transformIgnorePatterns": []
   }
 }
