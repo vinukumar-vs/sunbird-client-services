@@ -59,7 +59,6 @@ const config = {
         minimize: true,
         minimizer: [
             new TerserPlugin({
-                sourceMap: true,
                 terserOptions: {
                     compress: {
                         unused: false
