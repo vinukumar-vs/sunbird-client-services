@@ -64,7 +64,7 @@ export class UserServiceImpl implements CsUserService {
     );
   }
 
-  updateConsent(userConsent: Consent, config?: CsUserServiceConfig): Observable<UpdateConsentResponse> {
+  updateConsent(consent: Consent, config?: CsUserServiceConfig): Observable<UpdateConsentResponse> {
     const apiRequest: CsRequest = new CsRequest.Builder()
       .withType(CsHttpRequestType.POST)
       .withPath(`${config ? config.apiPath : this.apiPath}/consent/update`)
@@ -72,7 +72,7 @@ export class UserServiceImpl implements CsUserService {
       .withUserToken(true)
       .withBody({
         request: {
-          userConsent
+          consent
         }
       })
       .build();
@@ -82,7 +82,7 @@ export class UserServiceImpl implements CsUserService {
     );
   }
 
-  getConsent(userConent: Consent, config?: CsUserServiceConfig): Observable<ReadConsentResponse> {
+  getConsent(consent: Consent, config?: CsUserServiceConfig): Observable<ReadConsentResponse> {
     const apiRequest: CsRequest = new CsRequest.Builder()
       .withType(CsHttpRequestType.POST)
       .withPath(`${config ? config.apiPath : this.apiPath}/consent/read`)
@@ -92,7 +92,7 @@ export class UserServiceImpl implements CsUserService {
         request: {
           consent: {
             filters: {
-              userConent
+              consent
             }
           }
         }
