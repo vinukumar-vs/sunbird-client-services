@@ -76,3 +76,17 @@ export interface Feed {
         prospectChannels: string[];
     };
 }
+
+export enum ConsentStatus {
+    ACTIVE = 'ACTIVE',
+    REVOKED = 'REVOKED'
+}
+
+export interface Consent {
+    status?: ConsentStatus;
+    userId: string;
+    consumerId: string;
+    objectId: string;
+    objectType?: string;
+    expiry?: string;
+}
