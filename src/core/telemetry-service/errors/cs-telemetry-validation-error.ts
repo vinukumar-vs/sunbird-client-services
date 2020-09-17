@@ -1,4 +1,4 @@
-import {CsError} from '../../core/cs-error';
+import {CsError} from '../../cs-error';
 
 export class CsTelemetryError extends CsError {
     private static code = 'TELEMETRY_VALIDATION_ERROR';

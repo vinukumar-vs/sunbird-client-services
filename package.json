@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/client-services",
-  "version": "3.3.15",
+  "version": "3.3.14",
   "description": "Type definitions and models for Sunbird platform clients",
   "main": "dist/index.js",
   "module": "src/index.ts",
@@ -16,7 +16,6 @@
     "sonar-scanner": "sonar-scanner"
   },
   "dependencies": {
-    "@project-sunbird/telemetry-sdk": "0.0.26",
     "inversify": "^5.0.1",
     "qs": "^6.9.4",
     "reflect-metadata": "^0.1.13",
@@ -37,8 +36,8 @@
     "rxjs": "^6.5.3",
     "terser-webpack-plugin": "^4.1.0",
     "ts-jest": "^25.2.0",
-    "ts-loader": "^5.4.5",
     "tslint": "^5.12.0",
+    "ts-loader": "^5.4.5",
     "typescript": "2.9.1",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
