@@ -1,4 +1,4 @@
-export interface Form<Field> {
+export interface Form<Field = {}> {
     type: string;
     subtype: string;
     action: string;

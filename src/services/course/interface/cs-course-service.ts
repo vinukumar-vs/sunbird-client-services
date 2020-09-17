@@ -12,6 +12,12 @@ export interface GetUserEnrolledCoursesRequest {
     };
 }
 
+export interface CertificateUrlResponse {
+    printUri: string;
+}
+
 export interface CsCourseService {
     getUserEnrolledCourses(request: GetUserEnrolledCoursesRequest, additionalParams?: { [key: string]: string }, config?: CsCourseServiceConfig): Observable<Course[]>;
+
+    getSignedCourseCertificate(certificateId: string, config?: CsCourseServiceConfig): Observable<CertificateUrlResponse>;
 }

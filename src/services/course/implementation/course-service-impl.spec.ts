@@ -15,6 +15,8 @@ describe('CourseServiceImpl', () => {
 
         container.bind<CsHttpService>(InjectionTokens.core.HTTP_SERVICE).toConstantValue(mockHttpService as CsHttpService);
         container.bind<string>(InjectionTokens.services.course.COURSE_SERVICE_API_PATH).toConstantValue(mockApiPath);
+        container.bind<string>(InjectionTokens.services.course.COURSE_SERVICE_CERT_REGISTRATION_API_PATH).toConstantValue(mockApiPath);
+
 
         container.bind<CsCourseService>(InjectionTokens.services.course.COURSE_SERVICE).to(CourseServiceImpl).inSingletonScope();
 
@@ -30,8 +32,8 @@ describe('CourseServiceImpl', () => {
         expect(courseService).toBeTruthy();
     });
 
-    describe('searchLocations()', () => {
-        it('should be able to search locations with optional filter', (done) => {
+    describe('getUserEnrolledCourses()', () => {
+        it('should fetch enrolledCourseList of current userId', (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();
                 response.responseCode = 200;
@@ -57,6 +59,29 @@ describe('CourseServiceImpl', () => {
                     body: {
                         request
                     }
+                }));
+                done();
+            });
+        });
+
+        it('should fetch signedCourseCertificate', (done) => {
+            // arrange
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    result: {
+                        printUri: 'SAMPLE_PRINT_URI'
+                    }
+                };
+                return of(response);
+            });
+            // act
+            courseService.getSignedCourseCertificate('CERTIFICATE_ID').subscribe(() => {
+                // assert
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                    path: 'MOCK_API_PATH/download/CERTIFICATE_ID'
                 }));
                 done();
             });

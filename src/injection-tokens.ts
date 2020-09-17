@@ -38,7 +38,12 @@ export const InjectionTokens = {
         },
         course: {
             COURSE_SERVICE_API_PATH: Symbol.for('COURSE_SERVICE_API_PATH'),
+            COURSE_SERVICE_CERT_REGISTRATION_API_PATH: Symbol.for('COURSE_SERVICE_CERT_REGISTRATION_API_PATH'),
             COURSE_SERVICE: Symbol.for('COURSE_SERVICE')
+        },
+        form: {
+            FORM_SERVICE_API_PATH: Symbol.for('FORM_SERVICE_API_PATH'),
+            FORM_SERVICE: Symbol.for('FORM_SERVICE')
         }
     }
 };
