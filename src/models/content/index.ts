@@ -101,7 +101,7 @@ export enum UserConsent {
 }
 
 export interface Trackable {
-    enable: TrackingEnabled;
+    enabled: TrackingEnabled;
     autoBatch: AutoBatch;
 }
 
