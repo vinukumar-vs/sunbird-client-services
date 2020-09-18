@@ -89,4 +89,5 @@ export interface Consent {
     objectId: string;
     objectType?: string;
     expiry?: string;
+    lastUpdatedOn?: string;
 }
