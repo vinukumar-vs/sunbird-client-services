@@ -122,16 +122,6 @@ describe('CsMimeTypeFacetToMimeTypeCategoryAggregator', () => {
                 ]
             },
             {
-                'name': 'COLLECTION',
-                'count': 32,
-                'values': [
-                    {
-                        'name': 'application/vnd.ekstep.content-collection',
-                        'count': 32
-                    }
-                ]
-            },
-            {
                 'name': 'INTERACTION',
                 'count': 36,
                 'values': [
@@ -263,18 +253,6 @@ describe('CsMimeTypeFacetToMimeTypeCategoryAggregator', () => {
                 ],
                 'apply': false
             },
-            {
-                'name': 'COLLECTION',
-                'count': 32,
-                'values': [
-                    {
-                        'name': 'application/vnd.ekstep.content-collection',
-                        'count': 32,
-                        'apply': false
-                    }
-                ],
-                'apply': false
-            }
         ]);
 
     });
@@ -318,16 +296,6 @@ describe('CsMimeTypeFacetToMimeTypeCategoryAggregator', () => {
                     {
                         'name': 'application/pdf',
                         'count': 15
-                    }
-                ]
-            },
-            {
-                'name': 'COLLECTION',
-                'count': 32,
-                'values': [
-                    {
-                        'name': 'application/vnd.ekstep.content-collection',
-                        'count': 32
                     }
                 ]
             },
