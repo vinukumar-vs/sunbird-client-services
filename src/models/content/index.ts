@@ -142,7 +142,6 @@ export type ContentMimeType =
     'audio/wav';
 
 export enum MimeTypeCategory {
-    COLLECTION = 'COLLECTION',
     VIDEO = 'VIDEO',
     AUDIO = 'AUDIO',
     INTERACTION = 'INTERACTION',
@@ -151,9 +150,6 @@ export enum MimeTypeCategory {
 }
 
 export class MimeTypeCategoryMapping {
-    public static readonly [MimeTypeCategory.COLLECTION]: ContentMimeType[] = [
-        'application/vnd.ekstep.content-collection'
-    ];
     public static readonly [MimeTypeCategory.VIDEO]: ContentMimeType[] = [
         'video/avi',
         'video/mpeg',
