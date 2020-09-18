@@ -91,9 +91,7 @@ export class UserServiceImpl implements CsUserService {
       .withBody({
         request: {
           consent: {
-            filters: {
-              consent
-            }
+            filters: consent
           }
         }
       })
