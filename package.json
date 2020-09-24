@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/client-services",
-  "version": "3.3.23",
+  "version": "3.3.24",
   "description": "Type definitions and models for Sunbird platform clients",
   "main": "dist/index.js",
   "module": "src/index.ts",
@@ -16,7 +16,7 @@
     "sonar-scanner": "sonar-scanner"
   },
   "dependencies": {
-    "@project-sunbird/telemetry-sdk": "0.0.26",
+    "@project-sunbird/telemetry-sdk": "0.0.27",
     "inversify": "^5.0.1",
     "qs": "^6.9.4",
     "reflect-metadata": "^0.1.13",
