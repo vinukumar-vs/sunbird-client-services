@@ -6,6 +6,8 @@ export const InjectionTokens = {
             CHANNEL_ID: Symbol.for('CHANNEL_ID'),
             PRODUCER_ID: Symbol.for('PRODUCER_ID'),
             DEVICE_ID: Symbol.for('DEVICE_ID'),
+            SESSION_ID: Symbol.for('SESSION_ID'),
+            APP_VERSION: Symbol.for('APP_VERSION'),
         },
         api: {
             HOST: Symbol.for('HOST'),
