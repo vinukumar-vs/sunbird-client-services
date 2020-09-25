@@ -160,7 +160,7 @@ export class HttpServiceImpl implements CsHttpService {
             ...(this.producerId ? {'X-App-Id': this.producerId} : {}),
             ...(this.deviceId ? {'X-Device-Id': this.deviceId} : {}),
             ...(this.sessionId ? {'X-Session-Id': this.sessionId} : {}),
-            ...(this.appVersion ? {'X-App-Version': this.appVersion} : {}),
+            ...(this.appVersion ? {'X-App-Ver': this.appVersion} : {}),
         };
         this.http.addHeaders(header);
     }

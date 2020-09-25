@@ -78,7 +78,7 @@ describe('HttpServiceImpl', () => {
             'X-App-Id': 'SAMPLE_PRODUCER_ID',
             'X-Device-Id': 'SAMPLE_DEVICE_ID',
             'X-Session-Id': 'SAMPLE_SESSION_ID',
-            'X-App-Version': 'SAMPLE_APP_VERSION',
+            'X-App-Ver': 'SAMPLE_APP_VERSION',
         }));
 
         expect(mockHttpClient.addHeaders).toHaveBeenNthCalledWith(2, expect.not.objectContaining({
@@ -86,7 +86,7 @@ describe('HttpServiceImpl', () => {
             'X-App-Id': 'SAMPLE_PRODUCER_ID',
             'X-Device-Id': 'SAMPLE_DEVICE_ID',
             'X-Session-Id': 'SAMPLE_SESSION_ID',
-            'X-App-Version': 'SAMPLE_APP_VERSION',
+            'X-App-Ver': 'SAMPLE_APP_VERSION',
         }));
 
         container.rebind<string>(InjectionTokens.core.global.CHANNEL_ID).toConstantValue('SAMPLE_CHANNEL_ID');
