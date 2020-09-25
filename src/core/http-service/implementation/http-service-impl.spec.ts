@@ -10,6 +10,7 @@ import {CsHttpClientError} from '../errors';
 
 describe('HttpServiceImpl', () => {
     let httpService: CsHttpService;
+    const container = new Container();
     const mockHttpClient: Partial<HttpClient> = {
         addHeaders: (headers: { [p: string]: string }) => {
         },
@@ -18,7 +19,6 @@ describe('HttpServiceImpl', () => {
     };
 
     beforeAll(() => {
-        const container = new Container();
         container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(container);
         container.bind<HttpClient>(InjectionTokens.core.HTTP_ADAPTER).toConstantValue(mockHttpClient as HttpClient);
 
@@ -47,7 +47,7 @@ describe('HttpServiceImpl', () => {
         expect(httpService).toBeTruthy();
     });
 
-    it('should add global headers for each request', (done) => {
+    it('should add global headers for each request', async (done) => {
         // arrange
         const mockResponse = new CsResponse();
         mockResponse.body = {};
@@ -62,17 +62,40 @@ describe('HttpServiceImpl', () => {
             .build();
 
         // act
-        httpService.fetch(apiRequest).subscribe(() => {
-            // assert
-            expect(mockHttpClient.addHeaders).toHaveBeenCalledWith(expect.objectContaining({
-                'X-Channel-Id': 'SAMPLE_CHANNEL_ID',
-                'X-App-Id': 'SAMPLE_PRODUCER_ID',
-                'X-Device-Id': 'SAMPLE_DEVICE_ID',
-                'X-Session-Id': 'SAMPLE_SESSION_ID',
-                'X-App-Version': 'SAMPLE_APP_VERSION',
-            }));
-            done();
-        });
+        await httpService.fetch(apiRequest).toPromise();
+
+        container.rebind<string | undefined>(InjectionTokens.core.global.CHANNEL_ID).toConstantValue(undefined);
+        container.rebind<string | undefined>(InjectionTokens.core.global.DEVICE_ID).toConstantValue(undefined);
+        container.rebind<string | undefined>(InjectionTokens.core.global.PRODUCER_ID).toConstantValue(undefined);
+        container.rebind<string | undefined>(InjectionTokens.core.global.SESSION_ID).toConstantValue(undefined);
+        container.rebind<string | undefined>(InjectionTokens.core.global.APP_VERSION).toConstantValue(undefined);
+
+        await httpService.fetch(apiRequest).toPromise();
+
+        // assert
+        expect(mockHttpClient.addHeaders).toHaveBeenNthCalledWith(1, expect.objectContaining({
+            'X-Channel-Id': 'SAMPLE_CHANNEL_ID',
+            'X-App-Id': 'SAMPLE_PRODUCER_ID',
+            'X-Device-Id': 'SAMPLE_DEVICE_ID',
+            'X-Session-Id': 'SAMPLE_SESSION_ID',
+            'X-App-Version': 'SAMPLE_APP_VERSION',
+        }));
+
+        expect(mockHttpClient.addHeaders).toHaveBeenNthCalledWith(2, expect.not.objectContaining({
+            'X-Channel-Id': 'SAMPLE_CHANNEL_ID',
+            'X-App-Id': 'SAMPLE_PRODUCER_ID',
+            'X-Device-Id': 'SAMPLE_DEVICE_ID',
+            'X-Session-Id': 'SAMPLE_SESSION_ID',
+            'X-App-Version': 'SAMPLE_APP_VERSION',
+        }));
+
+        container.rebind<string>(InjectionTokens.core.global.CHANNEL_ID).toConstantValue('SAMPLE_CHANNEL_ID');
+        container.rebind<string>(InjectionTokens.core.global.DEVICE_ID).toConstantValue('SAMPLE_DEVICE_ID');
+        container.rebind<string>(InjectionTokens.core.global.PRODUCER_ID).toConstantValue('SAMPLE_PRODUCER_ID');
+        container.rebind<string>(InjectionTokens.core.global.SESSION_ID).toConstantValue('SAMPLE_SESSION_ID');
+        container.rebind<string>(InjectionTokens.core.global.APP_VERSION).toConstantValue('SAMPLE_APP_VERSION');
+
+        done();
     });
 
     it('should add BearerTokenInjectRequestInterceptor when requesting with bearerToken flag', (done) => {
