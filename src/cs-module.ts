@@ -53,6 +53,8 @@ export interface CsConfig {
             channelId?: string;
             producerId?: string;
             deviceId?: string;
+            sessionId?: string;
+            appVersion?: string;
         },
         api: {
             host: string;
@@ -164,6 +166,10 @@ export class CsModule {
             .toConstantValue(config.core.global.producerId);
         this._container[mode]<string | undefined>(InjectionTokens.core.global.DEVICE_ID)
             .toConstantValue(config.core.global.deviceId);
+        this._container[mode]<string | undefined>(InjectionTokens.core.global.SESSION_ID)
+            .toConstantValue(config.core.global.sessionId);
+        this._container[mode]<string | undefined>(InjectionTokens.core.global.APP_VERSION)
+            .toConstantValue(config.core.global.appVersion);
         this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
             .toConstantValue(config.core.api.authentication.bearerToken);
         this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
