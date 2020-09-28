@@ -52,6 +52,14 @@ export class HttpServiceImpl implements CsHttpService {
         return this.container.get(InjectionTokens.core.global.PRODUCER_ID);
     }
 
+    get sessionId(): string {
+        return this.container.get(InjectionTokens.core.global.SESSION_ID);
+    }
+
+    get appVersion(): string {
+        return this.container.get(InjectionTokens.core.global.APP_VERSION);
+    }
+
     constructor(
         @inject(InjectionTokens.CONTAINER) private container: Container,
         @inject(InjectionTokens.core.HTTP_ADAPTER) private http: HttpClient
@@ -148,12 +156,14 @@ export class HttpServiceImpl implements CsHttpService {
 
     private addGlobalHeader() {
         const header = {
-            'X-Channel-Id': this.channelId,
-            'X-App-Id': this.producerId,
-            'X-Device-Id': this.deviceId,
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            ...(this.channelId ? {'X-Channel-Id': this.channelId} : {}),
+            ...(this.producerId ? {'X-App-Id': this.producerId} : {}),
+            ...(this.deviceId ? {'X-Device-Id': this.deviceId} : {}),
+            ...(this.sessionId ? {'X-Session-Id': this.sessionId} : {}),
+            ...(this.appVersion ? {'X-App-Ver': this.appVersion} : {}),
         };
         this.http.addHeaders(header);
     }
