@@ -5,7 +5,8 @@ export enum GroupMembershipType {
 
 export enum GroupEntityStatus {
     ACTIVE = 'active',
-    INACTIVE = 'inactive'
+    INACTIVE = 'inactive',
+    SUSPENDED = 'suspended'
 }
 
 export enum GroupMemberRole {
@@ -55,4 +56,38 @@ export interface Group {
     activities?: GroupActivity[];
     activitiesGrouped?: ActivitiesGrouped[];
     members?: GroupMember[];
+}
+
+export class CsGroup implements  Group {
+    name: string;
+    description: string;
+    id: string;
+    status?: GroupEntityStatus | undefined;
+    membershipType: GroupMembershipType;
+    createdOn?: string | undefined;
+    createdBy?: string | undefined;
+    updatedOn?: string | undefined;
+    updatedBy?: string | undefined;
+    activities?: GroupActivity[] | undefined;
+    activitiesGrouped?: ActivitiesGrouped[] | undefined;
+    members?: GroupMember[] | undefined;
+
+    constructor(group) {
+        this.name = group.name;
+        this.description = group.description;
+        this.id = group.id;
+        this.status = group.status;
+        this.membershipType = group.membershipType;
+        this.createdOn = group.createdOn;
+        this.createdBy = group.createdBy;
+        this.updatedOn = group.updatedOn;
+        this.updatedBy = group.updatedBy;
+        this.activities = group.activities;
+        this.activitiesGrouped = group.activitiesGrouped;
+        this.members = group.members;
+    }
+
+    isGroupActive(): boolean {
+       return (this.status === GroupEntityStatus.ACTIVE);
+    }
 }

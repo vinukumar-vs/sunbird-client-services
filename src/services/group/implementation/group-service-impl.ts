@@ -1,3 +1,4 @@
+import { CsGroup } from './../../../models/group/index';
 import {Container, inject, injectable} from 'inversify';
 import {
     CsGroupAddActivitiesRequest,
@@ -227,7 +228,7 @@ export class GroupServiceImpl implements CsGroupService {
 
     getById(
         id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig
-    ): Observable<Group> {
+    ): Observable<CsGroup> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/read/${id}`)
@@ -291,7 +292,7 @@ export class GroupServiceImpl implements CsGroupService {
                     };
                 });
 
-                return result;
+                return Object.setPrototypeOf(result, new CsGroup(result));
             })
         );
     }

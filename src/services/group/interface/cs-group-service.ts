@@ -1,3 +1,4 @@
+import { CsGroup } from './../../../models/group/index';
 import {Group, GroupEntityStatus, GroupMemberRole, GroupMembershipType} from '../../../models/group';
 import {Observable} from 'rxjs';
 import {CsGroupServiceConfig} from '../../../index';
@@ -157,7 +158,7 @@ export interface CsGroupService {
 
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse>;
 
-    getById(id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig): Observable<Group>;
+    getById(id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig): Observable<CsGroup>;
 
     search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<CsGroupSearchResponse[]>;
 
