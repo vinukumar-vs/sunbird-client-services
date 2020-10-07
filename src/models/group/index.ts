@@ -62,15 +62,15 @@ export class CsGroup implements  Group {
     name: string;
     description: string;
     id: string;
-    status?: GroupEntityStatus | undefined;
+    status: GroupEntityStatus | undefined;
     membershipType: GroupMembershipType;
-    createdOn?: string | undefined;
-    createdBy?: string | undefined;
-    updatedOn?: string | undefined;
-    updatedBy?: string | undefined;
-    activities?: GroupActivity[] | undefined;
-    activitiesGrouped?: ActivitiesGrouped[] | undefined;
-    members?: GroupMember[] | undefined;
+    createdOn: string | undefined;
+    createdBy: string | undefined;
+    updatedOn: string | undefined;
+    updatedBy: string | undefined;
+    activities: GroupActivity[] | undefined;
+    activitiesGrouped: ActivitiesGrouped[] | undefined;
+    members: GroupMember[] | undefined;
 
     constructor(group) {
         // tslint:disable-next-line: forin
