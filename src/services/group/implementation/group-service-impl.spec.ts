@@ -1170,7 +1170,7 @@ describe('GroupServiceImpl', () => {
                 return of(response);
             });
 
-            groupService.reactiveById('SOME_GROUP_ID').subscribe(() => {
+            groupService.reactivateById('SOME_GROUP_ID').subscribe(() => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'PATCH',
                     body: {
@@ -1192,7 +1192,7 @@ describe('GroupServiceImpl', () => {
                     return of(response);
                 });
 
-                groupService.reactiveById('SOME_GROUP_ID', { apiPath: '/some_api_path', dataApiPath: '/some_api_path' }).subscribe(() => {
+                groupService.reactivateById('SOME_GROUP_ID', { apiPath: '/some_api_path', dataApiPath: '/some_api_path' }).subscribe(() => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'PATCH',
                         path: expect.stringContaining('/some_api_path'),

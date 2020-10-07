@@ -1,4 +1,3 @@
-import { CsGroup } from './../../../models/group/index';
 import {Group, GroupEntityStatus, GroupMemberRole, GroupMembershipType} from '../../../models/group';
 import {Observable} from 'rxjs';
 import {CsGroupServiceConfig} from '../../../index';
@@ -129,7 +128,7 @@ export interface CsGroupSuspendResponse {
 }
 
 // tslint:disable-next-line:no-empty-interface
-export interface CsGroupReactiveResponse {
+export interface CsGroupReactivateResponse {
 }
 
 export interface CsGroupRemoveActivitiesRequest {
@@ -166,7 +165,7 @@ export interface CsGroupService {
 
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse>;
 
-    getById(id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig): Observable<CsGroup>;
+    getById(id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig): Observable<Group>;
 
     search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<CsGroupSearchResponse[]>;
 
@@ -190,5 +189,5 @@ export interface CsGroupService {
 
     suspendById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupSuspendResponse>;
 
-    reactiveById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactiveResponse>;
+    reactivateById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactivateResponse>;
 }

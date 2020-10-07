@@ -1,5 +1,4 @@
-import { CsGroupSuspendResponse, CsGroupReactiveResponse } from './../interface/cs-group-service';
-import { CsGroup } from './../../../models/group/index';
+import { CsGroupSuspendResponse, CsGroupReactivateResponse } from './../interface/cs-group-service';
 import {Container, inject, injectable} from 'inversify';
 import {
     CsGroupAddActivitiesRequest,
@@ -230,7 +229,7 @@ export class GroupServiceImpl implements CsGroupService {
 
     getById(
         id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig
-    ): Observable<CsGroup> {
+    ): Observable<Group> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/read/${id}`)
@@ -250,11 +249,11 @@ export class GroupServiceImpl implements CsGroupService {
             .withUserToken(true)
             .build();
 
-        return this.httpService.fetch<{ result: Group }>(apiRequest).pipe(
-            map((r) => r.body.result),
+        return this.httpService.fetch<{ result: any }>(apiRequest).pipe(
+            map((r) => plainToClass(Group, r.body.result)),
             mergeMap(async (result) => {
                 if (!options || !options.groupActivities || !options.includeActivities) {
-                    return (plainToClass(CsGroup, result)) ;
+                    return result ;
                 }
 
                 const supportedActivitiesConfig = await this.getSupportedActivities().toPromise();
@@ -294,7 +293,7 @@ export class GroupServiceImpl implements CsGroupService {
                     };
                 });
 
-                return (plainToClass(CsGroup, result));
+                return result;
             })
         );
     }
@@ -333,7 +332,7 @@ export class GroupServiceImpl implements CsGroupService {
         return this.updateById(id, {status: GroupEntityStatus.SUSPENDED}, config);
     }
 
-    reactiveById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactiveResponse> {
+    reactivateById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactivateResponse> {
         return this.updateById(id, {status: GroupEntityStatus.ACTIVE}, config);
     }
 

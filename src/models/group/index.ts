@@ -45,20 +45,6 @@ export interface ActivitiesGrouped {
     items: GroupActivity[];
 }
 
-export interface Group {
-    name: string;
-    description: string;
-    id: string;
-    status?: GroupEntityStatus;
-    membershipType: GroupMembershipType;
-    createdOn?: string;
-    createdBy?: string;
-    updatedOn?: string;
-    updatedBy?: string;
-    activities?: GroupActivity[];
-    activitiesGrouped?: ActivitiesGrouped[];
-    members?: GroupMember[];
-}
 
 export class CsGroupActivity implements GroupActivity {
     id: string;
@@ -83,7 +69,7 @@ export class CsGroupMember implements GroupMember {
     updatedBy?: string;
   }
 
-export class CsGroup implements  Group {
+export class Group {
     name: string;
     description: string;
     id: string;
@@ -102,7 +88,11 @@ export class CsGroup implements  Group {
     activities?: CsGroupActivity[];
 
 
-    isGroupActive(): boolean {
+    isActive(): boolean {
         return (this.status === GroupEntityStatus.ACTIVE);
+    }
+
+    setStatus (value) {
+        this.status = value;
     }
 }
