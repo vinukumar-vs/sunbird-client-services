@@ -1,3 +1,5 @@
+import { Type } from 'class-transformer';
+
 export enum GroupMembershipType {
     INVITE_ONLY = 'invite_only',
     MODERATED = 'moderated'
@@ -58,28 +60,49 @@ export interface Group {
     members?: GroupMember[];
 }
 
+export class CsGroupActivity implements GroupActivity {
+    id: string;
+    type: string;
+    status?: GroupEntityStatus;
+    activityInfo?: any;
+    createdOn?: string; // Record created date
+    createdBy?: string; // Record created userid
+    updatedOn?: string; // Record updated date
+    updatedBy?: string; // Record updated userid
+}
+
+export class CsGroupMember implements GroupMember {
+    name: string;
+    groupId: string;
+    userId: string;
+    role: GroupMemberRole;
+    status: GroupEntityStatus;
+    createdOn?: string;
+    createdBy?: string;
+    updatedOn?: string;
+    updatedBy?: string;
+  }
+
 export class CsGroup implements  Group {
     name: string;
     description: string;
     id: string;
-    status: GroupEntityStatus | undefined;
+    status?: GroupEntityStatus;
     membershipType: GroupMembershipType;
-    createdOn: string | undefined;
-    createdBy: string | undefined;
-    updatedOn: string | undefined;
-    updatedBy: string | undefined;
-    activities: GroupActivity[] | undefined;
-    activitiesGrouped: ActivitiesGrouped[] | undefined;
-    members: GroupMember[] | undefined;
+    createdOn?: string;
+    createdBy?: string;
+    updatedOn?: string;
+    updatedBy?: string;
+    activitiesGrouped?: ActivitiesGrouped[];
 
-    constructor(group) {
-        // tslint:disable-next-line: forin
-        for (const prop in group) {
-            this[prop] = group[prop];
-        }
-    }
+    @Type(() => CsGroupMember)
+    members?: CsGroupMember[];
+
+    @Type(() => CsGroupActivity)
+    activities?: CsGroupActivity[];
+
 
     isGroupActive(): boolean {
-       return (this.status === GroupEntityStatus.ACTIVE);
+        return (this.status === GroupEntityStatus.ACTIVE);
     }
 }

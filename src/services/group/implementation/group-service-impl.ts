@@ -33,6 +33,7 @@ import {map, mergeMap} from 'rxjs/operators';
 import {CsGroupActivityService} from '../activity/interface';
 import {CsFormService} from '../../form/interface/cs-form-service';
 import {Form} from '../../../models/form';
+import { plainToClass } from 'class-transformer';
 
 @injectable()
 export class GroupServiceImpl implements CsGroupService {
@@ -253,7 +254,7 @@ export class GroupServiceImpl implements CsGroupService {
             map((r) => r.body.result),
             mergeMap(async (result) => {
                 if (!options || !options.groupActivities || !options.includeActivities) {
-                    return result;
+                    return (plainToClass(CsGroup, result)) ;
                 }
 
                 const supportedActivitiesConfig = await this.getSupportedActivities().toPromise();
@@ -293,7 +294,7 @@ export class GroupServiceImpl implements CsGroupService {
                     };
                 });
 
-                return (Object.setPrototypeOf(result, CsGroup.prototype));
+                return (plainToClass(CsGroup, result));
             })
         );
     }
