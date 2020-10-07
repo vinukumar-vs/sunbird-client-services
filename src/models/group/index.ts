@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 
 export enum GroupMembershipType {
     INVITE_ONLY = 'invite_only',
@@ -45,6 +45,20 @@ export interface ActivitiesGrouped {
     items: GroupActivity[];
 }
 
+export interface Group {
+    name: string;
+    description: string;
+    id: string;
+    status?: GroupEntityStatus;
+    membershipType: GroupMembershipType;
+    createdOn?: string;
+    createdBy?: string;
+    updatedOn?: string;
+    updatedBy?: string;
+    activities?: GroupActivity[];
+    activitiesGrouped?: ActivitiesGrouped[];
+    members?: GroupMember[];
+}
 
 export class CsGroupActivity implements GroupActivity {
     id: string;
@@ -69,7 +83,7 @@ export class CsGroupMember implements GroupMember {
     updatedBy?: string;
   }
 
-export class Group {
+export class CsGroup implements Group {
     name: string;
     description: string;
     id: string;
@@ -87,12 +101,13 @@ export class Group {
     @Type(() => CsGroupActivity)
     activities?: CsGroupActivity[];
 
+    @Expose({name: 'active'})
+    @Transform((__, obj) => obj.status === GroupEntityStatus.ACTIVE)
+    active: boolean;
+
 
     isActive(): boolean {
-        return (this.status === GroupEntityStatus.ACTIVE);
-    }
-
-    setStatus (value) {
-        this.status = value;
+        this.active = (this.status === GroupEntityStatus.ACTIVE)
+        return this.active;
     }
 }
