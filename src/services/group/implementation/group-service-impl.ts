@@ -293,7 +293,7 @@ export class GroupServiceImpl implements CsGroupService {
                     };
                 });
 
-                return Object.setPrototypeOf(result, new CsGroup(result));
+                return (Object.setPrototypeOf(result, CsGroup.prototype));
             })
         );
     }

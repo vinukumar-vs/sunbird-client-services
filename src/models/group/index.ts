@@ -73,18 +73,10 @@ export class CsGroup implements  Group {
     members?: GroupMember[] | undefined;
 
     constructor(group) {
-        this.name = group.name;
-        this.description = group.description;
-        this.id = group.id;
-        this.status = group.status;
-        this.membershipType = group.membershipType;
-        this.createdOn = group.createdOn;
-        this.createdBy = group.createdBy;
-        this.updatedOn = group.updatedOn;
-        this.updatedBy = group.updatedBy;
-        this.activities = group.activities;
-        this.activitiesGrouped = group.activitiesGrouped;
-        this.members = group.members;
+        // tslint:disable-next-line: forin
+        for (const prop in group) {
+            this[prop] = group[prop];
+        }
     }
 
     isGroupActive(): boolean {
