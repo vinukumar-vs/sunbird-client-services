@@ -1,3 +1,4 @@
+import { CsGroupSuspendResponse, CsGroupReactiveResponse } from './../interface/cs-group-service';
 import { CsGroup } from './../../../models/group/index';
 import {Container, inject, injectable} from 'inversify';
 import {
@@ -325,6 +326,14 @@ export class GroupServiceImpl implements CsGroupService {
 
     deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse> {
         return this.updateById(id, {status: GroupEntityStatus.INACTIVE}, config);
+    }
+
+    suspendById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupSuspendResponse> {
+        return this.updateById(id, {status: GroupEntityStatus.SUSPENDED}, config);
+    }
+
+    reactiveById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactiveResponse> {
+        return this.updateById(id, {status: GroupEntityStatus.ACTIVE}, config);
     }
 
     getSupportedActivities(config?: CsGroupServiceConfig): Observable<Form<CsGroupSupportedActivitiesFormField>> {

@@ -124,6 +124,14 @@ export interface CsGroupSearchCriteria {
 export interface CsGroupDeleteResponse {
 }
 
+// tslint:disable-next-line:no-empty-interface
+export interface CsGroupSuspendResponse {
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface CsGroupReactiveResponse {
+}
+
 export interface CsGroupRemoveActivitiesRequest {
     activityIds: string[];
 }
@@ -179,4 +187,8 @@ export interface CsGroupService {
     removeActivities(groupId: string, removeActivitiesRequest: CsGroupRemoveActivitiesRequest, config?: CsGroupServiceConfig): Observable<CsGroupRemoveActivitiesResponse>;
 
     getSupportedActivities(config?: CsGroupServiceConfig): Observable<Form<CsGroupSupportedActivitiesFormField>>;
+
+    suspendById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupSuspendResponse>;
+
+    reactiveById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactiveResponse>;
 }
