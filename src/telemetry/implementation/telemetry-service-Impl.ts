@@ -1,6 +1,5 @@
 import {TelemetryService} from '../interface';
 import {IActor, ICDataEntry, IProducerdata, ITelemetry, ITelemetryContext, ITelemetryObject} from '../interface/cs-telemetry-request';
-import * as EkTelemetry from '@project-sunbird/telemetry-sdk';
 import {injectable} from 'inversify';
 
 @injectable()
@@ -19,13 +18,15 @@ export class TelemetryServiceImpl implements TelemetryService {
 
 
     public initTelemetry(telemetryContext: ITelemetryContext) {
-        this.telemetryProvider = EkTelemetry;
-        this._isInitialsed = true;
-        this.context = telemetryContext;
-        this.telemetryProvider.initialize(telemetryContext.config);
+        if (window['EkTelemetry']) {
+            this.telemetryProvider = window['EkTelemetry'];
+            this._isInitialsed = true;
+            this.context = telemetryContext;
+            this.telemetryProvider.initialize(telemetryContext.config);
+        }
     }
     public initTelmetry(pdata: IProducerdata, actor: IActor, channel: string , sid: string, did: string) {
-        if (this.context != null) {
+        if (this.context != null && this.telemetryProvider) {
             this.telemetryProvider.initialize(this.context.config);
         } else {
             this.config.pdata = pdata;
