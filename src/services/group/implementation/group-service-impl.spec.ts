@@ -915,7 +915,8 @@ describe('GroupServiceImpl', () => {
             });
         });
 
-        it('should sort groups with order -> groups where user is admin, other groups -> ordered by recent first', (done) => {
+        it('should sort groups with order -> active then suspended -> within active lastUpdatedOn -> within suspended lastUpdatedOn',
+        (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();
                 response.responseCode = 200;
@@ -940,12 +941,12 @@ describe('GroupServiceImpl', () => {
                                 'id': 'cf3b680e-01da-4a81-a39c-da74c1202ab1',
                                 'name': 'Managed user group',
                                 'description': '',
-                                'status': 'active',
+                                'status': 'suspended',
                                 'membershipType': 'moderated',
                                 'activities': [],
                                 'createdOn': '2020-07-16 08:54:45:061+0000',
                                 'createdBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
-                                'updatedOn': '2020-07-16 09:05:40:622+0000',
+                                'updatedOn': '2020-07-05 09:05:40:622+0000',
                                 'updatedBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
                                 'members': null,
                                 'memberRole': 'admin'
@@ -959,7 +960,7 @@ describe('GroupServiceImpl', () => {
                                 'activities': [],
                                 'createdOn': '2020-07-17 10:05:25:939+0000',
                                 'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
-                                'updatedOn': '2020-07-16 10:11:33:240+0000',
+                                'updatedOn': '2020-07-13 10:05:25:939+0000',
                                 'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
                                 'members': null,
                                 'memberRole': 'member'
@@ -973,7 +974,7 @@ describe('GroupServiceImpl', () => {
                                 'activities': [{'id': 'do_21303485870433894411338', 'type': 'Course'}],
                                 'createdOn': '2020-07-16 09:12:47:833+0000',
                                 'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
-                                'updatedOn': '2020-07-16 10:03:22:887+0000',
+                                'updatedOn': '2020-07-20 10:03:22:887+0000',
                                 'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
                                 'members': null,
                                 'memberRole': 'admin'
@@ -982,12 +983,12 @@ describe('GroupServiceImpl', () => {
                                 'id': 'ee854e1c-4e66-4ca3-a375-593b002c7f27',
                                 'name': 'Manage user with admin role',
                                 'description': '',
-                                'status': 'active',
+                                'status': 'suspended',
                                 'membershipType': 'moderated',
                                 'activities': [{'id': 'do_2130654356933754881407', 'type': 'Course'}],
                                 'createdOn': '2020-07-16 09:06:06:590+0000',
                                 'createdBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
-                                'updatedOn': '2020-07-16 12:29:54:511+0000',
+                                'updatedOn': '2020-07-21 12:29:54:511+0000',
                                 'updatedBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
                                 'members': null,
                                 'memberRole': 'admin'
@@ -996,12 +997,12 @@ describe('GroupServiceImpl', () => {
                                 'id': 'dcbb4d49-f3be-4ffd-8de9-d09a452ea4c1',
                                 'name': 'Test 396',
                                 'description': '',
-                                'status': 'active',
+                                'status': 'suspended',
                                 'membershipType': 'moderated',
                                 'activities': [],
                                 'createdOn': '2020-07-16 10:05:25:939+0000',
                                 'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
-                                'updatedOn': '2020-07-16 10:11:33:240+0000',
+                                'updatedOn': '2020-07-20 10:11:33:240+0000',
                                 'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
                                 'members': null,
                                 'memberRole': 'member'
@@ -1011,21 +1012,19 @@ describe('GroupServiceImpl', () => {
                 };
                 return of(response);
             });
-
             const request = {
                 filters: {
                     userId: 'SOME_USER_ID'
                 }
             };
-
             groupService.search(request).subscribe((groups) => {
-                expect(groups.map((g) => g.memberRole + '-' + g.createdOn)).toEqual([
-                    'admin-2020-07-16 12:22:45:719+0000',
-                    'admin-2020-07-16 09:12:47:833+0000',
-                    'admin-2020-07-16 09:06:06:590+0000',
-                    'admin-2020-07-16 08:54:45:061+0000',
-                    'member-2020-07-17 10:05:25:939+0000',
-                    'member-2020-07-16 10:05:25:939+0000'
+                expect(groups.map((g) => g.status + '_' + g.updatedOn)).toEqual([
+                    'active_2020-07-20 10:03:22:887+0000',
+                    'active_2020-07-16 12:23:33:615+0000',
+                    'active_2020-07-13 10:05:25:939+0000',
+                    'suspended_2020-07-21 12:29:54:511+0000',
+                    'suspended_2020-07-20 10:11:33:240+0000',
+                    'suspended_2020-07-05 09:05:40:622+0000'
                 ]);
                 done();
             });
