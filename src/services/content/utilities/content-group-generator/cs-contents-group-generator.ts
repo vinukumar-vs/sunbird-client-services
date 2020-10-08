@@ -68,7 +68,7 @@ export class CsContentsGroupGenerator {
                     } else {
                         const c = acc.get(content[groupBy]) || [];
                         c.push(content);
-                        acc.set(content[groupBy], c);
+                        acc.set(content[groupBy] || 'Other', c);
                     }
 
                     return acc;
