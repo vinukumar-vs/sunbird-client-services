@@ -1,3 +1,5 @@
+import { CsGroupSuspendResponse, CsGroupReactivateResponse } from './../interface/cs-group-service';
+import { CsGroup } from './../../../models/group/index';
 import {Container, inject, injectable} from 'inversify';
 import {
     CsGroupAddActivitiesRequest,
@@ -31,6 +33,7 @@ import {map, mergeMap} from 'rxjs/operators';
 import {CsGroupActivityService} from '../activity/interface';
 import {CsFormService} from '../../form/interface/cs-form-service';
 import {Form} from '../../../models/form';
+import { plainToClass } from 'class-transformer';
 
 @injectable()
 export class GroupServiceImpl implements CsGroupService {
@@ -227,7 +230,7 @@ export class GroupServiceImpl implements CsGroupService {
 
     getById(
         id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig
-    ): Observable<Group> {
+    ): Observable<CsGroup> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/read/${id}`)
@@ -251,7 +254,7 @@ export class GroupServiceImpl implements CsGroupService {
             map((r) => r.body.result),
             mergeMap(async (result) => {
                 if (!options || !options.groupActivities || !options.includeActivities) {
-                    return result;
+                    return (plainToClass(CsGroup, result)) ;
                 }
 
                 const supportedActivitiesConfig = await this.getSupportedActivities().toPromise();
@@ -291,7 +294,7 @@ export class GroupServiceImpl implements CsGroupService {
                     };
                 });
 
-                return result;
+                return (plainToClass(CsGroup, result));
             })
         );
     }
@@ -324,6 +327,14 @@ export class GroupServiceImpl implements CsGroupService {
 
     deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse> {
         return this.updateById(id, {status: GroupEntityStatus.INACTIVE}, config);
+    }
+
+    suspendById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupSuspendResponse> {
+        return this.updateById(id, {status: GroupEntityStatus.SUSPENDED}, config);
+    }
+
+    reactivateById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactivateResponse> {
+        return this.updateById(id, {status: GroupEntityStatus.ACTIVE}, config);
     }
 
     getSupportedActivities(config?: CsGroupServiceConfig): Observable<Form<CsGroupSupportedActivitiesFormField>> {

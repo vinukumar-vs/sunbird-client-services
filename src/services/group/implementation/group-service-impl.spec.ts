@@ -1112,4 +1112,100 @@ describe('GroupServiceImpl', () => {
             });
         });
     });
+
+    describe('suspendById()', () => {
+        it('should be able to suspend a group with appropriate request ', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {};
+                return of(response);
+            });
+
+            groupService.suspendById('SOME_GROUP_ID').subscribe(() => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'PATCH',
+                    body: {
+                        request: {
+                            groupId: 'SOME_GROUP_ID',
+                            status: GroupEntityStatus.SUSPENDED
+                        }
+                    }
+                }));
+                done();
+            });
+        });
+        describe('when configuration is overridden', () => {
+            it('should be able to suspend a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                groupService.suspendById('SOME_GROUP_ID', { apiPath: '/some_api_path', dataApiPath: '/some_api_path' }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                status: GroupEntityStatus.SUSPENDED
+                            }
+                        }
+                    }));
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('reactivateById()', () => {
+        it('should be able to reactive a group with appropriate request ', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {};
+                return of(response);
+            });
+
+            groupService.reactivateById('SOME_GROUP_ID').subscribe(() => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'PATCH',
+                    body: {
+                        request: {
+                            groupId: 'SOME_GROUP_ID',
+                            status: GroupEntityStatus.ACTIVE
+                        }
+                    }
+                }));
+                done();
+            });
+        });
+        describe('when configuration is overridden', () => {
+            it('should be able to reactive a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                groupService.reactivateById('SOME_GROUP_ID', { apiPath: '/some_api_path', dataApiPath: '/some_api_path' }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                status: GroupEntityStatus.ACTIVE
+                            }
+                        }
+                    }));
+                    done();
+                });
+            });
+        });
+    });
 });
