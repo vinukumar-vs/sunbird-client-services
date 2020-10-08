@@ -309,17 +309,15 @@ export class GroupServiceImpl implements CsGroupService {
                 request: searchCriteria
             })
             .build();
-
         return this.httpService.fetch<{ result: { count: number; group: CsGroupSearchResponse[] } }>(apiRequest).pipe(
             map((r) =>
                 r.body.result.group.sort((a, b) => {
-                    if (a.memberRole === GroupMemberRole.ADMIN && b.memberRole === GroupMemberRole.MEMBER) {
-                        return -1;
-                    } else if (a.memberRole === GroupMemberRole.MEMBER && b.memberRole === GroupMemberRole.ADMIN) {
+                    if (a.status === GroupEntityStatus.SUSPENDED && b.status !== GroupEntityStatus.SUSPENDED) {
                         return 1;
+                    } else if (b.status === GroupEntityStatus.SUSPENDED && a.status !== GroupEntityStatus.SUSPENDED) {
+                        return -1;
                     }
-
-                    return new Date(b.createdOn!).getTime() - new Date(a.createdOn!).getTime();
+                    return new Date(b.updatedOn!).getTime() - new Date(a.updatedOn!).getTime();
                 })
             )
         );
