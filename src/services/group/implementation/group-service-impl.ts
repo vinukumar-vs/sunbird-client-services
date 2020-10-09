@@ -319,6 +319,7 @@ export class GroupServiceImpl implements CsGroupService {
                     }
                     return new Date(b.updatedOn!).getTime() - new Date(a.updatedOn!).getTime();
                 })
+                .map((g) => plainToClass(CsGroup, g) as CsGroupSearchResponse)
             )
         );
     }
