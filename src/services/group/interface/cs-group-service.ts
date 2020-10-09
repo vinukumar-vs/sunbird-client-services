@@ -146,7 +146,7 @@ export interface CsGroupRemoveActivitiesResponse {
     };
 }
 
-export interface CsGroupSearchResponse extends Group {
+export interface CsGroupSearchResponse extends CsGroup {
     memberRole: GroupMemberRole;
 }
 
