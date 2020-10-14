@@ -144,6 +144,8 @@ export interface CsGroupSearchResponse extends Group {
 export interface CsGroupSupportedActivitiesFormField {
     index: number;
     title: string;
+    translations: string;
+    isEnabled: boolean;
     activityType: string;
     objectType: string;
     searchQuery: string;

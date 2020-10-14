@@ -63,4 +63,5 @@ export interface Course {
     certificates?: CourseCertificate[];
     issuedCertificates?: CourseCertificate[];
     batches?: (Partial<Batch>)[];
+    forumId?: string;
 }

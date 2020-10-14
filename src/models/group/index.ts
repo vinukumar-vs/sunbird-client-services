@@ -38,7 +38,10 @@ export interface GroupActivity {
 
 export interface ActivitiesGrouped {
     title: string;
+    translations?: string;
     count: number;
+    isEnabled: boolean;
+    objectType: string;
     items: GroupActivity[];
 }
 
