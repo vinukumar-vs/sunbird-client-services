@@ -286,6 +286,7 @@ export class GroupServiceImpl implements CsGroupService {
 
                     return {
                         title: field.title,
+                        translations: field.translations,
                         count: activitiesByActivityType.length,
                         isEnabled: field.isEnabled,
                         objectType: field.objectType,
