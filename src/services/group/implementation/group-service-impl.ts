@@ -287,6 +287,8 @@ export class GroupServiceImpl implements CsGroupService {
                     return {
                         title: field.title,
                         count: activitiesByActivityType.length,
+                        isEnabled: field.isEnabled,
+                        objectType: field.objectType,
                         items: activitiesByActivityType
                     };
                 });
@@ -329,10 +331,18 @@ export class GroupServiceImpl implements CsGroupService {
     getSupportedActivities(config?: CsGroupServiceConfig): Observable<Form<CsGroupSupportedActivitiesFormField>> {
         const request = {
             'type': 'group',
-            'subType': 'activities_v2',
+            'subType': 'supported_activities',
             'action': 'list'
         };
 
-        return this.formService.getForm<CsGroupSupportedActivitiesFormField>(request);
+        return this.formService.getForm<CsGroupSupportedActivitiesFormField>(request)
+            .pipe(
+                // TODO: remove objectType: content filter
+                map((result) => {
+                    result.data.fields = result.data.fields
+                        .filter((field) => field.objectType.toLowerCase() === 'content');
+                    return result;
+                })
+            );
     }
 }
