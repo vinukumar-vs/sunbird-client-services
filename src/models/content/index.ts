@@ -64,6 +64,7 @@ export interface Content {
     trackable?: Trackable;
     userConsent?: UserConsent;
     additionalCategories?: string[];
+    forumId?: string;
 }
 
 export interface LicenseDetails {
