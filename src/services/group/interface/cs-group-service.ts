@@ -62,6 +62,7 @@ export interface CsGroupUpdateMembersRequest {
         userId: string;
         role?: GroupMemberRole;
         status?: GroupEntityStatus;
+        visited?: boolean;
     }[];
 }
 
@@ -148,6 +149,7 @@ export interface CsGroupRemoveActivitiesResponse {
 
 export interface CsGroupSearchResponse extends CsGroup {
     memberRole: GroupMemberRole;
+    visited?: boolean;
 }
 
 export interface CsGroupSupportedActivitiesFormField {
