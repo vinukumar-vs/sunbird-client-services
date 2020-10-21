@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {CsUserServiceConfig} from '../../../index';
-import {Consent, UserDeclaration} from '../../../models';
+import {Consent, UserDeclaration, UserFeedEntry} from '../../../models';
 
 export interface CheckUserExistsResponse {
     exists: boolean;
@@ -28,6 +28,10 @@ export interface CsUserService {
     checkUserExists(matching: { key: string, value: string }, captchaResponse?: { token: string, app?: string }, config?: CsUserServiceConfig): Observable<CheckUserExistsResponse>;
 
     updateUserDeclarations(declarations: UserDeclaration[], config?: CsUserServiceConfig): Observable<CsUpdateUserDeclarationsResponse>;
+
     updateConsent(userConsent: Consent, config?: CsUserServiceConfig): Observable<UpdateConsentResponse>;
+
     getConsent(userConsent: Consent, config?: CsUserServiceConfig): Observable<ReadConsentResponse>;
+
+    getUserFeed(uid: string, config?: CsUserServiceConfig): Observable<UserFeedEntry[]>;
 }

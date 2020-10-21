@@ -97,3 +97,16 @@ export interface Consent {
     expiry?: string;
     lastUpdatedOn?: string;
 }
+
+export interface UserFeedEntry {
+    id: string;
+    userId: string;
+    category: string;
+    priority: number;
+    createdBy: string;
+    createdOn: string;
+    channel: string;
+    status: string;
+    expireOn: string;
+    data: any;
+}

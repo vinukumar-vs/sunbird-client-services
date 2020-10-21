@@ -11,7 +11,7 @@ import {CsUserServiceConfig} from '../../../index';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map} from 'rxjs/operators';
-import {Consent, UserDeclaration} from 'src/models';
+import {Consent, UserDeclaration, UserFeedEntry} from 'src/models';
 
 @injectable()
 export class UserServiceImpl implements CsUserService {
@@ -99,6 +99,21 @@ export class UserServiceImpl implements CsUserService {
 
     return this.httpService.fetch<{ result: ReadConsentResponse }>(apiRequest).pipe(
       map((r) => r.body.result)
+    );
+  }
+
+  getUserFeed(uid: string, config?: CsUserServiceConfig): Observable<UserFeedEntry[]> {
+    const apiRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.GET)
+        .withPath(`${config ? config.apiPath : this.apiPath}/feed/${uid}`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .build();
+
+    return this.httpService.fetch<{ result: { response: { userFeed: UserFeedEntry[] } } }>(apiRequest).pipe(
+        map((response) => {
+          return response.body.result.response.userFeed;
+        })
     );
   }
 }
