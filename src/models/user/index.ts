@@ -21,6 +21,12 @@ export interface User {
         provider: string;
     }[];
     declarations?: UserDeclaration[];
+    allTncAccepted?: {
+        [key: string]: {
+            tncAcceptedOn: string,
+            version: string
+        } | undefined;
+    };
 }
 
 export enum UserDeclarationOperation {
