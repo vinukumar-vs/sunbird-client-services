@@ -64,7 +64,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
         this.headers = {...this.headers, ...headers};
     }
 
-    get(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse> {
+    get(baseUrl: string, path: string, headers: any, parameters: any, httpSerializer: CsHttpSerializer): Observable<CsResponse> {
         const url = new URL(baseUrl + path);
 
         this.addHeader('content-type', 'text/plain');
@@ -78,7 +78,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
         return this.invokeRequest(CsHttpRequestType.GET, url, headers, undefined);
     }
 
-    delete(baseUrl: string, path: string, headers: any, parameters: any): Observable<CsResponse> {
+    delete(baseUrl: string, path: string, headers: any, parameters: any, httpSerializer: CsHttpSerializer): Observable<CsResponse> {
         const url = new URL(baseUrl + path);
 
         this.addHeader('content-type', 'text/plain');
@@ -92,10 +92,10 @@ export class HttpClientBrowserAdapter implements HttpClient {
         return this.invokeRequest(CsHttpRequestType.DELETE, url, headers, undefined);
     }
 
-    patch(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse> {
+    patch(baseUrl: string, path: string, headers: any, body: any, httpSerializer: CsHttpSerializer): Observable<CsResponse> {
         const url = new URL(baseUrl + path);
 
-        if (this.serializer === CsHttpSerializer.URLENCODED && typeof body === 'object') {
+        if (httpSerializer === CsHttpSerializer.URLENCODED && typeof body === 'object') {
             this.addHeader('content-type', 'application/x-www-form-urlencoded');
             body = qs.stringify(body);
         } else if (typeof body === 'object') {
@@ -106,10 +106,10 @@ export class HttpClientBrowserAdapter implements HttpClient {
         return this.invokeRequest(CsHttpRequestType.PATCH, url, headers, body);
     }
 
-    post(baseUrl: string, path: string, headers: any, body: any): Observable<CsResponse> {
+    post(baseUrl: string, path: string, headers: any, body: any, httpSerializer: CsHttpSerializer): Observable<CsResponse> {
         const url = new URL(baseUrl + path);
 
-        if (this.serializer === CsHttpSerializer.URLENCODED && typeof body === 'object') {
+        if (httpSerializer === CsHttpSerializer.URLENCODED && typeof body === 'object') {
             this.addHeader('content-type', 'application/x-www-form-urlencoded');
             body = qs.stringify(body);
         } else if (typeof body === 'object') {

@@ -89,7 +89,7 @@ describe('HttpClientCordovaAdapter', () => {
             describe('when response is JSON', () => {
                 it('should resolve with success response', (done) => {
                     // arrange
-                    mockCordovaPlugin['get'] = jest.fn((_, __, ___, successCallback, errorCallback) => {
+                    mockCordovaPlugin['sendRequest'] = jest.fn((_, __, successCallback, errorCallback) => {
                         setTimeout(() => {
                             successCallback({
                                 data: {'SOME_KEY': 'SOME_VALUE'},
@@ -98,7 +98,7 @@ describe('HttpClientCordovaAdapter', () => {
                         });
                     });
 
-                    httpClientCordovaAdapter.get('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}).subscribe((r) => {
+                    httpClientCordovaAdapter.get('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}, expect.anything()).subscribe((r) => {
                         expect(r.responseCode).toBe(CsHttpResponseCode.HTTP_SUCCESS);
                         expect(typeof r.body === 'object').toBeTruthy();
                         done();
@@ -109,7 +109,7 @@ describe('HttpClientCordovaAdapter', () => {
             describe('when response is not JSON', () => {
                 it('should resolve with success response with string response', (done) => {
                     // arrange
-                    mockCordovaPlugin['post'] = jest.fn((_, __, ___, successCallback, errorCallback) => {
+                    mockCordovaPlugin['sendRequest'] = jest.fn((_, __, successCallback, errorCallback) => {
                         setTimeout(() => {
                             successCallback({
                                 data: 'SOME_SUCCESS_RESPONSE',
@@ -118,7 +118,7 @@ describe('HttpClientCordovaAdapter', () => {
                         });
                     });
 
-                    httpClientCordovaAdapter.post('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}).subscribe((r) => {
+                    httpClientCordovaAdapter.post('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}, expect.anything()).subscribe((r) => {
                         expect(typeof r.body === 'string').toBeTruthy();
                         done();
                     });
@@ -130,7 +130,7 @@ describe('HttpClientCordovaAdapter', () => {
             describe('when response has 0 status code and not from server', () => {
                 it('should throw network error', (done) => {
                     // arrange
-                    mockCordovaPlugin['patch'] = jest.fn((_, __, ___, successCallback, errorCallback) => {
+                    mockCordovaPlugin['sendRequest'] = jest.fn((_, __, successCallback, errorCallback) => {
                         setTimeout(() => {
                             errorCallback({
                                 status: 0
@@ -138,7 +138,7 @@ describe('HttpClientCordovaAdapter', () => {
                         });
                     });
 
-                    httpClientCordovaAdapter.patch('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}).subscribe((r) => {
+                    httpClientCordovaAdapter.patch('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}, expect.anything()).subscribe((r) => {
                         fail();
                     }, (e) => {
                         expect(CsNetworkError.isInstance(e)).toBeTruthy();
@@ -151,7 +151,7 @@ describe('HttpClientCordovaAdapter', () => {
                 describe('when response is JSON', () => {
                     it('should reject with error response', (done) => {
                         // arrange
-                        mockCordovaPlugin['delete'] = jest.fn((_, __, ___, successCallback, errorCallback) => {
+                        mockCordovaPlugin['sendRequest'] = jest.fn((_, __, successCallback, errorCallback) => {
                             setTimeout(() => {
                                 errorCallback({
                                     error: {'SOME_KEY': 'SOME_VALUE'},
@@ -160,7 +160,7 @@ describe('HttpClientCordovaAdapter', () => {
                             });
                         });
 
-                        httpClientCordovaAdapter.delete('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}).subscribe((r) => {
+                        httpClientCordovaAdapter.delete('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}, expect.anything()).subscribe((r) => {
                             fail();
                         }, (e) => {
                             expect(CsHttpClientError.isInstance(e)).toBeTruthy();
@@ -173,7 +173,7 @@ describe('HttpClientCordovaAdapter', () => {
                 describe('when response is string', () => {
                     it('should reject with error response', (done) => {
                         // arrange
-                        mockCordovaPlugin['delete'] = jest.fn((_, __, ___, successCallback, errorCallback) => {
+                        mockCordovaPlugin['sendRequest'] = jest.fn((_, __, successCallback, errorCallback) => {
                             setTimeout(() => {
                                 errorCallback({
                                     error: 'SOME_ERROR_RESPONSE',
@@ -182,7 +182,7 @@ describe('HttpClientCordovaAdapter', () => {
                             });
                         });
 
-                        httpClientCordovaAdapter.delete('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}).subscribe((r) => {
+                        httpClientCordovaAdapter.delete('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}, expect.anything()).subscribe((r) => {
                             fail();
                         }, (e) => {
                             expect(CsHttpServerError.isInstance(e)).toBeTruthy();

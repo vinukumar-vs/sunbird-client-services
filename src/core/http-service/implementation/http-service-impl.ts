@@ -95,23 +95,23 @@ export class HttpServiceImpl implements CsHttpService {
                 switch (request.type) {
                     case CsHttpRequestType.GET:
                         localResponse = await this.http.get(
-                            request.host || this.host, request.path, request.headers, request.parameters
+                            request.host || this.host, request.path, request.headers, request.parameters, request.serializer
                         ).toPromise();
                         break;
                     case CsHttpRequestType.PATCH:
                         localResponse = await this.http.patch(
-                            request.host || this.host, request.path, request.headers, request.body
+                            request.host || this.host, request.path, request.headers, request.body, request.serializer
                         ).toPromise();
                         break;
                     case CsHttpRequestType.POST: {
                         localResponse = await this.http.post(
-                            request.host || this.host, request.path, request.headers, request.body
+                            request.host || this.host, request.path, request.headers, request.body, request.serializer
                         ).toPromise();
                         break;
                     }
                     case CsHttpRequestType.DELETE:
                         localResponse = await this.http.delete(
-                            request.host || this.host, request.path, request.headers, request.parameters
+                            request.host || this.host, request.path, request.headers, request.parameters, request.serializer
                         ).toPromise();
                         break;
                     default:
