@@ -1,4 +1,4 @@
-import { CsGroupSuspendResponse, CsGroupReactivateResponse } from './../interface/cs-group-service';
+import { CsGroupSuspendResponse, CsGroupReactivateResponse, CsGroupUpdateGroupguidelinesResponse, CsGroupUpdateGroupGuidelinesRequest } from './../interface/cs-group-service';
 import { CsGroup } from './../../../models/group/index';
 import {Container, inject, injectable} from 'inversify';
 import {
@@ -370,5 +370,23 @@ export class GroupServiceImpl implements CsGroupService {
                     return result;
                 })
             );
+    }
+
+    updateGroupGuidelines(request: CsGroupUpdateGroupGuidelinesRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateGroupguidelinesResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+            .withType(CsHttpRequestType.PATCH)
+            .withPath(`${config ? config.apiPath : this.apiPath}/membership/update`)
+            .withBearerToken(true)
+            .withUserToken(true)
+            .withBody({
+                request: {
+                    request
+                }
+            })
+            .build();
+
+        return this.httpService.fetch<{ result: CsGroupUpdateGroupguidelinesResponse }>(apiRequest).pipe(
+            map((r) => r.body.result)
+        );
     }
 }
