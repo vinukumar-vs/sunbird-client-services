@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {CsUserServiceConfig} from '../../../index';
-import {Consent, UserDeclaration, UserFeedEntry} from '../../../models';
+import {Consent, UserDeclaration, UserFeedEntry, UserFeedStatus} from '../../../models';
 
 export interface CheckUserExistsResponse {
     exists: boolean;
@@ -21,11 +21,22 @@ export interface ReadConsentResponse {
     consents?: Consent[];
 }
 
+export interface CsUpdateUserFeedRequest {
+    status?: UserFeedStatus;
+}
+
 // tslint:disable-next-line:no-empty-interface
-export interface CsUpdateUserDeclarationsResponse {}
+export interface CsUpdateUserDeclarationsResponse {
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface CsUpdateUserFeedStatusResponse {
+}
 
 export interface CsUserService {
-    checkUserExists(matching: { key: string, value: string }, captchaResponse?: { token: string, app?: string }, config?: CsUserServiceConfig): Observable<CheckUserExistsResponse>;
+    checkUserExists(
+        matching: { key: string, value: string }, captchaResponse?: { token: string, app?: string }, config?: CsUserServiceConfig
+    ): Observable<CheckUserExistsResponse>;
 
     updateUserDeclarations(declarations: UserDeclaration[], config?: CsUserServiceConfig): Observable<CsUpdateUserDeclarationsResponse>;
 
@@ -34,4 +45,8 @@ export interface CsUserService {
     getConsent(userConsent: Consent, config?: CsUserServiceConfig): Observable<ReadConsentResponse>;
 
     getUserFeed(uid: string, config?: CsUserServiceConfig): Observable<UserFeedEntry[]>;
+
+    updateUserFeedEntry(
+        uid: string, feedEntryId: string, request: CsUpdateUserFeedRequest, config?: CsUserServiceConfig
+    ): Observable<CsUpdateUserFeedStatusResponse>;
 }

@@ -68,21 +68,6 @@ export interface Location {
     type: string;
 }
 
-export interface Feed {
-    id: string;
-    userId: string;
-    category: string;
-    priority: number;
-    createdBy: string;
-    createdOn: string;
-    channel: string;
-    status: string;
-    expireOn: string;
-    data: {
-        prospectChannels: string[];
-    };
-}
-
 export enum ConsentStatus {
     ACTIVE = 'ACTIVE',
     REVOKED = 'REVOKED'
@@ -98,15 +83,25 @@ export interface Consent {
     lastUpdatedOn?: string;
 }
 
-export interface UserFeedEntry {
-    id: string;
+export enum UserFeedStatus {
+    READ = 'read',
+    UNREAD = 'unread'
+}
+
+export enum UserFeedCategory {
+    ORG_MIGRATION_ACTION = 'OrgMigrationAction',
+    NOTIFICATION = 'Notification'
+}
+
+export interface UserFeedEntry<T = any> {
+    identifier: string;
     userId: string;
-    category: string;
+    category: UserFeedCategory;
     priority: number;
     createdBy: string;
     createdOn: string;
     channel: string;
-    status: string;
+    status: UserFeedStatus;
     expireOn: string;
-    data: any;
+    data: T;
 }
