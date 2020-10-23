@@ -173,7 +173,7 @@ export interface CsGroupUpdateGroupGuidelinesRequest {
     }[];
 }
 
-export interface CsGroupUpdateGroupguidelinesResponse {
+export interface CsGroupUpdateGroupGuidelinesResponse {
 }
 
 
@@ -209,5 +209,5 @@ export interface CsGroupService {
 
     reactivateById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactivateResponse>;
 
-    updateGroupGuidelines(request: CsGroupUpdateGroupGuidelinesRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateGroupguidelinesResponse>;
+    updateGroupGuidelines(request: CsGroupUpdateGroupGuidelinesRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateGroupGuidelinesResponse>;
 }
