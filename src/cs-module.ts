@@ -27,6 +27,7 @@ export interface CsUserServiceConfig {
 export interface CsGroupServiceConfig {
     apiPath: string;
     dataApiPath: string;
+    updateGroupGuidelinesApiPath?: string;
 }
 
 export interface CsFrameworkServiceConfig {
@@ -192,6 +193,10 @@ export class CsModule {
                 .toConstantValue(config.services.groupServiceConfig.apiPath);
             this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_DATA_API_PATH)
                 .toConstantValue(config.services.groupServiceConfig.dataApiPath);
+            if(config.services.groupServiceConfig.updateGroupGuidelinesApiPath) {
+                this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_UPDATE_GUIDELINES_API_PATH)
+                    .toConstantValue(config.services.groupServiceConfig.updateGroupGuidelinesApiPath);
+            }
         }
 
         // frameworkService

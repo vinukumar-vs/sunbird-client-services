@@ -1,6 +1,6 @@
 import { CsGroupSuspendResponse, CsGroupReactivateResponse, CsGroupUpdateGroupguidelinesResponse, CsGroupUpdateGroupGuidelinesRequest } from './../interface/cs-group-service';
 import { CsGroup } from './../../../models/group/index';
-import {Container, inject, injectable} from 'inversify';
+import {Container, inject, injectable, optional} from 'inversify';
 import {
     CsGroupAddActivitiesRequest,
     CsGroupAddActivitiesResponse,
@@ -42,6 +42,7 @@ export class GroupServiceImpl implements CsGroupService {
         @inject(InjectionTokens.services.group.GROUP_SERVICE_API_PATH) private apiPath: string,
         @inject(InjectionTokens.CONTAINER) private container: Container,
         @inject(InjectionTokens.services.form.FORM_SERVICE) private formService: CsFormService,
+        @optional() @inject(InjectionTokens.services.group.GROUP_SERVICE_UPDATE_GUIDELINES_API_PATH) private updateGroupGuidelinesApiPath: string,
     ) {
     }
 
@@ -328,22 +329,7 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
     deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse> {
-        // return this.updateById(id, {status: GroupEntityStatus.INACTIVE}, config);
-        const apiRequest: CsRequest = new CsRequest.Builder()
-        .withType(CsHttpRequestType.DELETE)
-        .withPath(`${config ? config.apiPath : this.apiPath}/delete`)
-        .withBearerToken(true)
-        .withUserToken(true)
-        .withBody({
-            request: {
-                groupId: id,
-            }
-        })
-        .build();
-
-        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
-            map((r) => r.body.result)
-        );
+        return this.updateById(id, {status: GroupEntityStatus.INACTIVE}, config);
     }
 
     suspendById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupSuspendResponse> {
@@ -371,16 +357,15 @@ export class GroupServiceImpl implements CsGroupService {
                 })
             );
     }
-
     updateGroupGuidelines(request: CsGroupUpdateGroupGuidelinesRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateGroupguidelinesResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.PATCH)
-            .withPath(`${config ? config.apiPath : this.apiPath}/membership/update`)
+            .withPath(`${config ? config.apiPath : this.updateGroupGuidelinesApiPath}/update`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
                 request: {
-                    request
+                    ...request
                 }
             })
             .build();

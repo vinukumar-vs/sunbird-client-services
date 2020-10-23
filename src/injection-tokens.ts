@@ -29,6 +29,7 @@ export const InjectionTokens = {
             GROUP_SERVICE_DATA_API_PATH: Symbol.for('GROUP_SERVICE_DATA_API_PATH'),
             GROUP_SERVICE: Symbol.for('GROUP_SERVICE'),
             GROUP_ACTIVITY_SERVICE: Symbol.for('GROUP_ACTIVITY_SERVICE'),
+            GROUP_SERVICE_UPDATE_GUIDELINES_API_PATH: Symbol.for('GROUP_SERVICE_UPDATE_GUIDELINES_API_PATH'),
         },
         framework: {
             FRAMEWORK_SERVICE_API_PATH: Symbol.for('FRAMEWORK_SERVICE_API_PATH'),
