@@ -1207,4 +1207,73 @@ describe('GroupServiceImpl', () => {
             });
         });
     });
+    describe('updateGroupGuidelines()', () => {
+        it('should be able to update  group guidelines with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {};
+                return of(response);
+            });
+
+            const request = {
+                userId: 'SOME_USER_ID',
+                groups: [
+                    {
+                        groupId: 'SOME_GROUP_ID',
+                        visited: true
+                    }
+                ]
+            };
+
+            groupService.updateGroupGuidelines( request).subscribe(() => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'PATCH',
+                    body: {
+                        request: {
+                            ...request
+                        }
+                    }
+                }));
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to update group guidelines with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                const request = {
+                    userId: 'SOME_USER_ID',
+                    groups: [
+                        {
+                            groupId: 'SOME_GROUP_ID',
+                            visited: true
+                        }
+                    ]
+                };
+
+                groupService.updateGroupGuidelines( request, {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                ...request
+                            }
+                        }
+                    }));
+                    done();
+                });
+            });
+        });
+    });
 });

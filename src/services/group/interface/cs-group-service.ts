@@ -165,6 +165,19 @@ export interface CsGroupSupportedActivitiesFormField {
     }[];
 }
 
+export interface CsGroupUpdateGroupGuidelinesRequest {
+    userId: string;
+    groups: {
+        groupId: string;
+        visited: boolean;
+    }[];
+}
+
+export interface CsGroupUpdateGroupGuidelinesResponse {
+}
+
+
+
 export interface CsGroupService {
     activityService: CsGroupActivityService;
 
@@ -195,4 +208,6 @@ export interface CsGroupService {
     suspendById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupSuspendResponse>;
 
     reactivateById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactivateResponse>;
+
+    updateGroupGuidelines(request: CsGroupUpdateGroupGuidelinesRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateGroupGuidelinesResponse>;
 }

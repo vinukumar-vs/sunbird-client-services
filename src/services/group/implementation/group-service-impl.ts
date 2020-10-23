@@ -1,6 +1,6 @@
-import { CsGroupSuspendResponse, CsGroupReactivateResponse } from './../interface/cs-group-service';
+import { CsGroupSuspendResponse, CsGroupReactivateResponse, CsGroupUpdateGroupGuidelinesResponse, CsGroupUpdateGroupGuidelinesRequest } from './../interface/cs-group-service';
 import { CsGroup } from './../../../models/group/index';
-import {Container, inject, injectable} from 'inversify';
+import {Container, inject, injectable, optional} from 'inversify';
 import {
     CsGroupAddActivitiesRequest,
     CsGroupAddActivitiesResponse,
@@ -42,6 +42,7 @@ export class GroupServiceImpl implements CsGroupService {
         @inject(InjectionTokens.services.group.GROUP_SERVICE_API_PATH) private apiPath: string,
         @inject(InjectionTokens.CONTAINER) private container: Container,
         @inject(InjectionTokens.services.form.FORM_SERVICE) private formService: CsFormService,
+        @optional() @inject(InjectionTokens.services.group.GROUP_SERVICE_UPDATE_GUIDELINES_API_PATH) private updateGroupGuidelinesApiPath: string,
     ) {
     }
 
@@ -355,5 +356,22 @@ export class GroupServiceImpl implements CsGroupService {
                     return result;
                 })
             );
+    }
+    updateGroupGuidelines(request: CsGroupUpdateGroupGuidelinesRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateGroupGuidelinesResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+            .withType(CsHttpRequestType.PATCH)
+            .withPath(`${config ? config.apiPath : this.updateGroupGuidelinesApiPath}/update`)
+            .withBearerToken(true)
+            .withUserToken(true)
+            .withBody({
+                request: {
+                    ...request
+                }
+            })
+            .build();
+
+        return this.httpService.fetch<{ result: CsGroupUpdateGroupGuidelinesResponse }>(apiRequest).pipe(
+            map((r) => r.body.result)
+        );
     }
 }
