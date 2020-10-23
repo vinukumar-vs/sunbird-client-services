@@ -163,8 +163,8 @@ export class UserServiceImpl implements CsUserService {
         uid: string, feedEntryId: string, category: UserFeedCategory, config?: CsUserServiceConfig
     ): Observable<CsDeleteUserFeedResponse> {
         const apiRequest = new CsRequest.Builder()
-            .withType(CsHttpRequestType.PATCH)
-            .withPath(`${config ? config.apiPath : this.apiPath}/feed/update`)
+            .withType(CsHttpRequestType.POST)
+            .withPath(`${config ? config.apiPath : this.apiPath}/feed/delete`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
