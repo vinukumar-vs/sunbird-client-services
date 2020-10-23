@@ -1,8 +1,9 @@
 import {
     CheckUserExistsResponse,
+    CsDeleteUserFeedResponse,
     CsUpdateUserDeclarationsResponse,
     CsUpdateUserFeedRequest,
-    CsUpdateUserFeedStatusResponse,
+    CsUpdateUserFeedResponse,
     CsUserService,
     ReadConsentResponse,
     UpdateConsentResponse
@@ -13,7 +14,7 @@ import {CsUserServiceConfig} from '../../../index';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map} from 'rxjs/operators';
-import {Consent, UserDeclaration, UserFeedEntry} from 'src/models';
+import {Consent, UserDeclaration, UserFeedCategory, UserFeedEntry} from 'src/models';
 
 @injectable()
 export class UserServiceImpl implements CsUserService {
@@ -120,12 +121,14 @@ export class UserServiceImpl implements CsUserService {
     }
 
     updateUserFeedEntry(
-        uid: string, feedEntryId: string, request: CsUpdateUserFeedRequest, config?: CsUserServiceConfig
-    ): Observable<CsUpdateUserFeedStatusResponse> {
+        uid: string, feedEntryId: string, category: UserFeedCategory, request: CsUpdateUserFeedRequest, config?: CsUserServiceConfig
+    ): Observable<CsUpdateUserFeedResponse> {
         return defer(async () => {
             const userFeed = await this.getUserFeed(uid, config).toPromise();
 
-            const entry = userFeed.find((e) => e.identifier === feedEntryId);
+            const entry = userFeed.find((e) =>
+                e.identifier === feedEntryId && e.category === category
+            );
 
             if (!entry) {
                 return {};
@@ -154,5 +157,29 @@ export class UserServiceImpl implements CsUserService {
                 })
             ).toPromise();
         });
+    }
+
+    deleteUserFeedEntry(
+        uid: string, feedEntryId: string, category: UserFeedCategory, config?: CsUserServiceConfig
+    ): Observable<CsDeleteUserFeedResponse> {
+        const apiRequest = new CsRequest.Builder()
+            .withType(CsHttpRequestType.PATCH)
+            .withPath(`${config ? config.apiPath : this.apiPath}/feed/update`)
+            .withBearerToken(true)
+            .withUserToken(true)
+            .withBody({
+                request: {
+                    userId: uid,
+                    category: category,
+                    feedId: feedEntryId,
+                }
+            })
+            .build();
+
+        return this.httpService.fetch<{ result: { response: any } }>(apiRequest).pipe(
+            map((response) => {
+                return response.body.result.response;
+            })
+        );
     }
 }

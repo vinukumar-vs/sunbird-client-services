@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {CsUserServiceConfig} from '../../../index';
-import {Consent, UserDeclaration, UserFeedEntry, UserFeedStatus} from '../../../models';
+import {Consent, UserDeclaration, UserFeedCategory, UserFeedEntry, UserFeedStatus} from '../../../models';
 
 export interface CheckUserExistsResponse {
     exists: boolean;
@@ -30,7 +30,11 @@ export interface CsUpdateUserDeclarationsResponse {
 }
 
 // tslint:disable-next-line:no-empty-interface
-export interface CsUpdateUserFeedStatusResponse {
+export interface CsUpdateUserFeedResponse {
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface CsDeleteUserFeedResponse {
 }
 
 export interface CsUserService {
@@ -47,6 +51,10 @@ export interface CsUserService {
     getUserFeed(uid: string, config?: CsUserServiceConfig): Observable<UserFeedEntry[]>;
 
     updateUserFeedEntry(
-        uid: string, feedEntryId: string, request: CsUpdateUserFeedRequest, config?: CsUserServiceConfig
-    ): Observable<CsUpdateUserFeedStatusResponse>;
+        uid: string, feedEntryId: string, category: UserFeedCategory, request: CsUpdateUserFeedRequest, config?: CsUserServiceConfig
+    ): Observable<CsUpdateUserFeedResponse>;
+
+    deleteUserFeedEntry(
+        uid: string, feedEntryId: string, category: UserFeedCategory, config?: CsUserServiceConfig
+    ): Observable<CsDeleteUserFeedResponse>;
 }
