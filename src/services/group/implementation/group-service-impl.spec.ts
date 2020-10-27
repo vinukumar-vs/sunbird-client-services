@@ -1074,11 +1074,10 @@ describe('GroupServiceImpl', () => {
 
             groupService.deleteById('SOME_GROUP_ID').subscribe(() => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'PATCH',
+                    type: 'POST',
                     body: {
                         request: {
-                            groupId: 'SOME_GROUP_ID',
-                            status: GroupEntityStatus.INACTIVE
+                            groupId: 'SOME_GROUP_ID'
                         }
                     }
                 }));
@@ -1095,14 +1094,16 @@ describe('GroupServiceImpl', () => {
                     return of(response);
                 });
 
-                groupService.deleteById('SOME_GROUP_ID', {apiPath: '/some_api_path', dataApiPath: '/some_api_path'}).subscribe(() => {
+                groupService.deleteById( 'SOME_GROUP_ID', {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                        type: 'PATCH',
+                        type: 'POST',
                         path: expect.stringContaining('/some_api_path'),
                         body: {
                             request: {
-                                groupId: 'SOME_GROUP_ID',
-                                status: GroupEntityStatus.INACTIVE
+                               groupId: 'SOME_GROUP_ID'
                             }
                         }
                     }));
@@ -1207,6 +1208,7 @@ describe('GroupServiceImpl', () => {
             });
         });
     });
+
     describe('updateGroupGuidelines()', () => {
         it('should be able to update  group guidelines with appropriate request', (done) => {
             mockHttpService.fetch = jest.fn(() => {

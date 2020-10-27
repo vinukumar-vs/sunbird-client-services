@@ -328,12 +328,7 @@ export class GroupServiceImpl implements CsGroupService {
         );
     }
 
-    // deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse> {
-    //     return this.updateById(id, {status: GroupEntityStatus.INACTIVE}, config);
-    // }
-
     deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse> {
-        // return this.updateById(id, {status: GroupEntityStatus.INACTIVE}, config);
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.POST)
         .withPath(`${config ? config.apiPath : this.apiPath}/delete`)
