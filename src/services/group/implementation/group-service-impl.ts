@@ -316,12 +316,16 @@ export class GroupServiceImpl implements CsGroupService {
         return this.httpService.fetch<{ result: { count: number; group: CsGroupSearchResponse[] } }>(apiRequest).pipe(
             map((r) =>
                 r.body.result.group.sort((a, b) => {
+                    const bLastActivity = b.updatedOn || b.createdOn!;
+                    const aLastActivity = a.updatedOn || a.createdOn!;
+
                     if (a.status === GroupEntityStatus.SUSPENDED && b.status !== GroupEntityStatus.SUSPENDED) {
                         return 1;
                     } else if (b.status === GroupEntityStatus.SUSPENDED && a.status !== GroupEntityStatus.SUSPENDED) {
                         return -1;
                     }
-                    return new Date(b.updatedOn!).getTime() - new Date(a.updatedOn!).getTime();
+
+                    return new Date(bLastActivity).getTime() - new Date(aLastActivity).getTime();
                 })
                 .map((g) => plainToClass(CsGroup, g) as CsGroupSearchResponse)
             )
