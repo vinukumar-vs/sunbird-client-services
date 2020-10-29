@@ -958,6 +958,18 @@ describe('GroupServiceImpl', () => {
                                 'status': 'active',
                                 'membershipType': 'moderated',
                                 'activities': [],
+                                'createdOn': '2020-07-02 10:05:25:939+0000',
+                                'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'members': null,
+                                'memberRole': 'member'
+                            },
+                            {
+                                'id': 'dcbb4d49-f3be-4ffd-8de9-d09a452ea4c1',
+                                'name': 'Test 396',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [],
                                 'createdOn': '2020-07-17 10:05:25:939+0000',
                                 'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
                                 'updatedOn': '2020-07-13 10:05:25:939+0000',
@@ -978,6 +990,18 @@ describe('GroupServiceImpl', () => {
                                 'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
                                 'members': null,
                                 'memberRole': 'admin'
+                            },
+                            {
+                                'id': 'dcbb4d49-f3be-4ffd-8de9-d09a452ea4c1',
+                                'name': 'Test 396',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [],
+                                'createdOn': '2020-07-03 10:05:25:939+0000',
+                                'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'members': null,
+                                'memberRole': 'member'
                             },
                             {
                                 'id': 'ee854e1c-4e66-4ca3-a375-593b002c7f27',
@@ -1006,7 +1030,19 @@ describe('GroupServiceImpl', () => {
                                 'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
                                 'members': null,
                                 'memberRole': 'member'
-                            }
+                            },
+                            {
+                                'id': 'dcbb4d49-f3be-4ffd-8de9-d09a452ea4c1',
+                                'name': 'Test 396',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [],
+                                'createdOn': '2020-07-01 10:05:25:939+0000',
+                                'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'members': null,
+                                'memberRole': 'member'
+                            },
                         ]
                     }
                 };
@@ -1018,10 +1054,13 @@ describe('GroupServiceImpl', () => {
                 }
             };
             groupService.search(request).subscribe((groups) => {
-                expect(groups.map((g) => g.status + '_' + g.updatedOn)).toEqual([
+                expect(groups.map((g) => g.status + '_' + (g.updatedOn ? g.updatedOn : 'created_' + g.createdOn))).toEqual([
                     'active_2020-07-20 10:03:22:887+0000',
                     'active_2020-07-16 12:23:33:615+0000',
                     'active_2020-07-13 10:05:25:939+0000',
+                    'active_created_2020-07-03 10:05:25:939+0000',
+                    'active_created_2020-07-02 10:05:25:939+0000',
+                    'active_created_2020-07-01 10:05:25:939+0000',
                     'suspended_2020-07-21 12:29:54:511+0000',
                     'suspended_2020-07-20 10:11:33:240+0000',
                     'suspended_2020-07-05 09:05:40:622+0000'
