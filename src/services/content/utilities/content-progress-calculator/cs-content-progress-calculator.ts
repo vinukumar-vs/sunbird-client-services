@@ -1,8 +1,9 @@
 import {CsMimeType} from '../../interface';
 
 export class CsContentProgressCalculator {
-    private static PLAYBACK_MIME_TYPES = [CsMimeType.YOUTUBE, CsMimeType.VIDEO, CsMimeType.WEBM, CsMimeType.PDF, CsMimeType.EPUB];
+    private static PLAYBACK_MIME_TYPES = [CsMimeType.YOUTUBE, CsMimeType.VIDEO, CsMimeType.WEBM, CsMimeType.EPUB];
     private static OTHER_MIME_TYPES = [CsMimeType.H5P, CsMimeType.HTML];
+    private static PDF_MIME_TYPES = [CsMimeType.PDF];
 
     static calculate(summary: any[], mimeType: CsMimeType): number {
         const summaryMap = summary.reduce((acc, s) => {
@@ -28,6 +29,10 @@ export class CsContentProgressCalculator {
             CsContentProgressCalculator.OTHER_MIME_TYPES.indexOf(mimeType) > -1
         ) {
             return CsContentProgressCalculator.absoluteProgress(summaryMap.progress, 0);
+        } else if (
+            CsContentProgressCalculator.PDF_MIME_TYPES.indexOf(mimeType) > -1
+        ) {
+            return CsContentProgressCalculator.absoluteProgress(summaryMap.progress, 100);
         } else {
             return CsContentProgressCalculator.absoluteProgress(summaryMap.progress, 100);
         }
