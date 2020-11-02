@@ -83,7 +83,7 @@ export class TelemetryServiceImpl implements TelemetryService {
     }
     public raiseErrorTelemetry(errorObject: any) {
         if (this.isTelemetryInitialised()) {
-            this.telemetryProvider.log(errorObject.edata, errorObject.options);
+            this.telemetryProvider.error(errorObject.edata, errorObject.options);
         }
     }
     public raiseErrorTelemetryWith(cdata: Array<ICDataEntry>, env: string, edata: any, telemetryObject?: ITelemetryObject) {
