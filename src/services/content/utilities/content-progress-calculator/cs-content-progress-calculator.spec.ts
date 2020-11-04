@@ -44,15 +44,6 @@ describe('CsContentProgressCalculator', () => {
         });
     });
 
-    describe('when summary data with some progress is given for PDF MIME types (CsMimeType.PDF)', () => {
-        it('should return 100 only when absolute 100', () => {
-            expect(CsContentProgressCalculator.calculate([{progress: 0}], CsMimeType.PDF)).toEqual(0);
-            expect(CsContentProgressCalculator.calculate([{progress: 10}], CsMimeType.PDF)).toEqual(0);
-            expect(CsContentProgressCalculator.calculate([{progress: 50}], CsMimeType.PDF)).toEqual(0);
-            expect(CsContentProgressCalculator.calculate([{progress: 100}], CsMimeType.PDF)).toEqual(100);
-        });
-    });
-
     describe('when summary data with some progress is given for unknown MIME types', () => {
         it('should return 100 for any unknown MIME type only when progress is 100, zero otherwise', () => {
             expect(CsContentProgressCalculator.calculate([{progress: 100}], 'UNKNOWN' as CsMimeType)).toEqual(100);
