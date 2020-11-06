@@ -67,7 +67,7 @@ describe('HttpClientBrowserAdapter', () => {
                         text: () => Promise.resolve(JSON.stringify({'key': 'value'}))
                     } as Partial<Response>));
 
-                    httpClientBrowserAdapter.get('https://some_host', '/some_path', {}, {'KEY': 'VALUE'}).subscribe((r) => {
+                    httpClientBrowserAdapter.get('https://some_host', '/some_path', {}, {'KEY': 'VALUE'}, expect.anything()).subscribe((r) => {
                         expect(r.responseCode).toBe(CsHttpResponseCode.HTTP_SUCCESS);
                         expect(typeof r.body === 'object').toBeTruthy();
                         expect(r.body).toEqual({'key': 'value'});
@@ -85,7 +85,7 @@ describe('HttpClientBrowserAdapter', () => {
                         text: () => Promise.resolve('SOME_SUCCESS_RESPONSE')
                     } as Partial<Response>));
 
-                    httpClientBrowserAdapter.post('https://some_host', '/some_path', {}, {'KEY': 'VALUE'}).subscribe((r) => {
+                    httpClientBrowserAdapter.post('https://some_host', '/some_path', {}, {'KEY': 'VALUE'}, expect.anything()).subscribe((r) => {
                         expect(typeof r.body === 'string').toBeTruthy();
                         expect(r.body).toEqual('SOME_SUCCESS_RESPONSE');
                         done();
@@ -103,7 +103,7 @@ describe('HttpClientBrowserAdapter', () => {
                         status: 999,
                     } as Partial<Response>));
 
-                    httpClientBrowserAdapter.patch('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}).subscribe((r) => {
+                    httpClientBrowserAdapter.patch('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}, expect.anything()).subscribe((r) => {
                         fail();
                     }, (e) => {
                         expect(CsNetworkError.isInstance(e)).toBeTruthy();
@@ -122,7 +122,7 @@ describe('HttpClientBrowserAdapter', () => {
                             text: () => Promise.resolve(JSON.stringify({'key': 'value'}))
                         } as Partial<Response>));
 
-                        httpClientBrowserAdapter.delete('https://run.mocky.io', '/v3/4283da0f-9759-49e6-a045-6b577f73e65f', {}, {'KEY': 'VALUE'}).subscribe((r) => {
+                        httpClientBrowserAdapter.delete('https://run.mocky.io', '/v3/4283da0f-9759-49e6-a045-6b577f73e65f', {}, {'KEY': 'VALUE'}, expect.anything()).subscribe((r) => {
                             fail();
                         }, (e) => {
                             expect(CsHttpClientError.isInstance(e)).toBeTruthy();
@@ -143,7 +143,7 @@ describe('HttpClientBrowserAdapter', () => {
                             text: () => Promise.resolve(JSON.stringify('SOME_ERROR_RESPONSE'))
                         } as Partial<Response>));
 
-                        httpClientBrowserAdapter.delete('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}).subscribe((r) => {
+                        httpClientBrowserAdapter.delete('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}, expect.anything()).subscribe((r) => {
                             fail();
                         }, (e) => {
                             expect(CsHttpServerError.isInstance(e)).toBeTruthy();
