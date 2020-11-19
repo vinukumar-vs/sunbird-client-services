@@ -57,10 +57,21 @@ export class HttpClientCordovaAdapter implements HttpClient {
 
         const requestOptions = {
             method: type.toLowerCase(),
-            data: parametersOrData,
             headers: headers,
-            serializer: httpSerializer
+            serializer: httpSerializer,
         };
+
+        if (
+          type === CsHttpRequestType.POST ||
+          type === CsHttpRequestType.PATCH
+        ) {
+            requestOptions['data']  = parametersOrData;
+        } else if (
+          type === CsHttpRequestType.GET ||
+          type === CsHttpRequestType.DELETE
+        ) {
+            requestOptions['params']  = parametersOrData;
+        }
 
         this.http.sendRequest(url, requestOptions, (response: CordovaHttpClientResponse) => {
             const r = new CsResponse();
