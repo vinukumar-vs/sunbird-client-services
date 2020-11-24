@@ -26,14 +26,13 @@ import {
 } from '../interface';
 import {CsGroupServiceConfig} from '../../..';
 import {Observable} from 'rxjs';
-import {Group, GroupEntityStatus, GroupMemberRole} from '../../../models/group';
+import {Group, GroupEntityStatus} from '../../../models/group';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map, mergeMap} from 'rxjs/operators';
 import {CsGroupActivityService} from '../activity/interface';
 import {CsFormService} from '../../form/interface/cs-form-service';
 import {Form} from '../../../models/form';
-import { plainToClass } from 'class-transformer';
 
 @injectable()
 export class GroupServiceImpl implements CsGroupService {
@@ -230,7 +229,9 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
     getById(
-        id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig
+        id: string,
+        options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean },
+        config?: CsGroupServiceConfig
     ): Observable<CsGroup> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
@@ -255,7 +256,7 @@ export class GroupServiceImpl implements CsGroupService {
             map((r) => r.body.result),
             mergeMap(async (result) => {
                 if (!options || !options.groupActivities || !options.includeActivities) {
-                    return (plainToClass(CsGroup, result)) ;
+                    return CsGroup.fromJSON(result);
                 }
 
                 const supportedActivitiesConfig = await this.getSupportedActivities().toPromise();
@@ -298,7 +299,7 @@ export class GroupServiceImpl implements CsGroupService {
                     };
                 });
 
-                return (plainToClass(CsGroup, result));
+                return CsGroup.fromJSON(result);
             })
         );
     }
@@ -327,7 +328,7 @@ export class GroupServiceImpl implements CsGroupService {
 
                     return new Date(bLastActivity).getTime() - new Date(aLastActivity).getTime();
                 })
-                .map((g) => plainToClass(CsGroup, g) as CsGroupSearchResponse)
+                .map((g) => CsGroup.fromJSON(g) as CsGroupSearchResponse)
             )
         );
     }
@@ -375,7 +376,9 @@ export class GroupServiceImpl implements CsGroupService {
                 })
             );
     }
-    updateGroupGuidelines(request: CsGroupUpdateGroupGuidelinesRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateGroupGuidelinesResponse> {
+    updateGroupGuidelines(
+        request: CsGroupUpdateGroupGuidelinesRequest, config?: CsGroupServiceConfig
+    ): Observable<CsGroupUpdateGroupGuidelinesResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.PATCH)
             .withPath(`${config ? config.apiPath : this.updateGroupGuidelinesApiPath}/update`)
