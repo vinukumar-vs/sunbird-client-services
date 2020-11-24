@@ -1,5 +1,5 @@
 import {
-    CertificateUrlResponse, ContentState,
+    CertificateUrlResponse, ContentState, ContentStateScore,
     CsCourseService,
     GetContentStateRequest,
     GetUserEnrolledCoursesRequest
@@ -59,7 +59,7 @@ export class CourseServiceImpl implements CsCourseService {
 
     getContentState(request: GetContentStateRequest, config?: CsCourseServiceConfig): Observable<ContentState[]> {
         const apiRequest: CsRequest = new CsRequest.Builder()
-            .withType(CsHttpRequestType.GET)
+            .withType(CsHttpRequestType.POST)
             .withPath((config ? config.apiPath : this.apiPath) + '/content/state/read')
             .withBearerToken(true)
             .withUserToken(true)
@@ -68,7 +68,25 @@ export class CourseServiceImpl implements CsCourseService {
 
         return this.httpService.fetch<{ result: { contentList: ContentState[] } }>(apiRequest).pipe(
             map((response) => {
-                return response.body.result.contentList;
+                return response.body.result.contentList.map((content: ContentState) => {
+                    if (!content.score) {
+                        return content;
+                    }
+
+                    content.bestScore = content.score.reduce<ContentStateScore | undefined>((acc: ContentStateScore | undefined, score: ContentStateScore) => {
+                        if (!acc) {
+                            return score;
+                        }
+
+                        if (acc.totalMaxScore < score.totalMaxScore) {
+                            return score;
+                        }
+
+                        return acc;
+                    }, undefined);
+
+                    return content;
+                });
             })
         );
     }

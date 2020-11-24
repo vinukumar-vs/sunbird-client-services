@@ -16,17 +16,26 @@ export interface CertificateUrlResponse {
     printUri: string;
 }
 
+type ContentStateRequestFields = 'progress' | 'score';
+
 export interface GetContentStateRequest {
     userId: string;
     courseId: string;
     batchId: string;
     contentIds: string[];
-    fields?: ('progress' | 'score')[];
+    fields?: ContentStateRequestFields[];
 }
 
 export enum ContentStateStatus {
     IN_PROGRESS = 1,
     COMPLETED = 2
+}
+
+export interface ContentStateScore {
+    attemptId: string;
+    lastAttemptedOn: string;
+    totalMaxScore: number;
+    totalScore: number;
 }
 
 export interface ContentState {
@@ -43,12 +52,8 @@ export interface ContentState {
     collectionId: string;
     lastCompletedTime: string;
     status: ContentStateStatus;
-    score?: {
-        attemptId: string;
-        lastAttemptedOn: string,
-        totalMaxScore: number;
-        totalScore: number;
-    }[];
+    score?: ContentStateScore[];
+    bestScore?: ContentStateScore;
 }
 
 export interface CsCourseService {
