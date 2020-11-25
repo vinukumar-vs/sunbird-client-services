@@ -39,19 +39,21 @@ export interface ContentStateScore {
 }
 
 export interface ContentState {
-    id: string;
-    contentVersion: string;
-    userId: string;
-    lastAccessTime: string;
-    contentId: string;
-    progress: number;
-    viewCount: number;
-    completedCount: number;
-    batchId: string;
-    courseId: string;
-    collectionId: string;
-    lastCompletedTime: string;
-    status: ContentStateStatus;
+    id?: string;
+    userId?: string;
+    contentId?: string;
+    batchId?: string;
+    courseId?: string;
+    lastAccessTime?: string;
+    viewCount?: number;
+    completedCount?: number;
+    collectionId?: string;
+    lastCompletedTime?: string;
+    status?: ContentStateStatus;
+    contentVersion?: string;
+    grade?: string;
+    result?: string;
+    progress?: number;
     score?: ContentStateScore[];
     bestScore?: ContentStateScore;
 }
