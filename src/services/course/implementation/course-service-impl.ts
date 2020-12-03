@@ -78,7 +78,7 @@ export class CourseServiceImpl implements CsCourseService {
                             return score;
                         }
 
-                        if (acc.totalMaxScore < score.totalMaxScore) {
+                        if (acc.totalScore < score.totalScore) {
                             return score;
                         }
 
