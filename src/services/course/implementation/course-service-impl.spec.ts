@@ -256,8 +256,8 @@ describe('CourseServiceImpl', () => {
                                         {
                                             attemptId: 'ATTEMPT_ID_3',
                                             lastAttemptedOn: (new Date()).toISOString(),
-                                            totalMaxScore: 20,
-                                            totalScore: 10
+                                            totalMaxScore: 10,
+                                            totalScore: 20
                                         }
                                     ],
                                 } as Partial<ContentState> as ContentState,
@@ -288,8 +288,8 @@ describe('CourseServiceImpl', () => {
                         expect.objectContaining({
                             attemptId: 'ATTEMPT_ID_3',
                             lastAttemptedOn: expect.any(String),
-                            totalMaxScore: 20,
-                            totalScore: 10
+                            totalMaxScore: 10,
+                            totalScore: 20
                         })
                     ]);
                     done();
