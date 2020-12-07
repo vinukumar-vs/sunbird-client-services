@@ -1,28 +1,65 @@
-import { plainToClass } from 'class-transformer';
-import { CsGroup, GroupEntityStatus } from './index';
+import {
+    ActivitiesGrouped,
+    CsGroup,
+    CsGroupActivity,
+    CsGroupMember,
+    GroupEntityStatus, GroupMemberRole,
+    GroupMembershipType
+} from './index';
 describe('Group Class', () => {
-    let csGroup: CsGroup;
     beforeEach(() => {
         jest.resetAllMocks();
         jest.restoreAllMocks();
     });
 
-    it('should be able to get an instance from the container', () => {
-        csGroup = plainToClass(CsGroup, {status: 'active'});
-        expect(csGroup).toBeTruthy();
-        expect(csGroup.active).toEqual(true);
-    });
+    it('should be able to create an instance from plain JSON', () => {
+        const instance = CsGroup.fromJSON({
+            name: 'SOME_GROUP_NAME',
+            description: 'SOME_DESCRIPTION',
+            id: 'SOME_ID',
+            status: GroupEntityStatus.ACTIVE,
+            membershipType: GroupMembershipType.INVITE_ONLY,
+            activitiesGrouped: [],
+            members: [
+                {
+                    name: 'SAMPLE_NAME',
+                    groupId: 'SAMPLE_GROUP_ID',
+                    userId: 'SAMPLE_USER_ID',
+                    role: GroupMemberRole.ADMIN,
+                    status: GroupEntityStatus.ACTIVE
+                },
+                {
+                    name: 'SAMPLE_NAME',
+                    groupId: 'SAMPLE_GROUP_ID',
+                    userId: 'SAMPLE_USER_ID',
+                    role: GroupMemberRole.ADMIN,
+                    status: GroupEntityStatus.ACTIVE
+                }
+            ],
+            activities: [
+                {
+                    id: 'SAMPLE_ID',
+                    type: 'SAMPLE_TYPE'
+                },
+                {
+                    id: 'SAMPLE_ID',
+                    type: 'SAMPLE_TYPE'
+                }
+            ],
+        });
 
-    it('should return "TRUE" when group status = "active"', () => {
-        csGroup = plainToClass(CsGroup, {status: 'active'});
-        const isActive = csGroup.isActive();
-        expect(isActive).toEqual(true);
-    });
+        expect(instance instanceof CsGroup).toBeTruthy();
 
-    it('should return "FALSE" when group status != "active"', () => {
-        csGroup = plainToClass(CsGroup, {status: 'suspended'});
-        csGroup.status = GroupEntityStatus.SUSPENDED;
-        const isActive = csGroup.isActive();
-        expect(isActive).toEqual(false);
+        if (instance.members) {
+            instance.members.forEach((m) => {
+                expect(m instanceof CsGroupMember).toBeTruthy();
+            });
+        }
+
+        if (instance.activities) {
+            instance.activities.forEach((m) => {
+                expect(m instanceof CsGroupActivity).toBeTruthy();
+            });
+        }
     });
 });

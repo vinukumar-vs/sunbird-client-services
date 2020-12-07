@@ -1,5 +1,3 @@
-import { Expose, Transform, Type } from 'class-transformer';
-
 export enum GroupMembershipType {
     INVITE_ONLY = 'invite_only',
     MODERATED = 'moderated'
@@ -72,6 +70,10 @@ export class CsGroupActivity implements GroupActivity {
     createdBy?: string; // Record created userid
     updatedOn?: string; // Record updated date
     updatedBy?: string; // Record updated userid
+
+    static fromJSON(obj: {}): CsGroupActivity {
+        return Object.setPrototypeOf(obj, new CsGroupActivity());
+    }
 }
 
 export class CsGroupMember implements GroupMember {
@@ -84,7 +86,11 @@ export class CsGroupMember implements GroupMember {
     createdBy?: string;
     updatedOn?: string;
     updatedBy?: string;
-  }
+
+    static fromJSON(obj: {}): CsGroupMember {
+        return Object.setPrototypeOf(obj, new CsGroupMember());
+    }
+}
 
 export class CsGroup implements Group {
     name: string;
@@ -97,20 +103,27 @@ export class CsGroup implements Group {
     updatedOn?: string;
     updatedBy?: string;
     activitiesGrouped?: ActivitiesGrouped[];
-
-    @Type(() => CsGroupMember)
     members?: CsGroupMember[];
-
-    @Type(() => CsGroupActivity)
     activities?: CsGroupActivity[];
-
-    @Expose({name: 'active'})
-    @Transform((__, obj) => obj.status === GroupEntityStatus.ACTIVE)
     active: boolean;
 
+    static fromJSON(obj: {}): CsGroup {
+        const instance: CsGroup = Object.setPrototypeOf(obj, new CsGroup());
+        instance.active = instance.status === GroupEntityStatus.ACTIVE;
+
+        if (instance.members) {
+            instance.members = instance.members.map(m => CsGroupMember.fromJSON(m));
+        }
+
+        if (instance.activities) {
+            instance.activities = instance.activities.map(a => CsGroupActivity.fromJSON(a));
+        }
+
+        return instance;
+    }
 
     isActive(): boolean {
-        this.active = (this.status === GroupEntityStatus.ACTIVE)
+        this.active = (this.status === GroupEntityStatus.ACTIVE);
         return this.active;
     }
 }

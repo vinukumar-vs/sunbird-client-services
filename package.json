@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/client-services",
-  "version": "3.5.2",
+  "version": "3.5.3",
   "description": "Type definitions and models for Sunbird platform clients",
   "main": "dist/index.js",
   "module": "src/index.ts",
@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@project-sunbird/telemetry-sdk": "0.0.26",
-    "class-transformer": "^0.3.1",
     "inversify": "^5.0.1",
     "qs": "^6.9.4",
     "reflect-metadata": "^0.1.13",
