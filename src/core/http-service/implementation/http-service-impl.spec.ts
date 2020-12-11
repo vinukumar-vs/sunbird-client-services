@@ -1,12 +1,13 @@
-import {CsHttpRequestType, CsHttpSerializer, CsHttpService, CsRequest, CsResponse} from '../interface';
-import {Container} from 'inversify';
-import {InjectionTokens} from '../../../injection-tokens';
-import {HttpClient} from './http-client-adapters/http-client';
-import {HttpServiceImpl} from './http-service-impl';
-import {of, throwError} from 'rxjs';
-import {BearerTokenInjectRequestInterceptor} from './interceptors/bearer-token-inject-request-interceptor';
-import {UserTokenInjectRequestInterceptor} from './interceptors/user-token-inject-request-interceptor';
-import {CsHttpClientError, CsHttpServerError} from '../errors';
+import { CsHttpRequestType, CsHttpSerializer, CsHttpService, CsRequest, CsResponse } from '../interface';
+import { Container } from 'inversify';
+import { InjectionTokens } from '../../../injection-tokens';
+import { HttpClient } from './http-client-adapters/http-client';
+import { HttpServiceImpl } from './http-service-impl';
+import { of, throwError } from 'rxjs';
+import { BearerTokenInjectRequestInterceptor } from './interceptors/bearer-token-inject-request-interceptor';
+import { UserTokenInjectRequestInterceptor } from './interceptors/user-token-inject-request-interceptor';
+import { CsHttpClientError, CsHttpServerError } from '../errors';
+import { CsClientStorage } from '../../cs-client-storage';
 
 describe('HttpServiceImpl', () => {
     let httpService: CsHttpService;
@@ -17,10 +18,20 @@ describe('HttpServiceImpl', () => {
         setSerializer: jest.fn((httpSerializer: CsHttpSerializer) => {
         })
     };
+    const clientStorage = new class implements CsClientStorage {
+        setItem(key: string, value: string): Promise<void> {
+            return Promise.resolve();
+        }
+
+        getItem(key: string): Promise<string | undefined> {
+            return Promise.resolve('some_key');
+        }
+    };
 
     beforeAll(() => {
         container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(container);
         container.bind<HttpClient>(InjectionTokens.core.HTTP_ADAPTER).toConstantValue(mockHttpClient as HttpClient);
+        container.bind<CsClientStorage>(InjectionTokens.core.CLIENT_STORAGE).toConstantValue(clientStorage);
 
         container.bind<string>(InjectionTokens.core.api.HOST).toConstantValue('SAMPLE_HOST');
         container.bind<string>(InjectionTokens.core.global.CHANNEL_ID).toConstantValue('SAMPLE_CHANNEL_ID');
@@ -52,6 +63,7 @@ describe('HttpServiceImpl', () => {
         const mockResponse = new CsResponse();
         mockResponse.body = {};
         mockResponse.responseCode = 200;
+        mockResponse.headers = {};
         mockHttpClient.get = jest.fn(() => of(mockResponse));
         spyOn(mockHttpClient, 'addHeaders').and.callThrough();
 
@@ -103,6 +115,7 @@ describe('HttpServiceImpl', () => {
         const mockResponse = new CsResponse();
         mockResponse.body = {};
         mockResponse.responseCode = 200;
+        mockResponse.headers = {};
         mockHttpClient.get = jest.fn(() => of(mockResponse));
 
         const apiRequest: CsRequest = new CsRequest.Builder()
@@ -125,6 +138,7 @@ describe('HttpServiceImpl', () => {
         const mockResponse = new CsResponse();
         mockResponse.body = {};
         mockResponse.responseCode = 200;
+        mockResponse.headers = {};
         mockHttpClient.post = jest.fn(() => of(mockResponse));
 
         const apiRequest: CsRequest = new CsRequest.Builder()
@@ -147,6 +161,7 @@ describe('HttpServiceImpl', () => {
         const mockResponse = new CsResponse();
         mockResponse.body = {};
         mockResponse.responseCode = 200;
+        mockResponse.headers = {};
         mockHttpClient.patch = jest.fn(() => of(mockResponse));
 
         const apiRequest: CsRequest = new CsRequest.Builder()
@@ -190,6 +205,7 @@ describe('HttpServiceImpl', () => {
             const mockResponse = new CsResponse();
             mockResponse.body = {};
             mockResponse.responseCode = 200;
+            mockResponse.headers = {};
             mockHttpClient.get = jest.fn(() => of(mockResponse));
 
             const customInterceptor = {
@@ -220,6 +236,7 @@ describe('HttpServiceImpl', () => {
             const mockResponse = new CsResponse();
             mockResponse.body = {};
             mockResponse.responseCode = 200;
+            mockResponse.headers = {};
             mockHttpClient.get = jest.fn(() => of(mockResponse));
 
             const customInterceptor = {
@@ -251,6 +268,7 @@ describe('HttpServiceImpl', () => {
                 const mockResponse = new CsResponse();
                 mockResponse.body = {};
                 mockResponse.responseCode = 400;
+                mockResponse.headers = {};
                 mockHttpClient.get = jest.fn(() => throwError(new CsHttpClientError('custom error', mockResponse)));
 
                 const mockSuccessResponse = new CsResponse();
@@ -289,6 +307,7 @@ describe('HttpServiceImpl', () => {
                 const mockResponse = new CsResponse();
                 mockResponse.body = {};
                 mockResponse.responseCode = 400;
+                mockResponse.headers = {};
                 mockHttpClient.get = jest.fn(() => throwError(new CsHttpClientError('custom error', mockResponse)));
 
                 const mockErrorResponse = new CsResponse();
@@ -328,6 +347,7 @@ describe('HttpServiceImpl', () => {
                 const mockResponse = new CsResponse();
                 mockResponse.body = {};
                 mockResponse.responseCode = 400;
+                mockResponse.headers = {};
                 mockHttpClient.get = jest.fn(() => throwError(new CsHttpClientError('custom error', mockResponse)));
 
                 const mockErrorResponse = new CsResponse();
@@ -367,6 +387,7 @@ describe('HttpServiceImpl', () => {
                 const mockResponse = new CsResponse();
                 mockResponse.body = {};
                 mockResponse.responseCode = 500;
+                mockResponse.headers = {};
                 mockHttpClient.get = jest.fn(() => throwError(new CsHttpServerError('custom error', mockResponse)));
 
                 const mockErrorResponse = new CsResponse();
@@ -409,6 +430,7 @@ describe('HttpServiceImpl', () => {
             const mockResponse = new CsResponse();
             mockResponse.body = {};
             mockResponse.responseCode = 200;
+            mockResponse.headers = {};
             mockHttpClient.get = jest.fn(() => of(mockResponse));
 
             const customInterceptor = {
@@ -441,6 +463,7 @@ describe('HttpServiceImpl', () => {
             const mockResponse = new CsResponse();
             mockResponse.body = {};
             mockResponse.responseCode = 200;
+            mockResponse.headers = {};
             mockHttpClient.delete = jest.fn(() => of(mockResponse));
 
             const customInterceptor = {
