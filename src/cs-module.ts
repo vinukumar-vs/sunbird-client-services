@@ -150,6 +150,8 @@ export class CsModule {
         if (clientStorage) {
             this._container.bind<CsClientStorage>(InjectionTokens.core.CLIENT_STORAGE).toConstantValue(clientStorage);
         }
+
+        this.httpService.init();
     }
 
     updateConfig(config: CsConfig) {

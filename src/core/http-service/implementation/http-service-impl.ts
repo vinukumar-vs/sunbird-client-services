@@ -20,6 +20,7 @@ import { CsClientStorage } from '../../cs-client-storage';
 export class HttpServiceImpl implements CsHttpService {
     private _requestInterceptors: CsRequestInterceptor[] = [];
     private _responseInterceptors: CsResponseInterceptor[] = [];
+    private _traceId?: string;
 
     private _bearerTokenInjectRequestInterceptor?: BearerTokenInjectRequestInterceptor;
     get bearerTokenInjectRequestInterceptor(): BearerTokenInjectRequestInterceptor {
@@ -66,6 +67,14 @@ export class HttpServiceImpl implements CsHttpService {
         @inject(InjectionTokens.core.HTTP_ADAPTER) private http: HttpClient,
         @optional() @inject(InjectionTokens.core.CLIENT_STORAGE) private clientStorage?: CsClientStorage,
     ) {
+    }
+
+    public init() {
+        if (this.clientStorage) {
+            this.clientStorage.getItem(CsClientStorage.TRACE_ID).then((traceId) => {
+                this._traceId = traceId || '';
+            });
+        }
     }
 
     get requestInterceptors(): CsRequestInterceptor[] {
@@ -121,8 +130,10 @@ export class HttpServiceImpl implements CsHttpService {
                 }
 
                 // TODO: Need to confirm the header key
-                if (this.clientStorage) {
-                    this.clientStorage.setItem(CsClientStorage.TRACE_ID, localResponse.headers['X-Trace-Enabled'] || '');
+                const responseTraceId = localResponse.headers['X-Trace-Enabled'] || '';
+                if (this.clientStorage
+                    && responseTraceId !== this._traceId) {
+                    this.clientStorage.setItem(CsClientStorage.TRACE_ID, responseTraceId);
                 }
 
                 return await this.interceptResponse(request, localResponse);
@@ -162,8 +173,6 @@ export class HttpServiceImpl implements CsHttpService {
     }
 
     private async addGlobalHeader() {
-        const traceId = this.clientStorage ? await this.clientStorage.getItem(CsClientStorage.TRACE_ID) : undefined;
-
         const header = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -173,7 +182,7 @@ export class HttpServiceImpl implements CsHttpService {
             ...(this.deviceId ? { 'X-Device-Id': this.deviceId } : {}),
             ...(this.sessionId ? { 'X-Session-Id': this.sessionId } : {}),
             ...(this.appVersion ? { 'X-App-Ver': this.appVersion } : {}),
-            ...(traceId ? { 'X-Request-Id': traceId } : {}),
+            ...(this._traceId ? { 'X-Request-Id': this._traceId } : {}),
         };
         this.http.addHeaders(header);
     }
