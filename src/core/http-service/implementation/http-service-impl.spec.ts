@@ -19,13 +19,8 @@ describe('HttpServiceImpl', () => {
         })
     };
     const clientStorage = new class implements CsClientStorage {
-        setItem(key: string, value: string): Promise<void> {
-            return Promise.resolve();
-        }
-
-        getItem(key: string): Promise<string | undefined> {
-            return Promise.resolve('some_key');
-        }
+        getItem = jest.fn(() => Promise.resolve('some_key'));
+        setItem = jest.fn(() => Promise.resolve());
     };
 
     beforeAll(() => {
@@ -313,6 +308,7 @@ describe('HttpServiceImpl', () => {
                 const mockErrorResponse = new CsResponse();
                 mockErrorResponse.body = {};
                 mockErrorResponse.responseCode = 405;
+                mockErrorResponse.headers = {};
 
                 const customInterceptor = {
                     interceptResponse: (request: CsRequest, response: CsResponse) => {
@@ -353,6 +349,7 @@ describe('HttpServiceImpl', () => {
                 const mockErrorResponse = new CsResponse();
                 mockErrorResponse.body = {};
                 mockErrorResponse.responseCode = 405;
+                mockErrorResponse.headers = {};
 
                 const customInterceptor = {
                     interceptResponse: (request: CsRequest, response: CsResponse) => {
@@ -393,6 +390,7 @@ describe('HttpServiceImpl', () => {
                 const mockErrorResponse = new CsResponse();
                 mockErrorResponse.body = {};
                 mockErrorResponse.responseCode = 505;
+                mockErrorResponse.headers = {};
 
                 const customInterceptor = {
                     interceptResponse: (request: CsRequest, response: CsResponse) => {
@@ -490,5 +488,19 @@ describe('HttpServiceImpl', () => {
                 done();
             });
         });
+    });
+
+    it('should be able to initialize traceId', (done) => {
+        // arrange
+        clientStorage.getItem = jest.fn(() => Promise.resolve('some_key'));
+
+        // act
+        httpService.init();
+
+        // assert
+        setTimeout(() => {
+            expect(clientStorage.getItem).toHaveBeenCalledWith(CsClientStorage.TRACE_ID);
+            done();
+        }, 0);
     });
 });
