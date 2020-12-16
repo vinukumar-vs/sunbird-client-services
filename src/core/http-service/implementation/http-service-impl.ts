@@ -7,18 +7,20 @@ import {
     CsResponse,
     CsResponseInterceptor
 } from '../interface';
-import {from, Observable} from 'rxjs';
-import {Container, inject, injectable} from 'inversify';
-import {InjectionTokens} from '../../../injection-tokens';
-import {HttpClient} from './http-client-adapters/http-client';
-import {BearerTokenInjectRequestInterceptor} from './interceptors/bearer-token-inject-request-interceptor';
-import {UserTokenInjectRequestInterceptor} from './interceptors/user-token-inject-request-interceptor';
-import {CsHttpClientError, CsHttpServerError} from '../errors';
+import { from, Observable } from 'rxjs';
+import { Container, inject, injectable, optional } from 'inversify';
+import { InjectionTokens } from '../../../injection-tokens';
+import { HttpClient } from './http-client-adapters/http-client';
+import { BearerTokenInjectRequestInterceptor } from './interceptors/bearer-token-inject-request-interceptor';
+import { UserTokenInjectRequestInterceptor } from './interceptors/user-token-inject-request-interceptor';
+import { CsHttpClientError, CsHttpServerError } from '../errors';
+import { CsClientStorage } from '../../cs-client-storage';
 
 @injectable()
 export class HttpServiceImpl implements CsHttpService {
     private _requestInterceptors: CsRequestInterceptor[] = [];
     private _responseInterceptors: CsResponseInterceptor[] = [];
+    private _traceId?: string;
 
     private _bearerTokenInjectRequestInterceptor?: BearerTokenInjectRequestInterceptor;
     get bearerTokenInjectRequestInterceptor(): BearerTokenInjectRequestInterceptor {
@@ -62,8 +64,17 @@ export class HttpServiceImpl implements CsHttpService {
 
     constructor(
         @inject(InjectionTokens.CONTAINER) private container: Container,
-        @inject(InjectionTokens.core.HTTP_ADAPTER) private http: HttpClient
+        @inject(InjectionTokens.core.HTTP_ADAPTER) private http: HttpClient,
+        @optional() @inject(InjectionTokens.core.CLIENT_STORAGE) private clientStorage?: CsClientStorage,
     ) {
+    }
+
+    public init() {
+        if (this.clientStorage) {
+            this.clientStorage.getItem(CsClientStorage.TRACE_ID).then((traceId) => {
+                this._traceId = traceId || '';
+            });
+        }
     }
 
     get requestInterceptors(): CsRequestInterceptor[] {
@@ -118,6 +129,13 @@ export class HttpServiceImpl implements CsHttpService {
                         throw new Error('Unsupported type');
                 }
 
+                // TODO: Need to confirm the header key
+                const responseTraceId = localResponse.headers['X-Trace-Enabled'] || '';
+                if (this.clientStorage
+                    && responseTraceId !== this._traceId) {
+                    this.clientStorage.setItem(CsClientStorage.TRACE_ID, responseTraceId);
+                }
+
                 return await this.interceptResponse(request, localResponse);
             } catch (e) {
                 const wrapError = (res: CsResponse<T>) => {
@@ -154,16 +172,17 @@ export class HttpServiceImpl implements CsHttpService {
         return from(response as Promise<CsResponse<T>>);
     }
 
-    private addGlobalHeader() {
+    private async addGlobalHeader() {
         const header = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            ...(this.channelId ? {'X-Channel-Id': this.channelId} : {}),
-            ...(this.producerId ? {'X-App-Id': this.producerId} : {}),
-            ...(this.deviceId ? {'X-Device-Id': this.deviceId} : {}),
-            ...(this.sessionId ? {'X-Session-Id': this.sessionId} : {}),
-            ...(this.appVersion ? {'X-App-Ver': this.appVersion} : {}),
+            ...(this.channelId ? { 'X-Channel-Id': this.channelId } : {}),
+            ...(this.producerId ? { 'X-App-Id': this.producerId } : {}),
+            ...(this.deviceId ? { 'X-Device-Id': this.deviceId } : {}),
+            ...(this.sessionId ? { 'X-Session-Id': this.sessionId } : {}),
+            ...(this.appVersion ? { 'X-App-Ver': this.appVersion } : {}),
+            ...(this._traceId ? { 'X-Request-Id': this._traceId } : {}),
         };
         this.http.addHeaders(header);
     }

@@ -18,6 +18,7 @@ export const InjectionTokens = {
             }
         },
         HTTP_SERVICE: Symbol.for('HTTP_SERVICE'),
+        CLIENT_STORAGE: Symbol.for('CLIENT_STORAGE'),
     },
     services: {
         user: {

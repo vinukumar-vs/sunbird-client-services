@@ -1,24 +1,25 @@
-import {Container} from 'inversify';
-import {HttpClient} from './core/http-service/implementation/http-client-adapters/http-client';
-import {HttpClientCordovaAdapter} from './core/http-service/implementation/http-client-adapters/http-client-cordova-adapter';
-import {HttpClientBrowserAdapter} from './core/http-service/implementation/http-client-adapters/http-client-browser-adapter';
-import {CsHttpService} from './core/http-service/interface';
-import {HttpServiceImpl} from './core/http-service/implementation/http-service-impl';
-import {GroupServiceImpl} from './services/group/implementation/group-service-impl';
-import {CsGroupService} from './services/group/interface';
-import {InjectionTokens} from './injection-tokens';
-import {CsFrameworkService} from './services/framework/interface';
-import {FrameworkServiceImpl} from './services/framework/implementation/framework-service-impl';
-import {CsLocationService} from './services/location/interface';
-import {LocationServiceImpl} from './services/location/implementation/location-service-impl';
-import {CsCourseService} from './services/course/interface';
-import {CourseServiceImpl} from './services/course/implementation/course-service-impl';
-import {CsUserService} from './services/user/interface';
-import {UserServiceImpl} from './services/user/implementation/user-service-impl';
-import {CsGroupActivityService} from './services/group/activity/interface';
-import {GroupActivityServiceImpl} from './services/group/activity/implementation/group-activity-service-impl';
-import {CsFormService} from './services/form/interface/cs-form-service';
-import {FormServiceImpl} from './services/form/implementation/form-service-impl';
+import { Container } from 'inversify';
+import { HttpClient } from './core/http-service/implementation/http-client-adapters/http-client';
+import { HttpClientCordovaAdapter } from './core/http-service/implementation/http-client-adapters/http-client-cordova-adapter';
+import { HttpClientBrowserAdapter } from './core/http-service/implementation/http-client-adapters/http-client-browser-adapter';
+import { CsHttpService } from './core/http-service/interface';
+import { HttpServiceImpl } from './core/http-service/implementation/http-service-impl';
+import { GroupServiceImpl } from './services/group/implementation/group-service-impl';
+import { CsGroupService } from './services/group/interface';
+import { InjectionTokens } from './injection-tokens';
+import { CsFrameworkService } from './services/framework/interface';
+import { FrameworkServiceImpl } from './services/framework/implementation/framework-service-impl';
+import { CsLocationService } from './services/location/interface';
+import { LocationServiceImpl } from './services/location/implementation/location-service-impl';
+import { CsCourseService } from './services/course/interface';
+import { CourseServiceImpl } from './services/course/implementation/course-service-impl';
+import { CsUserService } from './services/user/interface';
+import { UserServiceImpl } from './services/user/implementation/user-service-impl';
+import { CsGroupActivityService } from './services/group/activity/interface';
+import { GroupActivityServiceImpl } from './services/group/activity/implementation/group-activity-service-impl';
+import { CsFormService } from './services/form/interface/cs-form-service';
+import { FormServiceImpl } from './services/form/implementation/form-service-impl';
+import { CsClientStorage } from './core/cs-client-storage';
 
 export interface CsUserServiceConfig {
     apiPath: string;
@@ -131,7 +132,7 @@ export class CsModule {
         return this._container.get<CsFormService>(InjectionTokens.services.form.FORM_SERVICE);
     }
 
-    public async init(config: CsConfig, onConfigUpdate?: () => void) {
+    public async init(config: CsConfig, onConfigUpdate?: () => void, clientStorage?: CsClientStorage) {
         if (onConfigUpdate) {
             this.onUpdateConfigCallback = onConfigUpdate;
         }
@@ -145,6 +146,12 @@ export class CsModule {
         this.updateConfig(config);
 
         this._isInitialised = true;
+
+        if (clientStorage) {
+            this._container.bind<CsClientStorage>(InjectionTokens.core.CLIENT_STORAGE).toConstantValue(clientStorage);
+        }
+
+        this.httpService.init();
     }
 
     updateConfig(config: CsConfig) {
@@ -193,7 +200,7 @@ export class CsModule {
                 .toConstantValue(config.services.groupServiceConfig.apiPath);
             this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_DATA_API_PATH)
                 .toConstantValue(config.services.groupServiceConfig.dataApiPath);
-            if(config.services.groupServiceConfig.updateGroupGuidelinesApiPath) {
+            if (config.services.groupServiceConfig.updateGroupGuidelinesApiPath) {
                 this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_UPDATE_GUIDELINES_API_PATH)
                     .toConstantValue(config.services.groupServiceConfig.updateGroupGuidelinesApiPath);
             }
@@ -220,10 +227,10 @@ export class CsModule {
             .to(CourseServiceImpl).inSingletonScope();
         if (config.services.courseServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.course.COURSE_SERVICE_API_PATH)
-            .toConstantValue(config.services.courseServiceConfig.apiPath);
+                .toConstantValue(config.services.courseServiceConfig.apiPath);
             if (config.services.courseServiceConfig.certRegistrationApiPath) {
                 this._container[mode]<string>(InjectionTokens.services.course.COURSE_SERVICE_CERT_REGISTRATION_API_PATH)
-                .toConstantValue(config.services.courseServiceConfig.certRegistrationApiPath);
+                    .toConstantValue(config.services.courseServiceConfig.certRegistrationApiPath);
             }
         }
 
