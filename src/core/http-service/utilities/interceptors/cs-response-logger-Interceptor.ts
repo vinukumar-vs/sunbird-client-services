@@ -5,7 +5,7 @@ import {CsRequest} from '../../interface/cs-request';
 
 export class CsResponseLoggerInterceptor implements CsResponseInterceptor {
     interceptResponse(request: CsRequest, response: CsResponse<any>): Observable<CsResponse> {
-        console.log('CsResponseLoggerInterceptor: ', 'response:', JSON.parse(JSON.stringify(response)));
+        console.log('CsResponseLoggerInterceptor: ', 'response:', response);
         return of(response);
     }
 }

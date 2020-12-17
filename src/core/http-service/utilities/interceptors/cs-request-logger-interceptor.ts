@@ -4,7 +4,7 @@ import {Observable, of} from 'rxjs';
 
 export class CsRequestLoggerInterceptor implements CsRequestInterceptor {
     interceptRequest(request: CsRequest): Observable<CsRequest> {
-        console.log('CsRequestLoggerInterceptor: ', 'request:', JSON.parse(JSON.stringify(request)));
+        console.log('CsRequestLoggerInterceptor: ', 'request:', request);
         return of(request);
     }
 }
