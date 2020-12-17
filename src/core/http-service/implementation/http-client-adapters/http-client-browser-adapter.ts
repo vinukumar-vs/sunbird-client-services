@@ -1,9 +1,9 @@
-import {defer, Observable} from 'rxjs';
+import { defer, Observable } from 'rxjs';
 import * as qs from 'qs';
-import {HttpClient} from './http-client';
-import {CsHttpRequestType, CsHttpSerializer, CsResponse} from '../../interface';
-import {CsHttpClientError, CsHttpServerError, CsNetworkError} from '../../errors';
-import {injectable} from 'inversify';
+import { HttpClient } from './http-client';
+import { CsHttpRequestType, CsHttpSerializer, CsResponse } from '../../interface';
+import { CsHttpClientError, CsHttpServerError, CsNetworkError } from '../../errors';
+import { injectable } from 'inversify';
 
 @injectable()
 export class HttpClientBrowserAdapter implements HttpClient {
@@ -26,6 +26,11 @@ export class HttpClientBrowserAdapter implements HttpClient {
         scResponse.responseCode = response.status;
 
         scResponse.body = await response.text();
+
+        scResponse.headers = {};
+        if (response.headers) {
+            response.headers.forEach((v, k) => scResponse.headers[k] = v);
+        }
 
         try {
             scResponse.body = JSON.parse(scResponse.body);
@@ -50,7 +55,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
         }
     }
 
-    constructor() {}
+    constructor() { }
 
     setSerializer(httpSerializer: CsHttpSerializer) {
         this.serializer = httpSerializer;
@@ -61,7 +66,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
     }
 
     addHeaders(headers: { [p: string]: string }) {
-        this.headers = {...this.headers, ...headers};
+        this.headers = { ...this.headers, ...headers };
     }
 
     get(baseUrl: string, path: string, headers: any, parameters: any, httpSerializer: CsHttpSerializer): Observable<CsResponse> {
@@ -124,7 +129,7 @@ export class HttpClientBrowserAdapter implements HttpClient {
         return defer(() =>
             fetch(url.toString(), {
                 method,
-                headers: {...this.headers, ...headers},
+                headers: { ...this.headers, ...headers },
                 body,
                 credentials: 'same-origin'
             }).then(HttpClientBrowserAdapter.mapResponse)
