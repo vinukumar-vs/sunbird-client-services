@@ -48,6 +48,10 @@ export const InjectionTokens = {
         form: {
             FORM_SERVICE_API_PATH: Symbol.for('FORM_SERVICE_API_PATH'),
             FORM_SERVICE: Symbol.for('FORM_SERVICE')
+        },
+        systemSettings: {
+            SYSTEM_SETTINGS_SERVICE_API_PATH: Symbol.for('SYSTEM_SETTINGS_SERVICE_API_PATH'),
+            SYSTEM_SETTINGS_SERVICE: Symbol.for('SYSTEM_SETTINGS_SERVICE')
         }
     }
 };
