@@ -1,25 +1,31 @@
-import { Container } from 'inversify';
-import { HttpClient } from './core/http-service/implementation/http-client-adapters/http-client';
-import { HttpClientCordovaAdapter } from './core/http-service/implementation/http-client-adapters/http-client-cordova-adapter';
-import { HttpClientBrowserAdapter } from './core/http-service/implementation/http-client-adapters/http-client-browser-adapter';
-import { CsHttpService } from './core/http-service/interface';
-import { HttpServiceImpl } from './core/http-service/implementation/http-service-impl';
-import { GroupServiceImpl } from './services/group/implementation/group-service-impl';
-import { CsGroupService } from './services/group/interface';
-import { InjectionTokens } from './injection-tokens';
-import { CsFrameworkService } from './services/framework/interface';
-import { FrameworkServiceImpl } from './services/framework/implementation/framework-service-impl';
-import { CsLocationService } from './services/location/interface';
-import { LocationServiceImpl } from './services/location/implementation/location-service-impl';
-import { CsCourseService } from './services/course/interface';
-import { CourseServiceImpl } from './services/course/implementation/course-service-impl';
-import { CsUserService } from './services/user/interface';
-import { UserServiceImpl } from './services/user/implementation/user-service-impl';
-import { CsGroupActivityService } from './services/group/activity/interface';
-import { GroupActivityServiceImpl } from './services/group/activity/implementation/group-activity-service-impl';
-import { CsFormService } from './services/form/interface/cs-form-service';
-import { FormServiceImpl } from './services/form/implementation/form-service-impl';
-import { CsClientStorage } from './core/cs-client-storage';
+import {Container} from 'inversify';
+import {HttpClient} from './core/http-service/implementation/http-client-adapters/http-client';
+import {HttpClientCordovaAdapter} from './core/http-service/implementation/http-client-adapters/http-client-cordova-adapter';
+import {HttpClientBrowserAdapter} from './core/http-service/implementation/http-client-adapters/http-client-browser-adapter';
+import {CsHttpService} from './core/http-service/interface';
+import {HttpServiceImpl} from './core/http-service/implementation/http-service-impl';
+import {GroupServiceImpl} from './services/group/implementation/group-service-impl';
+import {CsGroupService} from './services/group/interface';
+import {InjectionTokens} from './injection-tokens';
+import {CsFrameworkService} from './services/framework/interface';
+import {FrameworkServiceImpl} from './services/framework/implementation/framework-service-impl';
+import {CsLocationService} from './services/location/interface';
+import {LocationServiceImpl} from './services/location/implementation/location-service-impl';
+import {CsCourseService} from './services/course/interface';
+import {CourseServiceImpl} from './services/course/implementation/course-service-impl';
+import {CsUserService} from './services/user/interface';
+import {UserServiceImpl} from './services/user/implementation/user-service-impl';
+import {CsGroupActivityService} from './services/group/activity/interface';
+import {GroupActivityServiceImpl} from './services/group/activity/implementation/group-activity-service-impl';
+import {CsFormService} from './services/form/interface/cs-form-service';
+import {FormServiceImpl} from './services/form/implementation/form-service-impl';
+import {CsSystemSettingsService} from './services/system-settings/interface';
+import {SystemSettingsServiceImpl} from './services/system-settings/implementation/system-settings-service-impl';
+import {CsClientStorage} from './core/cs-client-storage';
+
+export interface CsSystemSettingsServiceConfig {
+    apiPath: string;
+}
 
 export interface CsUserServiceConfig {
     apiPath: string;
@@ -74,6 +80,7 @@ export interface CsConfig {
         locationServiceConfig?: CsLocationServiceConfig,
         courseServiceConfig?: CsCourseServiceConfig,
         formServiceConfig?: CsFormServiceConfig,
+        systemSettingsServiceConfig?: CsSystemSettingsServiceConfig
     };
 }
 
@@ -130,6 +137,10 @@ export class CsModule {
 
     get formService(): CsFormService {
         return this._container.get<CsFormService>(InjectionTokens.services.form.FORM_SERVICE);
+    }
+
+    get systemSettingsService(): CsSystemSettingsService {
+        return this._container.get<CsSystemSettingsService>(InjectionTokens.services.systemSettings.SYSTEM_SETTINGS_SERVICE);
     }
 
     public async init(config: CsConfig, onConfigUpdate?: () => void, clientStorage?: CsClientStorage) {
@@ -248,6 +259,14 @@ export class CsModule {
         if (config.services.formServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.form.FORM_SERVICE_API_PATH)
                 .toConstantValue(config.services.formServiceConfig.apiPath);
+        }
+
+        // systemSettings
+        this._container[mode]<CsSystemSettingsService>(InjectionTokens.services.systemSettings.SYSTEM_SETTINGS_SERVICE)
+          .to(SystemSettingsServiceImpl).inSingletonScope();
+        if (config.services.systemSettingsServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.systemSettings.SYSTEM_SETTINGS_SERVICE_API_PATH)
+              .toConstantValue(config.services.systemSettingsServiceConfig.apiPath);
         }
 
         if (mode === 'rebind' && this.onUpdateConfigCallback) {
