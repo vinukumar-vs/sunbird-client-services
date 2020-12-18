@@ -84,6 +84,7 @@ export class HttpClientCordovaAdapter implements HttpClient {
 
             r.responseCode = response.status;
             r.errorMesg = '';
+            r.headers = response.headers;
             observable.next(r);
             observable.complete();
 
