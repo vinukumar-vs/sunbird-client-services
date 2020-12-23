@@ -4,7 +4,7 @@ import {Container} from 'inversify';
 import {InjectionTokens} from '../../../injection-tokens';
 import {UserServiceImpl} from './user-service-impl';
 import {of} from 'rxjs';
-import {ConsentStatus, UserDeclarationOperation} from '../../../models/user';
+import {ConsentStatus, UserDeclarationOperation, UserFeedCategory, UserFeedStatus} from '../../../models/user';
 
 describe('UserServiceImpl', () => {
   let userService: CsUserService;
@@ -451,5 +451,312 @@ describe('UserServiceImpl', () => {
       });
     });
   });
-})
-;
+
+  describe('getUserFeed()', () => {
+    it('should be able to get the user feed if response code is 200', (done) => {
+      mockHttpService.fetch = jest.fn(() => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+        response.body = {
+          result: {
+            response: { userFeed: [] }
+          }
+        };
+        return of(response);
+      });
+
+      userService.getUserFeed('sample_user_id').subscribe((r) => {
+        expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+          type: 'GET',
+          path: expect.stringContaining('/feed/sample_user_id')
+        }));
+        expect(r).toEqual([]);
+        done();
+      });
+    });
+
+    it('should be able to get the user feed when configuration is overridden', (done) => {
+      mockHttpService.fetch = jest.fn(() => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+        response.body = {
+          result: {
+            response: { userFeed: [] }
+          }
+        };
+        return of(response);
+      });
+
+      userService.getUserFeed('sample_user_id', {
+        apiPath: '/some_path'
+      }).subscribe((r) => {
+        expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+          type: 'GET',
+          path: expect.stringContaining('/some_path/feed/sample_user_id')
+        }));
+        expect(r).toEqual([]);
+        done();
+      });
+    });
+  });
+
+  describe('updateUserFeedEntry()', () => {
+    it('should be able to update user feed entry if response code is 200', (done) => {
+      userService.getUserFeed = jest.fn(() => of([
+        {
+          identifier: 'sample_feed_id',
+          category: UserFeedCategory.NOTIFICATION
+        } as any
+      ]));
+      mockHttpService.fetch = jest.fn((apiRequest) => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+          response.body = {
+            result: {
+              response: {}
+            }
+          };
+        return of(response);
+      });
+
+      userService.updateUserFeedEntry('sample_user_id', 'sample_feed_id', UserFeedCategory.NOTIFICATION, { status: UserFeedStatus.READ})
+        .subscribe((r) => {
+        expect(mockHttpService.fetch).toHaveBeenNthCalledWith(1, expect.objectContaining({
+          type: 'PATCH',
+          path: expect.stringContaining('/feed/update')
+        }));
+        expect(r).toEqual({});
+        done();
+      });
+    });
+
+    it('should not invoke the API if the entry is not available in getUserFeed API', (done) => {
+      userService.getUserFeed = jest.fn(() => of([
+      ]));
+      mockHttpService.fetch = jest.fn((apiRequest) => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+        response.body = {
+          result: {
+            response: {}
+          }
+        };
+        return of(response);
+      });
+
+      userService.updateUserFeedEntry('sample_user_id', 'sample_feed_id', UserFeedCategory.NOTIFICATION, { status: UserFeedStatus.READ})
+        .subscribe((r) => {
+          expect(mockHttpService.fetch).not.toHaveBeenNthCalledWith(1, expect.objectContaining({
+            type: 'PATCH',
+            path: expect.stringContaining('/feed/update')
+          }));
+          expect(r).toEqual({});
+          done();
+        });
+    });
+
+    it('should be able to update user feed entry iwhen configuration is overridden', (done) => {
+      userService.getUserFeed = jest.fn(() => of([
+        {
+          identifier: 'sample_feed_id',
+          category: UserFeedCategory.NOTIFICATION
+        } as any
+      ]));
+      mockHttpService.fetch = jest.fn((apiRequest) => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+        response.body = {
+          result: {
+            response: {}
+          }
+        };
+        return of(response);
+      });
+
+      userService.updateUserFeedEntry('sample_user_id',
+        'sample_feed_id', UserFeedCategory.NOTIFICATION,
+        { status: UserFeedStatus.READ},
+        {apiPath: '/some_path'})
+        .subscribe((r) => {
+          expect(mockHttpService.fetch).toHaveBeenNthCalledWith(1, expect.objectContaining({
+            type: 'PATCH',
+            path: expect.stringContaining('/some_path/feed/update')
+          }));
+          expect(r).toEqual({});
+          done();
+        });
+    });
+  });
+
+  describe('deleteUserFeedEntry()', () => {
+    it('should be able to delete user feed entry if response code is 200', (done) => {
+      mockHttpService.fetch = jest.fn(() => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+        response.body = {
+          result: {
+            response: {}
+          }
+        };
+        return of(response);
+      });
+
+      userService.deleteUserFeedEntry('sample_user_id', 'sample_feed_id', UserFeedCategory.NOTIFICATION).subscribe((r) => {
+        expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+          type: 'POST',
+          path: expect.stringContaining('/feed/delete')
+        }));
+        expect(r).toEqual({});
+        done();
+      });
+    });
+
+    it('should be able to get the user feed when configuration is overridden', (done) => {
+      mockHttpService.fetch = jest.fn(() => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+        response.body = {
+          result: {
+            response: {}
+          }
+        };
+        return of(response);
+      });
+
+      userService.deleteUserFeedEntry('sample_user_id', 'sample_feed_id', UserFeedCategory.NOTIFICATION, {
+        apiPath: '/some_path'
+      }).subscribe((r) => {
+        expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+          type: 'POST',
+          path: expect.stringContaining('/some_path/feed/delete')
+        }));
+        expect(r).toEqual({});
+        done();
+      });
+    });
+  });
+
+  describe('getProfileDetails()', () => {
+    it('should be able to get profile details if response code is 200', (done) => {
+      mockHttpService.fetch = jest.fn(() => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+        response.body = {
+          result: {
+            response: {
+              userId: 'sample_user_id'
+            }
+          }
+        };
+        return of(response);
+      });
+
+      userService.getProfileDetails({
+        userId: 'sample_user_id',
+        requiredFields: ['roles', 'location']
+      }).subscribe((r) => {
+        expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+          type: 'GET',
+          path: expect.stringContaining('read/sample_user_id')
+        }));
+        expect(r).toEqual({
+          userId: 'sample_user_id'
+        });
+        done();
+      });
+    });
+
+    it('should be able to get profile when configuration is overridden', (done) => {
+      mockHttpService.fetch = jest.fn(() => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+        response.body = {
+          result: {
+            response:  {
+              userId: 'sample_user_id'
+            }
+          }
+        };
+        return of(response);
+      });
+
+      userService.getProfileDetails({
+        userId: 'sample_user_id',
+        requiredFields: ['roles', 'location']
+      }, {
+        apiPath: '/some_path'
+      }).subscribe((r) => {
+        expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+          type: 'GET',
+          path: expect.stringContaining('/some_path/read/sample_user_id')
+        }));
+        expect(r).toEqual({
+          userId: 'sample_user_id'
+        });
+        done();
+      });
+    });
+  });
+
+  describe('updateProfile()', () => {
+    it('should be able to update profile if response code is 200', (done) => {
+      mockHttpService.fetch = jest.fn(() => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+        response.body = {
+          result: {
+            response: 'SUCCESS',
+            errors: []
+          }
+        };
+        return of(response);
+      });
+
+      userService.updateProfile({
+        userId: 'sample_user_id',
+        locationCodes: ['101', '102']
+      }).subscribe((r) => {
+        expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+          type: 'PATCH',
+          path: expect.stringContaining('update')
+        }));
+        expect(r).toEqual({
+          response: 'SUCCESS',
+          errors: []
+        });
+        done();
+      });
+    });
+
+    it('should be able to update when configuration is overridden', (done) => {
+      mockHttpService.fetch = jest.fn(() => {
+        const response = new CsResponse();
+        response.responseCode = 200;
+        response.body = {
+          result: {
+            response: 'SUCCESS',
+            errors: []
+          }
+        };
+        return of(response);
+      });
+
+      userService.updateProfile({
+        userId: 'sample_user_id',
+        locationCodes: ['101', '102']
+      }, {
+        apiPath: '/some_path'
+      }).subscribe((r) => {
+        expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+          type: 'PATCH',
+          path: expect.stringContaining('/some_path/update')
+        }));
+        expect(r).toEqual({
+          response: 'SUCCESS',
+          errors: []
+        });
+        done();
+      });
+    });
+  });
+});
