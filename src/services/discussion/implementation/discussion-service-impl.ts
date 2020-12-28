@@ -1,5 +1,4 @@
 // import { CsGroupSuspendResponse, CsGroupReactivateResponse, CsGroupU pdateGroupGuidelinesResponse, CsGroupUpdateGroupGuidelinesRequest } from './../interface/cs-group-service';
-import { CsGroup } from './../../../models/group/index';
 import {Container, inject, injectable, optional} from 'inversify';
 // import {
 //     CsGroupAddActivitiesRequest,
@@ -26,13 +25,9 @@ import {Container, inject, injectable, optional} from 'inversify';
 // } from '../interface';
 import {CsDiscussionServiceConfig, CsGroupServiceConfig} from '../../..';
 import {Observable} from 'rxjs';
-import {Group, GroupEntityStatus, GroupMemberRole} from '../../../models/group';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map, mergeMap} from 'rxjs/operators';
-import {CsFormService} from '../../form/interface/cs-form-service';
-import {Form} from '../../../models/form';
-import { plainToClass } from 'class-transformer';
 import { CsDiscussionService } from '../interface/cs-discussion-service';
 
 @injectable()
