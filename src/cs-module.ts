@@ -22,6 +22,12 @@ import {FormServiceImpl} from './services/form/implementation/form-service-impl'
 import {CsSystemSettingsService} from './services/system-settings/interface';
 import {SystemSettingsServiceImpl} from './services/system-settings/implementation/system-settings-service-impl';
 import {CsClientStorage} from './core/cs-client-storage';
+import { CsDiscussionService } from './services/discussion';
+import { DiscussionServiceImpl } from './services/discussion/implementation/discussion-service-impl';
+
+export interface CsDiscussionServiceConfig {
+    apiPath: string;
+}
 
 export interface CsSystemSettingsServiceConfig {
     apiPath: string;
@@ -80,7 +86,8 @@ export interface CsConfig {
         locationServiceConfig?: CsLocationServiceConfig,
         courseServiceConfig?: CsCourseServiceConfig,
         formServiceConfig?: CsFormServiceConfig,
-        systemSettingsServiceConfig?: CsSystemSettingsServiceConfig
+        systemSettingsServiceConfig?: CsSystemSettingsServiceConfig,
+        discussionServiceConfig?: CsDiscussionServiceConfig
     };
 }
 
@@ -143,6 +150,10 @@ export class CsModule {
         return this._container.get<CsSystemSettingsService>(InjectionTokens.services.systemSettings.SYSTEM_SETTINGS_SERVICE);
     }
 
+    get discussionService(): CsDiscussionService {
+        return this._container.get<CsDiscussionService>(InjectionTokens.services.discussion.DISCUSSION_SERVICE);
+    }
+
     public async init(config: CsConfig, onConfigUpdate?: () => void, clientStorage?: CsClientStorage) {
         if (onConfigUpdate) {
             this.onUpdateConfigCallback = onConfigUpdate;
@@ -163,6 +174,7 @@ export class CsModule {
         }
 
         this.httpService.init();
+        window['CsModule'] = this;
     }
 
     updateConfig(config: CsConfig) {
@@ -271,6 +283,14 @@ export class CsModule {
 
         if (mode === 'rebind' && this.onUpdateConfigCallback) {
             this.onUpdateConfigCallback();
+        }
+
+        // discussion service
+        this._container[mode]<CsDiscussionService>(InjectionTokens.services.discussion.DISCUSSION_SERVICE)
+            .to(DiscussionServiceImpl).inSingletonScope();
+        if (config.services.discussionServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.discussion.DISCUSSION_SERVICE_API_PATH)
+                .toConstantValue(config.services.discussionServiceConfig.apiPath);
         }
     }
 }
