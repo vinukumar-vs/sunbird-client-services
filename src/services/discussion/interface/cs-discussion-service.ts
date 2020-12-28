@@ -78,4 +78,12 @@ export interface CsDiscussionService {
     fetchNetworkProfile(slug: string, config?);
 
     getContextBasedTopic(slug: string, config?);
+
+    createUser(data: any, config?);
+
+    getForumIds(data: any, config?);
+
+    getUserDetails(data: any, config?);
+
+    getContextBasedTopic(uid: string, config?);
 }
