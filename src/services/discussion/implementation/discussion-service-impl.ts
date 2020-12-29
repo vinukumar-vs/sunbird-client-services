@@ -55,7 +55,6 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             .withPath(`${config ? config.apiPath : this.apiPath}/tags`)
             .withBearerToken(false)
             .withUserToken(false)
-            .withHeaders({'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6Im1vYmlsZV9kZXZpY2V2Ml9rZXk0In0.eyJpc3MiOiJkZXYuc3VuYmlyZC5hcHAtMzU0MTI2Mjc1YjNkODZkMThkZDhjMTRkZjhjY2NkNTM4MjI2MWNlNiIsImlhdCI6MTYwODU1OTM0OH0.reBVGt4Wewyv1u8wqgRZu_a1B9mBM-NUIXMXGRtDgF1AzNbZeiIzG--gSn6CQKTJs_-nC4avplu_3DkUUeiVTr9RUvuh0wK0jI606QZ2fImSY_Wzo_TAylulR8FP-jJNSdzyvaTgyRpl8wBp0_Wk-Oh7RMP-gStCQeZZ1BTluauh31mIScWs2NaksVtvSHkV1pH5xa2wRpegwFxla73nRvjnSRicjaLAGyt44n7eBuJU2ADxJe3mVulkLahJXPLKZtf0NFupq39-OtokrdgHawMZw0md1mQmp_3hMkwSX43I57q8aszedW9TdpPIMC_Ek_wb0FL5jFH7NAMjSRreNw'})
             .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
