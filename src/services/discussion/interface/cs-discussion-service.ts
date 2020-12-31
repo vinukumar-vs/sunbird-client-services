@@ -53,15 +53,15 @@ export interface CsDiscussionService {
 
     fetchRecentD(page?: any, config?): Observable<any>;
 
-    fetchPopularD(page?: any, config?): Observable<any>;
+    // fetchPopularD(page?: any, config?): Observable<any>;
 
     fetchTopicById(topicId: number, slug?: any, page?: any, config?): Observable<any>;
 
     fetchTopicByIdSort(topicId: number, sort: any, page?: any, config?): Observable<any>;
 
-    fetchUnreadCOunt(config?): Observable<any>;
+    // fetchUnreadCOunt(config?): Observable<any>;
 
-    fetchProfile(config?): Observable<any>;
+    // fetchProfile(config?): Observable<any>;
 
     fetchProfileInfo(slug: string, config?): Observable<any>;
 
