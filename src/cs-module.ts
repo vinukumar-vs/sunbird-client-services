@@ -174,7 +174,6 @@ export class CsModule {
         }
 
         this.httpService.init();
-        window['CsModule'] = this;
     }
 
     updateConfig(config: CsConfig) {

@@ -1,28 +1,4 @@
-// import { CsGroupSuspendResponse, CsGroupReactivateResponse, CsGroupU pdateGroupGuidelinesResponse, CsGroupUpdateGroupGuidelinesRequest } from './../interface/cs-group-service';
-import {Container, inject, injectable, optional} from 'inversify';
-// import {
-//     CsGroupAddActivitiesRequest,
-//     CsGroupAddActivitiesResponse,
-//     CsGroupAddMembersRequest,
-//     CsGroupAddMembersResponse,
-//     CsGroupCreateRequest,
-//     CsGroupCreateResponse,
-//     CsGroupDeleteResponse,
-//     CsGroupRemoveActivitiesRequest,
-//     CsGroupRemoveActivitiesResponse,
-//     CsGroupRemoveMembersRequest,
-//     CsGroupRemoveMembersResponse,
-//     CsGroupSearchCriteria,
-//     CsGroupSearchResponse,
-//     CsGroupService,
-//     CsGroupSupportedActivitiesFormField,
-//     CsGroupUpdateActivitiesRequest,
-//     CsGroupUpdateActivitiesResponse,
-//     CsGroupUpdateMembersRequest,
-//     CsGroupUpdateMembersResponse,
-//     CsGroupUpdateRequest,
-//     CsGroupUpdateResponse
-// } from '../interface';
+import {Container, inject, injectable, optional } from 'inversify';
 import {CsDiscussionServiceConfig, CsGroupServiceConfig} from '../../..';
 import {Observable} from 'rxjs';
 import {InjectionTokens} from '../../../injection-tokens';
