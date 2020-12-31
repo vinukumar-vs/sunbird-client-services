@@ -29,61 +29,61 @@ import {Form} from '../../../models/form';
 export interface CsDiscussionService {
     // appendPage(page: any, url: string);
     
-    fetchAllTags(config?);
+    fetchAllTags(config?): Observable<any>;
     
-    createPost(data: any, config?);
+    createPost(data: any, config?): Observable<any>;
      
-    fetchAllCategories(config?: CsDiscussionServiceConfig);
+    fetchAllCategories(config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchSingleCategoryDetails(cid, config?)
+    fetchSingleCategoryDetails(cid, config?): Observable<any>;
 
     // fetchAllTag(config?);
 
     // fetchPostDetails(config?);
 
-    votePost(pid: number, data, config?);
+    votePost(pid: number, data, config?): Observable<any>;
 
-    deleteVotePost(pid: number, config?);
+    deleteVotePost(pid: number, config?): Observable<any>;
 
-    bookmarkPost(pid: number, config?);
+    bookmarkPost(pid: number, config?): Observable<any>;
 
-    deleteBookmarkPost(pid: number, config?);
+    deleteBookmarkPost(pid: number, config?): Observable<any>;
 
-    replyPost(tid: number, data: any, config?);
+    replyPost(tid: number, data: any, config?): Observable<any>;
 
-    fetchRecentD(page?: any, config?);
+    fetchRecentD(page?: any, config?): Observable<any>;
 
-    fetchPopularD(page?: any, config?);
+    fetchPopularD(page?: any, config?): Observable<any>;
 
-    fetchTopicById(topicId: number, slug?: any, page?: any, config?);
+    fetchTopicById(topicId: number, slug?: any, page?: any, config?): Observable<any>;
 
-    fetchTopicByIdSort(topicId: number, sort: any, page?: any, config?);
+    fetchTopicByIdSort(topicId: number, sort: any, page?: any, config?): Observable<any>;
 
-    fetchUnreadCOunt(config?);
+    fetchUnreadCOunt(config?): Observable<any>;
 
-    fetchProfile(config?);
+    fetchProfile(config?): Observable<any>;
 
-    fetchProfileInfo(slug: string, config?);
+    fetchProfileInfo(slug: string, config?): Observable<any>;
 
-    fetchUpvoted(slug: string, config?);
+    fetchUpvoted(slug: string, config?): Observable<any>;
 
-    fetchDownvoted(slug: string, config?);
+    fetchDownvoted(slug: string, config?): Observable<any>;
 
-    fetchSaved(slug: string, config?);
+    fetchSaved(slug: string, config?): Observable<any>;
 
     // fetchSingleCategoryDetails(cid: number, page?: any);
 
     // fetchSingleCategoryDetailsSort(cid: number, sort: any, page?: any);
 
-    fetchNetworkProfile(slug: string, config?);
+    fetchNetworkProfile(slug: string, config?): Observable<any>;
 
-    getContextBasedTopic(slug: string, config?);
+    getContextBasedTopic(slug: string, config?): Observable<any>;
 
-    createUser(data: any, config?);
+    createUser(data: any, config?): Observable<any>;
 
-    getForumIds(data: any, config?);
+    getForumIds(data: any, config?): Observable<any>;
 
-    getUserDetails(data: any, config?);
+    getUserDetails(data: any, config?): Observable<any>;
 
-    getContextBasedTopic(uid: string, config?);
+    getContextBasedTopic(uid: string, config?): Observable<any>;
 }

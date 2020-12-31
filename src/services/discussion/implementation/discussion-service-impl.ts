@@ -39,17 +39,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
     ) {
     }
 
-
-
-    // appendPage(page: any, url: string) {
-    //     if (page) {
-    //         return `${url}?page=${page}`;
-    //     }
-    //     return `${url}?page=1`;
-    // }
-    
     fetchAllTags(config?) {
-        console.log('from csl', config)
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/tags`)
@@ -59,7 +49,6 @@ export class DiscussionServiceImpl implements CsDiscussionService {
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
             map((r) => {
-                console.log('-----',r)
                 return r.body
             })
         );
@@ -75,7 +64,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             .withUserToken(true)
             .withBody({
                 request: {
-                    data
+                    ...data
                 }
             })
             .build();
@@ -89,7 +78,6 @@ export class DiscussionServiceImpl implements CsDiscussionService {
     //  * @description To get all the categories
     //  */
     fetchAllCategories(config?: CsDiscussionServiceConfig) {
-        console.log('fetchAllCategories CSL', config)
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/categories`)
@@ -99,7 +87,6 @@ export class DiscussionServiceImpl implements CsDiscussionService {
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
             map((r) => {
-                console.log('fetchAllCategories CSL result', r.body)
                 return r.body
             })
         );
@@ -129,12 +116,12 @@ export class DiscussionServiceImpl implements CsDiscussionService {
     votePost(pid: number,  data, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
-            .withPath(`${config ? config.apapiPath : this.apiPath}/v2/posts/${pid}/vote`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/v2/posts/${pid}/vote`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
                 request: {
-                    data
+                    ...data
                 }
             })
             .build();
@@ -160,7 +147,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
     bookmarkPost(pid: number, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
-            .withPath(`${config ? config.bookmarkPost : this.apiPath}/v2/posts/${pid}/bookmark`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/v2/posts/${pid}/bookmark`)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
@@ -186,12 +173,12 @@ export class DiscussionServiceImpl implements CsDiscussionService {
     replyPost(tid: number, data: any, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
-            .withPath(`${config ? config.replyPost : this.apiPath}/v2/topics/${tid}`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/v2/topics/${tid}`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
                 request: {
-                    data
+                    ...data
                 }
             })
             .build();
