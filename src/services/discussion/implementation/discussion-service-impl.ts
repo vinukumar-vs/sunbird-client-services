@@ -205,22 +205,22 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    fetchPopularD(page?: any, config?) {
-        // const url = this.appendPage(page, urlConfig.popularPost());
-        // return this.http.get(url);
-        const apiRequest: CsRequest = new CsRequest.Builder()
-        .withType(CsHttpRequestType.GET)
-        .withPath(`${config ? config.apiPath : this.apiPath}/topics/popular?page=${page}`)
-        .withBearerToken(true)
-        .withUserToken(true)
-        .build();
+    // fetchPopularD(page?: any, config?) {
+    //     // const url = this.appendPage(page, urlConfig.popularPost());
+    //     // return this.http.get(url);
+    //     const apiRequest: CsRequest = new CsRequest.Builder()
+    //     .withType(CsHttpRequestType.GET)
+    //     .withPath(`${config ? config.apiPath : this.apiPath}/topics/popular?page=${page}`)
+    //     .withBearerToken(true)
+    //     .withUserToken(true)
+    //     .build();
 
-        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
-            map((r) => {
-                return r.body
-            })
-        );
-    }
+    //     return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+    //         map((r) => {
+    //             return r.body
+    //         })
+    //     );
+    // }
 
     fetchTopicById(topicId: number, slug?: any, page?: any, config?) {
         // let url = urlConfig.getTopic() + '/' + topicId.toString() + '/' + slug;
@@ -260,31 +260,32 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    fetchUnreadCOunt(config?) {
-        const apiRequest: CsRequest = new CsRequest.Builder()
-            .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/topics/unread/total`)
-            .withBearerToken(true)
-            .withUserToken(true)
-            .build();
+    // fetchUnreadCOunt(config?) {
+    //     const apiRequest: CsRequest = new CsRequest.Builder()
+    //         .withType(CsHttpRequestType.GET)
+    //         .withPath(`${config ? config.apiPath : this.apiPath}/topics/unread/total`)
+    //         .withBearerToken(true)
+    //         .withUserToken(true)
+    //         .build();
 
-        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
-            map((r) => r.body)
-        );
-        // return this.http.get<any>(urlConfig.unread());
-    }
-    fetchProfile(config?) {
-        const apiRequest: CsRequest = new CsRequest.Builder()
-            .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/users/me`)
-            .withBearerToken(true)
-            .withUserToken(true)
-            .build();
+    //     return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+    //         map((r) => r.body)
+    //     );
+    //     // return this.http.get<any>(urlConfig.unread());
+    // }
 
-        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
-            map((r) => r.body)
-        );
-    }
+    // fetchProfile(config?) {
+    //     const apiRequest: CsRequest = new CsRequest.Builder()
+    //         .withType(CsHttpRequestType.GET)
+    //         .withPath(`${config ? config.apiPath : this.apiPath}/users/me`)
+    //         .withBearerToken(true)
+    //         .withUserToken(true)
+    //         .build();
+
+    //     return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+    //         map((r) => r.body)
+    //     );
+    // }
     fetchProfileInfo(slug: string, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.GET)
