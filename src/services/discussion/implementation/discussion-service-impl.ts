@@ -260,19 +260,19 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    // fetchUnreadCOunt(config?) {
-    //     const apiRequest: CsRequest = new CsRequest.Builder()
-    //         .withType(CsHttpRequestType.GET)
-    //         .withPath(`${config ? config.apiPath : this.apiPath}/topics/unread/total`)
-    //         .withBearerToken(true)
-    //         .withUserToken(true)
-    //         .build();
+    fetchUnreadCOunt(config?) {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+            .withType(CsHttpRequestType.GET)
+            .withPath(`${config ? config.apiPath : this.apiPath}/topics/unread/total`)
+            .withBearerToken(true)
+            .withUserToken(true)
+            .build();
 
-    //     return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
-    //         map((r) => r.body)
-    //     );
-    //     // return this.http.get<any>(urlConfig.unread());
-    // }
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+        // return this.http.get<any>(urlConfig.unread());
+    }
 
     // fetchProfile(config?) {
     //     const apiRequest: CsRequest = new CsRequest.Builder()

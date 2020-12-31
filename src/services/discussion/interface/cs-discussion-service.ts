@@ -59,7 +59,7 @@ export interface CsDiscussionService {
 
     fetchTopicByIdSort(topicId: number, sort: any, page?: any, config?): Observable<any>;
 
-    // fetchUnreadCOunt(config?): Observable<any>;
+    fetchUnreadCOunt(config?): Observable<any>;
 
     // fetchProfile(config?): Observable<any>;
 

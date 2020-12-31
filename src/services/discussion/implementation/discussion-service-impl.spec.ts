@@ -438,6 +438,150 @@ describe('DiscussionServiceImpl', () => {
                 });
             });
         });
+
+        describe('when configuration is overridden', () => {
+            it('should create a user in nodebb', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        postId: 'SOME_POST_ID'
+                    };
+                    return of(response);
+                });
+
+                discussionService.createUser(10, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'POST',
+                        path: '/some_api_path/user/v1/create'
+                    }));
+                    expect(r).toEqual({
+                        postId: 'SOME_POST_ID'
+                    });
+                    done();
+                });
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch the unread post count', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        postId: 'SOME_POST_ID'
+                    };
+                    return of(response);
+                });
+
+                discussionService.fetchUnreadCOunt({apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/topics/unread/total'
+                    }));
+                    expect(r).toEqual({
+                        postId: 'SOME_POST_ID'
+                    });
+                    done();
+                });
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch the unread post count', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        postId: 'SOME_POST_ID'
+                    };
+                    return of(response);
+                });
+
+                discussionService.fetchProfileInfo('SOME_SLUG', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/users/SOME_SLUG/about'
+                    }));
+                    expect(r).toEqual({
+                        postId: 'SOME_POST_ID'
+                    });
+                    done();
+                });
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch the unread post count', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        postId: 'SOME_POST_ID'
+                    };
+                    return of(response);
+                });
+
+                discussionService.fetchUpvoted('SOME_SLUG', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/user/SOME_SLUG/upvoted'
+                    }));
+                    expect(r).toEqual({
+                        postId: 'SOME_POST_ID'
+                    });
+                    done();
+                });
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch the unread post count', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        postId: 'SOME_POST_ID'
+                    };
+                    return of(response);
+                });
+
+                discussionService.fetchDownvoted('SOME_SLUG', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/user/SOME_SLUG/downvoted'
+                    }));
+                    expect(r).toEqual({
+                        postId: 'SOME_POST_ID'
+                    });
+                    done();
+                });
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch the unread post count', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        postId: 'SOME_POST_ID'
+                    };
+                    return of(response);
+                });
+
+                discussionService.fetchSaved('SOME_SLUG', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/user/SOME_SLUG/bookmarks'
+                    }));
+                    expect(r).toEqual({
+                        postId: 'SOME_POST_ID'
+                    });
+                    done();
+                });
+            });
+        });
     });
 
 });
