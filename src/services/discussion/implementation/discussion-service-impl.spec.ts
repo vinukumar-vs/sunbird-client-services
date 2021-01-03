@@ -734,9 +734,32 @@ describe('DiscussionServiceImpl', () => {
                 });
             });
         });
+    });
 
-        describe('fetchUpvoted()', () => {
-            it('should fetch profile info with appropriate request', (done) => {
+    describe('fetchUpvoted()', () => {
+        it('should fetch upvoted info with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    count: 10
+                };
+                return of(response);
+            });
+
+            discussionService.fetchUpvoted('some_id').subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    count: 10
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch upvoted info with appropriate request', (done) => {
                 mockHttpService.fetch = jest.fn(() => {
                     const response = new CsResponse();
                     response.responseCode = 200;
@@ -745,10 +768,11 @@ describe('DiscussionServiceImpl', () => {
                     };
                     return of(response);
                 });
-    
-                discussionService.fetchUpvoted('some_id').subscribe((r) => {
+
+                discussionService.fetchUpvoted('some_id', {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
+                        path: '/some_api_path/user/some_id/upvoted'
                     }));
                     expect(r).toEqual({
                         count: 10
@@ -756,28 +780,239 @@ describe('DiscussionServiceImpl', () => {
                     done();
                 });
             });
-    
-            describe('when configuration is overridden', () => {
-                it('should fetch profile info with appropriate request', (done) => {
-                    mockHttpService.fetch = jest.fn(() => {
-                        const response = new CsResponse();
-                        response.responseCode = 200;
-                        response.body = {
-                            count: 10
-                        };
-                        return of(response);
+        });
+    });
+
+    describe('fetchDownvoted()', () => {
+        it('should fetch downvoted info with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    count: 10
+                };
+                return of(response);
+            });
+
+            discussionService.fetchDownvoted('some_id').subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    count: 10
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch downvoted info with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        count: 10
+                    };
+                    return of(response);
+                });
+
+                discussionService.fetchDownvoted('some_id', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/user/some_id/downvoted'
+                    }));
+                    expect(r).toEqual({
+                        count: 10
                     });
-    
-                    discussionService.fetchUpvoted('some_id', {apiPath: '/some_api_path'}).subscribe((r) => {
-                        expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                            type: 'GET',
-                            path: '/some_api_path/user/some_id/upvoted'
-                        }));
-                        expect(r).toEqual({
-                            count: 10
-                        });
-                        done();
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('fetchSaved()', () => {
+        it('should fetch saved count with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    count: 10
+                };
+                return of(response);
+            });
+
+            discussionService.fetchSaved('some_id').subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    count: 10
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch saved count with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        count: 10
+                    };
+                    return of(response);
+                });
+
+                discussionService.fetchSaved('some_id', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/user/some_id/bookmarks'
+                    }));
+                    expect(r).toEqual({
+                        count: 10
                     });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('fetchNetworkProfile()', () => {
+        it('should fetch network profile with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    name: 'some_name'
+                };
+                return of(response);
+            });
+
+            discussionService.fetchNetworkProfile('some_id').subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    name: 'some_name'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch network profile with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        name: 'some_name'
+                    };
+                    return of(response);
+                });
+
+                discussionService.fetchNetworkProfile('some_id', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/user/some_id'
+                    }));
+                    expect(r).toEqual({
+                        name: 'some_name'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('getContextBasedTopic()', () => {
+        it('should fetch context based topic with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    name: 'some_name'
+                };
+                return of(response);
+            });
+
+            discussionService.getContextBasedTopic('some_id').subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    name: 'some_name'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch context based topic with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        name: 'some_name'
+                    };
+                    return of(response);
+                });
+
+                discussionService.getContextBasedTopic('some_context', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/category/some_context'
+                    }));
+                    expect(r).toEqual({
+                        name: 'some_name'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('getUserDetails()', () => {
+        it('should fetch user details with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    name: 'some_name'
+                };
+                return of(response);
+            });
+
+            discussionService.getUserDetails('some_id').subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    name: 'some_name'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch user details with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        name: 'some_name'
+                    };
+                    return of(response);
+                });
+
+                discussionService.getUserDetails('some_id', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/user/uid/some_id'
+                    }));
+                    expect(r).toEqual({
+                        name: 'some_name'
+                    });
+                    done();
                 });
             });
         });
