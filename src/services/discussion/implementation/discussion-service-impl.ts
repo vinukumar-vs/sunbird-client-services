@@ -1,33 +1,9 @@
-// import { CsGroupSuspendResponse, CsGroupReactivateResponse, CsGroupU pdateGroupGuidelinesResponse, CsGroupUpdateGroupGuidelinesRequest } from './../interface/cs-group-service';
-import {Container, inject, injectable, optional} from 'inversify';
-// import {
-//     CsGroupAddActivitiesRequest,
-//     CsGroupAddActivitiesResponse,
-//     CsGroupAddMembersRequest,
-//     CsGroupAddMembersResponse,
-//     CsGroupCreateRequest,
-//     CsGroupCreateResponse,
-//     CsGroupDeleteResponse,
-//     CsGroupRemoveActivitiesRequest,
-//     CsGroupRemoveActivitiesResponse,
-//     CsGroupRemoveMembersRequest,
-//     CsGroupRemoveMembersResponse,
-//     CsGroupSearchCriteria,
-//     CsGroupSearchResponse,
-//     CsGroupService,
-//     CsGroupSupportedActivitiesFormField,
-//     CsGroupUpdateActivitiesRequest,
-//     CsGroupUpdateActivitiesResponse,
-//     CsGroupUpdateMembersRequest,
-//     CsGroupUpdateMembersResponse,
-//     CsGroupUpdateRequest,
-//     CsGroupUpdateResponse
-// } from '../interface';
-import {CsDiscussionServiceConfig, CsGroupServiceConfig} from '../../..';
+import {Container, inject, injectable} from 'inversify';
+import {CsDiscussionServiceConfig} from '../../..';
 import {Observable} from 'rxjs';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
-import {map, mergeMap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import { CsDiscussionService } from '../interface/cs-discussion-service';
 
 @injectable()
