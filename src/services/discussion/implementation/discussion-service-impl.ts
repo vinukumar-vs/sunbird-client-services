@@ -378,10 +378,10 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    getUserDetails(uid, config?) {
+    getUserDetails(username, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.GET)
-        .withPath(`${config ? config.apiPath : this.apiPath}/user/uid/${uid}`)
+        .withPath(`${config ? config.apiPath : this.apiPath}/user/username/${username}`)
         .withBearerToken(true)
         .withUserToken(true)
         .build();
