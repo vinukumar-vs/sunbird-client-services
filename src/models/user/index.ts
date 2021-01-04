@@ -27,6 +27,8 @@ export interface User {
             version: string
         } | undefined;
     };
+    userType?: string;
+    userSubType?: string;
 }
 
 export enum UserDeclarationOperation {

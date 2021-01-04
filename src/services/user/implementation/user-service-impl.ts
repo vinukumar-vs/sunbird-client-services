@@ -1,6 +1,6 @@
 import {
     CheckUserExistsResponse,
-    CsDeleteUserFeedResponse,
+    CsDeleteUserFeedResponse, CsProfileDetailsRequest, CsProfileUpdateRequest, CsProfileUpdateResponse,
     CsUpdateUserDeclarationsResponse,
     CsUpdateUserFeedRequest,
     CsUpdateUserFeedResponse,
@@ -14,7 +14,7 @@ import {CsUserServiceConfig} from '../../../index';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map} from 'rxjs/operators';
-import {Consent, UserDeclaration, UserFeedCategory, UserFeedEntry} from 'src/models';
+import {Consent, User, UserDeclaration, UserFeedCategory, UserFeedEntry} from 'src/models';
 
 @injectable()
 export class UserServiceImpl implements CsUserService {
@@ -180,6 +180,39 @@ export class UserServiceImpl implements CsUserService {
             map((response) => {
                 return response.body.result.response;
             })
+        );
+    }
+
+    getProfileDetails(profileDetailsRequest: CsProfileDetailsRequest, config?: CsUserServiceConfig): Observable<User> {
+        const apiRequest = new CsRequest.Builder()
+          .withType(CsHttpRequestType.GET)
+          .withPath(`${config ? config.apiPath : this.apiPath}/read/${profileDetailsRequest.userId}`)
+          .withParameters({'fields': profileDetailsRequest.requiredFields.join(',')})
+          .withBearerToken(true)
+          .withUserToken(true)
+          .withBody(profileDetailsRequest)
+          .build();
+
+        return this.httpService.fetch<{ result: { response: User } }>(apiRequest).pipe(
+          map((response) => {
+              return response.body.result.response;
+          })
+        );
+    }
+
+    updateProfile(profileUpdateRequest: CsProfileUpdateRequest, config?: CsUserServiceConfig): Observable<CsProfileUpdateResponse> {
+        const apiRequest = new CsRequest.Builder()
+          .withType(CsHttpRequestType.PATCH)
+          .withPath(`${config ? config.apiPath : this.apiPath}/update`)
+          .withBearerToken(true)
+          .withUserToken(true)
+          .withBody({request: profileUpdateRequest})
+          .build();
+
+        return this.httpService.fetch<{ result: CsProfileUpdateResponse }>(apiRequest).pipe(
+          map((response) => {
+              return response.body.result;
+          })
         );
     }
 }
