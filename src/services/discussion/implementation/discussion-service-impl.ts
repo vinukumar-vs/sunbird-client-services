@@ -164,7 +164,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    fetchRecentId(page?: any, config?) {
+    fetchRecentD(page?: any, config?) {
         // const url = this.appendPage(page, urlConfig.recentPost());
         // return this.http.get(url);
         const apiRequest: CsRequest = new CsRequest.Builder()
@@ -181,7 +181,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    fetchPopularId(page?: any, config?) {
+    fetchPopularD(page?: any, config?) {
         // const url = this.appendPage(page, urlConfig.popularPost());
         // return this.http.get(url);
         const apiRequest: CsRequest = new CsRequest.Builder()

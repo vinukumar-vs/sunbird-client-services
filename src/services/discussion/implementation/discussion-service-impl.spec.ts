@@ -512,7 +512,7 @@ describe('DiscussionServiceImpl', () => {
                 return of(response);
             });
 
-            discussionService.fetchRecentId(10).subscribe((r) => {
+            discussionService.fetchRecentD(10).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                 }));
@@ -534,7 +534,7 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.fetchRecentId(10, {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.fetchRecentD(10, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
                         path: '/some_api_path/topics/recent/?page=10'
@@ -548,7 +548,7 @@ describe('DiscussionServiceImpl', () => {
         });
     });
 
-    describe('fetchPopularId()', () => {
+    describe('fetchPopularD()', () => {
         it('should fetch popular Id with appropriate request', (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();
@@ -559,7 +559,7 @@ describe('DiscussionServiceImpl', () => {
                 return of(response);
             });
 
-            discussionService.fetchPopularId(10).subscribe((r) => {
+            discussionService.fetchPopularD(10).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                 }));
@@ -581,7 +581,7 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.fetchPopularId(10, {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.fetchPopularD(10, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
                         path: '/some_api_path/topics/popular?page=10'

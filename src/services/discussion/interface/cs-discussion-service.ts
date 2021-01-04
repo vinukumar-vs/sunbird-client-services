@@ -48,9 +48,9 @@ export interface CsDiscussionService {
 
     replyPost(tid: number, data: any, config?): Observable<any>;
 
-    fetchRecentId(page?: any, config?): Observable<any>;
+    fetchRecentD(page?: any, config?): Observable<any>;
 
-    fetchPopularId(page?: any, config?): Observable<any>;
+    fetchPopularD(page?: any, config?): Observable<any>;
 
     fetchTopicById(topicId: number, slug?: any, page?: any, config?): Observable<any>;
 
