@@ -363,12 +363,12 @@ export class DiscussionServiceImpl implements CsDiscussionService {
     getForumIds(data, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.POST)
-        .withPath(`${config ? config.apiPath : this.apiPath}/forumId`)
+        .withPath(`${config ? config.apiPath : this.apiPath}/forum/v2/read`)
         .withBearerToken(true)
         .withUserToken(true)
         .withBody({
             request: {
-                data
+                ...data
             }
         })
         .build();
