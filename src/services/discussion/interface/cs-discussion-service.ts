@@ -1,8 +1,5 @@
-import { CsGroup } from './../../../models/group/index';
-import {Group, GroupEntityStatus, GroupMemberRole, GroupMembershipType} from '../../../models/group';
 import {Observable} from 'rxjs';
-import {CsDiscussionServiceConfig, CsGroupServiceConfig} from '../../../index';
-import {Form} from '../../../models/form';
+import {CsDiscussionServiceConfig} from '../../../index';
 
 // export interface CsGroupCreateRequest {
 //     name: string;
