@@ -38,11 +38,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             .withPath(`${config ? config.apiPath : this.apiPath}/v2/topics`)
             .withBearerToken(true)
             .withUserToken(true)
-            .withBody({
-                request: {
-                    ...data
-                }
-            })
+            .withBody(data)
             .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
@@ -95,11 +91,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             .withPath(`${config ? config.apiPath : this.apiPath}/v2/posts/${pid}/vote`)
             .withBearerToken(true)
             .withUserToken(true)
-            .withBody({
-                request: {
-                    ...data
-                }
-            })
+            .withBody(data)
             .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
@@ -152,11 +144,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             .withPath(`${config ? config.apiPath : this.apiPath}/v2/topics/${tid}`)
             .withBearerToken(true)
             .withUserToken(true)
-            .withBody({
-                request: {
-                    ...data
-                }
-            })
+            .withBody(data)
             .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
