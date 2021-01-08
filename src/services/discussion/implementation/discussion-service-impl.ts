@@ -20,8 +20,8 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/tags`)
-            .withBearerToken(false)
-            .withUserToken(false)
+            .withBearerToken(true)
+            .withUserToken(true)
             .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
@@ -54,8 +54,8 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/categories`)
-            .withBearerToken(false)
-            .withUserToken(false)
+            .withBearerToken(true)
+            .withUserToken(true)
             .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
@@ -69,8 +69,8 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/category/${cid}`)
-            .withBearerToken(false)
-            .withUserToken(false)
+            .withBearerToken(true)
+            .withUserToken(true)
             .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(

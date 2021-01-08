@@ -603,7 +603,7 @@ describe('DiscussionServiceImpl', () => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'POST',
                     body: {
-                        request: request
+                        ...request
                     }
                 }));
                 expect(r).toEqual({
@@ -633,7 +633,7 @@ describe('DiscussionServiceImpl', () => {
                         type: 'POST',
                         path: '/some_api_path/v2/topics/10',
                         body: {
-                            request: request
+                            ...request
                         }
                     }));
                     expect(r).toEqual({
