@@ -1,9 +1,10 @@
-import {Container, inject, injectable, optional } from 'inversify';
-import {CsDiscussionServiceConfig, CsGroupServiceConfig} from '../../..';
+
+import {Container, inject, injectable} from 'inversify';
+import {CsDiscussionServiceConfig} from '../../..';
 import {Observable} from 'rxjs';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
-import {map, mergeMap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import { CsDiscussionService } from '../interface/cs-discussion-service';
 
 @injectable()
@@ -19,8 +20,8 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/tags`)
-            .withBearerToken(false)
-            .withUserToken(false)
+            .withBearerToken(true)
+            .withUserToken(true)
             .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
@@ -53,8 +54,8 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/categories`)
-            .withBearerToken(false)
-            .withUserToken(false)
+            .withBearerToken(true)
+            .withUserToken(true)
             .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
@@ -68,8 +69,8 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/category/${cid}`)
-            .withBearerToken(false)
-            .withUserToken(false)
+            .withBearerToken(true)
+            .withUserToken(true)
             .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
