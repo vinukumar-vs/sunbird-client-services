@@ -194,7 +194,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         let url = '/topic/' + topicId.toString() + '/' + slug;
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.GET)
-        .withPath(`${config ? config.apiPath : this.apiPath}${url}page=${page}`)
+        .withPath(`${config ? config.apiPath : this.apiPath}${url}?page=${page}`)
         .withBearerToken(true)
         .withUserToken(true)
         .build();
