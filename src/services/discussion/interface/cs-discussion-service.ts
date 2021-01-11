@@ -23,12 +23,14 @@ export interface CsGetForumIdsRequest {
 }
 // tslint:disable-next-line:no-empty-interface
 export interface CsGetForumIdsResponse {
+    result: any
 }
 // tslint:disable-next-line:no-empty-interface
 export interface CsCreateUserRequest {
 }
 // tslint:disable-next-line:no-empty-interface
 export interface CsCreateUserResponse {
+    result: any
 }
 
 
