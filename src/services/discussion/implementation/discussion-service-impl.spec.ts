@@ -64,7 +64,7 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.fetchAllTags({apiPath: '/some_api_path', dataApiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.fetchAllTags({apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
                         path: '/some_api_path/tags'
@@ -122,7 +122,7 @@ describe('DiscussionServiceImpl', () => {
                     name: 'SOME_NAME',
                 };
 
-                discussionService.createPost(request, {apiPath: '/some_api_path', dataApiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.createPost(request, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'POST',
                         path: '/some_api_path/v2/topics',
@@ -277,7 +277,7 @@ describe('DiscussionServiceImpl', () => {
                     name: 'SOME_NAME',
                 };
 
-                discussionService.votePost(10, request, {apiPath: '/some_api_path', dataApiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.votePost(10, request, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'POST',
                         path: '/some_api_path/v2/posts/10/vote',
@@ -628,7 +628,7 @@ describe('DiscussionServiceImpl', () => {
                     name: 'SOME_NAME',
                 };
 
-                discussionService.replyPost(10, request, {apiPath: '/some_api_path', dataApiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.replyPost(10, request, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'POST',
                         path: '/some_api_path/v2/topics/10',
@@ -692,53 +692,6 @@ describe('DiscussionServiceImpl', () => {
         });
     });
 
-    // describe('fetchPopularD()', () => {
-    //     it('should fetch popular Id with appropriate request', (done) => {
-    //         mockHttpService.fetch = jest.fn(() => {
-    //             const response = new CsResponse();
-    //             response.responseCode = 200;
-    //             response.body = {
-    //                 postId: 'SOME_POST_ID'
-    //             };
-    //             return of(response);
-    //         });
-
-    //         discussionService.fetchPopularD(10).subscribe((r) => {
-    //             expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-    //                 type: 'GET',
-    //             }));
-    //             expect(r).toEqual({
-    //                 postId: 'SOME_POST_ID'
-    //             });
-    //             done();
-    //         });
-    //     });
-
-    //     describe('when configuration is overridden', () => {
-    //         it('should fetch popular Id with appropriate request', (done) => {
-    //             mockHttpService.fetch = jest.fn(() => {
-    //                 const response = new CsResponse();
-    //                 response.responseCode = 200;
-    //                 response.body = {
-    //                     postId: 'SOME_POST_ID'
-    //                 };
-    //                 return of(response);
-    //             });
-
-    //             discussionService.fetchPopularD(10, {apiPath: '/some_api_path'}).subscribe((r) => {
-    //                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-    //                     type: 'GET',
-    //                     path: '/some_api_path/topics/popular?page=10'
-    //                 }));
-    //                 expect(r).toEqual({
-    //                     postId: 'SOME_POST_ID'
-    //                 });
-    //                 done();
-    //             });
-    //         });
-    //     });
-    // });
-
     describe('fetchUnreadCOunt()', () => {
         it('should fetch unread count with appropriate request', (done) => {
             mockHttpService.fetch = jest.fn(() => {
@@ -785,53 +738,6 @@ describe('DiscussionServiceImpl', () => {
             });
         });
     });
-
-    // describe('fetchProfile()', () => {
-    //     it('should fetch profile info with appropriate request', (done) => {
-    //         mockHttpService.fetch = jest.fn(() => {
-    //             const response = new CsResponse();
-    //             response.responseCode = 200;
-    //             response.body = {
-    //                 name: 'some_name'
-    //             };
-    //             return of(response);
-    //         });
-
-    //         discussionService.fetchProfile().subscribe((r) => {
-    //             expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-    //                 type: 'GET',
-    //             }));
-    //             expect(r).toEqual({
-    //                 name: 'some_name'
-    //             });
-    //             done();
-    //         });
-    //     });
-
-    //     describe('when configuration is overridden', () => {
-    //         it('should fetch profile info with appropriate request', (done) => {
-    //             mockHttpService.fetch = jest.fn(() => {
-    //                 const response = new CsResponse();
-    //                 response.responseCode = 200;
-    //                 response.body = {
-    //                     name: 'some_name'
-    //                 };
-    //                 return of(response);
-    //             });
-
-    //             discussionService.fetchProfile({apiPath: '/some_api_path'}).subscribe((r) => {
-    //                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-    //                     type: 'GET',
-    //                     path: '/some_api_path/users/me'
-    //                 }));
-    //                 expect(r).toEqual({
-    //                     name: 'some_name'
-    //                 });
-    //                 done();
-    //             });
-    //         });
-    //     });
-    // });
 
     describe('fetchProfileInfo()', () => {
         it('should fetch profile info with appropriate request', (done) => {
