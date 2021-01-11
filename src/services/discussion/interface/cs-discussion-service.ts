@@ -19,68 +19,78 @@ import {CsDiscussionServiceConfig} from '../../../index';
 // }
 
 // tslint:disable-next-line:no-empty-interface
-// export interface CsGroupUpdateResponse {
-// }
+export interface CsGetForumIdsRequest {
+}
+// tslint:disable-next-line:no-empty-interface
+export interface CsGetForumIdsResponse {
+}
+// tslint:disable-next-line:no-empty-interface
+export interface CsCreateUserRequest {
+}
+// tslint:disable-next-line:no-empty-interface
+export interface CsCreateUserResponse {
+}
+
 
 
 export interface CsDiscussionService {
     // appendPage(page: any, url: string);
     
-    fetchAllTags(config?): Observable<any>;
+    fetchAllTags(config?: CsDiscussionServiceConfig): Observable<any>;
     
-    createPost(data: any, config?): Observable<any>;
+    createPost(data: any, config?: CsDiscussionServiceConfig): Observable<any>;
      
     fetchAllCategories(config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchSingleCategoryDetails(cid, config?): Observable<any>;
+    fetchSingleCategoryDetails(cid, config?: CsDiscussionServiceConfig): Observable<any>;
 
     // fetchAllTag(config?);
 
     // fetchPostDetails(config?);
 
-    votePost(pid: number, data, config?): Observable<any>;
+    votePost(pid: number, data, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    deleteVotePost(pid: number, config?): Observable<any>;
+    deleteVotePost(pid: number, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    bookmarkPost(pid: number, config?): Observable<any>;
+    bookmarkPost(pid: number, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    deleteBookmarkPost(pid: number, config?): Observable<any>;
+    deleteBookmarkPost(pid: number, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    replyPost(tid: number, data: any, config?): Observable<any>;
+    replyPost(tid: number, data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchRecentD(page?: any, config?): Observable<any>;
+    fetchRecentD(page?: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    // fetchPopularD(page?: any, config?): Observable<any>;
+    // fetchPopularD(page?: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchTopicById(topicId: number, slug?: any, page?: any, config?): Observable<any>;
+    fetchTopicById(topicId: number, slug?: any, page?: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchTopicByIdSort(topicId: number, sort: any, page?: any, config?): Observable<any>;
+    fetchTopicByIdSort(topicId: number, sort: any, page?: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchUnreadCOunt(config?): Observable<any>;
+    fetchUnreadCOunt(config?: CsDiscussionServiceConfig): Observable<any>;
 
-    // fetchProfile(config?): Observable<any>;
+    // fetchProfile(config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchProfileInfo(slug: string, config?): Observable<any>;
+    fetchProfileInfo(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchUpvoted(slug: string, config?): Observable<any>;
+    fetchUpvoted(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchDownvoted(slug: string, config?): Observable<any>;
+    fetchDownvoted(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchSaved(slug: string, config?): Observable<any>;
+    fetchSaved(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
 
     // fetchSingleCategoryDetails(cid: number, page?: any);
 
     // fetchSingleCategoryDetailsSort(cid: number, sort: any, page?: any);
 
-    fetchNetworkProfile(slug: string, config?): Observable<any>;
+    fetchNetworkProfile(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    getContextBasedTopic(slug: string, config?): Observable<any>;
+    getContextBasedTopic(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    createUser(data: any, config?): Observable<any>;
+    createUser(data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    getForumIds(data: any, config?): Observable<any>;
+    getForumIds(data: CsGetForumIdsRequest, config?: CsDiscussionServiceConfig): Observable<CsGetForumIdsResponse>;
 
-    getUserDetails(data: any, config?): Observable<any>;
+    getUserDetails(data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    getContextBasedTopic(uid: string, config?): Observable<any>;
+    getContextBasedTopic(uid: string, config?: CsDiscussionServiceConfig): Observable<any>;
 }
