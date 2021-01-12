@@ -1057,7 +1057,7 @@ describe('DiscussionServiceImpl', () => {
                 discussionService.getUserDetails('some_name', {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/user/username/some_name'
+                        path: '/some_api_path/user/some_name'
                     }));
                     expect(r).toEqual({
                         name: 'some_name'
