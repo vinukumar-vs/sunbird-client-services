@@ -370,7 +370,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
     getUserDetails(username, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.GET)
-        .withPath(`${config ? config.apiPath : this.apiPath}/user/username/${username}`)
+        .withPath(`${config ? config.apiPath : this.apiPath}/user/${username}`)
         .withBearerToken(true)
         .withUserToken(true)
         .build();
