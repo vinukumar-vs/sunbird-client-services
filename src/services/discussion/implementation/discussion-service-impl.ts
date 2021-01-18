@@ -382,7 +382,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
 
     editPost(tid, data, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
-        .withType(CsHttpRequestType.POST)
+        .withType(CsHttpRequestType.PUT)
         .withPath(`${config ? config.apiPath : this.apiPath}/v2/topics/${tid}`)
         .withBearerToken(true)
         .withUserToken(true)
