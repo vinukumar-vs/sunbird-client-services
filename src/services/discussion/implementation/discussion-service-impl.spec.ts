@@ -1115,7 +1115,7 @@ describe('DiscussionServiceImpl', () => {
                 discussionService.editPost(7 ,request, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'PUT',
-                        path: '/some_api_path/v2/topics/7',
+                        path: '/some_api_path/v2/posts/7',
                         body: {
                             ...request
                         }
@@ -1165,7 +1165,7 @@ describe('DiscussionServiceImpl', () => {
                 discussionService.deletePost(10, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'DELETE',
-                        path: '/some_api_path/v2/topics/10'
+                        path: '/some_api_path/v2/posts/10'
                     }));
                     expect(r).toEqual({
                         topicId: 'SOME_TOPIC_ID'
