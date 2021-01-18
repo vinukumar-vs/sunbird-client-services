@@ -380,7 +380,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    editPost(tid, data, config?) {
+    editPost(tid: number, data, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.PUT)
         .withPath(`${config ? config.apiPath : this.apiPath}/v2/topics/${tid}`)
