@@ -393,10 +393,10 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    deletePost(pid: number, config?) {
+    deletePost(pid: number, uid: number, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.DELETE)
-            .withPath(`${config ? config.apiPath : this.apiPath}/v2/posts/${pid}`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/v2/posts/${pid}?uid=${uid}`)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
