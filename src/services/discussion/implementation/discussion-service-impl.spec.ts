@@ -1140,7 +1140,7 @@ describe('DiscussionServiceImpl', () => {
                 return of(response);
             });
 
-            discussionService.deletePost(10).subscribe((r) => {
+            discussionService.deletePost(10, 20).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'DELETE',
                 }));
@@ -1162,10 +1162,10 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.deletePost(10, {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.deletePost(10, 20, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'DELETE',
-                        path: '/some_api_path/v2/posts/10'
+                        path: '/some_api_path/v2/posts/10?uid=20'
                     }));
                     expect(r).toEqual({
                         topicId: 'SOME_TOPIC_ID'

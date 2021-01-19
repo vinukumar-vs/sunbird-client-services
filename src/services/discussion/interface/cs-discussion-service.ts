@@ -98,5 +98,5 @@ export interface CsDiscussionService {
 
     editPost(pid: number, data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    deletePost(pid: number, config?: CsDiscussionServiceConfig): Observable<any>;
+    deletePost(pid: number, uid: number, config?: CsDiscussionServiceConfig): Observable<any>;
 }
