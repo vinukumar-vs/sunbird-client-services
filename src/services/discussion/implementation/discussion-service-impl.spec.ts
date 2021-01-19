@@ -1085,7 +1085,7 @@ describe('DiscussionServiceImpl', () => {
 
             discussionService.editPost(7, request).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'PUT',
+                    type: 'POST',
                     body: {
                         ...request
                     }
@@ -1112,9 +1112,9 @@ describe('DiscussionServiceImpl', () => {
                     name: 'SOME_NAME',
                 };
 
-                discussionService.editPost(7 ,request, {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.editPost(7 , request, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                        type: 'PUT',
+                        type: 'POST',
                         path: '/some_api_path/v2/posts/7',
                         body: {
                             ...request
