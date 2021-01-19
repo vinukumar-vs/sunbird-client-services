@@ -1068,4 +1068,113 @@ describe('DiscussionServiceImpl', () => {
         });
     });
 
+    describe('editPost()', () => {
+        it('should be able to edit a post with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    topicId: 'SOME_TOPIC_ID'
+                };
+                return of(response);
+            });
+
+            const request = {
+                name: 'SOME_NAME',
+            };
+
+            discussionService.editPost(7, request).subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'PUT',
+                    body: {
+                        ...request
+                    }
+                }));
+                expect(r).toEqual({
+                    topicId: 'SOME_TOPIC_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to create a post with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        topicId: 'SOME_TOPIC_ID'
+                    };
+                    return of(response);
+                });
+
+                const request = {
+                    name: 'SOME_NAME',
+                };
+
+                discussionService.editPost(7 ,request, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PUT',
+                        path: '/some_api_path/v2/posts/7',
+                        body: {
+                            ...request
+                        }
+                    }));
+                    expect(r).toEqual({
+                        topicId: 'SOME_TOPIC_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('deleteTopic()', () => {
+        it('should delete topic with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    topicId: 'SOME_TOPIC_ID'
+                };
+                return of(response);
+            });
+
+            discussionService.deletePost(10).subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'DELETE',
+                }));
+                expect(r).toEqual({
+                    topicId: 'SOME_TOPIC_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should delete topic with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        topicId: 'SOME_TOPIC_ID'
+                    };
+                    return of(response);
+                });
+
+                discussionService.deletePost(10, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'DELETE',
+                        path: '/some_api_path/v2/posts/10'
+                    }));
+                    expect(r).toEqual({
+                        topicId: 'SOME_TOPIC_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+
 });

@@ -95,4 +95,8 @@ export interface CsDiscussionService {
     getUserDetails(data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
     getContextBasedTopic(uid: string, config?: CsDiscussionServiceConfig): Observable<any>;
+
+    editPost(pid: number, data: any, config?: CsDiscussionServiceConfig): Observable<any>;
+
+    deletePost(pid: number, config?: CsDiscussionServiceConfig): Observable<any>;
 }

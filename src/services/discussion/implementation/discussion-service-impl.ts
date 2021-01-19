@@ -379,4 +379,29 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             map((r) => r.body)
         );
     }
+
+    editPost(pid: number, data, config?) {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.PUT)
+        .withPath(`${config ? config.apiPath : this.apiPath}/v2/posts/${pid}`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody(data)
+        .build();
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    deletePost(pid: number, config?) {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+            .withType(CsHttpRequestType.DELETE)
+            .withPath(`${config ? config.apiPath : this.apiPath}/v2/posts/${pid}`)
+            .withBearerToken(true)
+            .withUserToken(true)
+            .build();
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
 }
