@@ -52,6 +52,10 @@ export const InjectionTokens = {
         systemSettings: {
             SYSTEM_SETTINGS_SERVICE_API_PATH: Symbol.for('SYSTEM_SETTINGS_SERVICE_API_PATH'),
             SYSTEM_SETTINGS_SERVICE: Symbol.for('SYSTEM_SETTINGS_SERVICE')
+        },
+        discussion: {
+            DISCUSSION_SERVICE_API_PATH: Symbol.for('DISCUSSION_SERVICE_API_PATH'),
+            DISCUSSION_SERVICE: Symbol.for('DISCUSSION_SERVICE')
         }
     }
 };
