@@ -13,6 +13,7 @@ describe('ContentGroupGenerator', () => {
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.ASC,
                 },
+                [],
                 {
                     medium: ['invalid_medium', 'english', 'hindi'],
                     gradeLevel: ['class 2', 'invalid']
@@ -28,6 +29,7 @@ describe('ContentGroupGenerator', () => {
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.ASC,
                 }],
+                [],
                 {
                     medium: ['invalid_medium', 'english', 'hindi'],
                     gradeLevel: ['class 2', 'invalid']
@@ -64,7 +66,8 @@ describe('ContentGroupGenerator', () => {
                 [{
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.DESC,
-                }]
+                }],
+                []
             )
         ).toEqual({
             name: 'subject',
@@ -96,6 +99,7 @@ describe('ContentGroupGenerator', () => {
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.DESC,
                 }],
+                [],
                 {
                     medium: ['', 'invalid_medium', 'english', 'hindi'],
                     gradeLevel: [''],
@@ -108,6 +112,44 @@ describe('ContentGroupGenerator', () => {
                 'medium': ''
             },
             sections: expect.any(Array)
+        });
+
+        expect(
+            CsContentsGroupGenerator.generate(
+                searchResultWithMultiValueAttributes.result.content as any,
+                'subject',
+                [{
+                    sortAttribute: 'name',
+                    sortOrder: CsSortOrder.DESC,
+                }],
+                [{
+                    filterAttribute: 'variants.online.size',
+                    filterCondition: {
+                        operation: '!=',
+                        value: 3045
+                    }
+                }]
+            )
+        ).toEqual({
+            name: 'subject',
+            combination: undefined,
+            sections: [
+                // {
+                //     count: 1,
+                //     name: 'Physical Science',
+                //     contents: expect.any(Array)
+                // },
+                {
+                    count: 1,
+                    name: 'Geography',
+                    contents: expect.any(Array)
+                },
+                {
+                    count: 1,
+                    name: 'English',
+                    contents: expect.any(Array)
+                }
+            ]
         });
     });
 });
