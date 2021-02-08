@@ -30,6 +30,22 @@ export interface CsSerializedRequest {
 }
 
 export class CsRequest {
+    static fromJSON(json: Partial<CsSerializedRequest>): CsRequest {
+        const builder = new CsRequest.Builder();
+
+        if (json.body) { builder.withBody(json.body); }
+        if (json.type) { builder.withType(json.type); }
+        if (json.host) { builder.withHost(json.host); }
+        if (json.path) { builder.withPath(json.path); }
+        if (json.serializer) { builder.withSerializer(json.serializer); }
+        if (json.withBearerToken) { builder.withBearerToken(json.withBearerToken); }
+        if (json.withUserToken) { builder.withBearerToken(json.withUserToken); }
+        if (json.headers) { builder.withBearerToken(json.headers); }
+        if (json.parameters) { builder.withBearerToken(json.parameters); }
+
+        return builder.build();
+    }
+
     static Builder: any = class Builder {
 
         protected request: CsRequest;
