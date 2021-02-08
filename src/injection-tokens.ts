@@ -6,6 +6,8 @@ export const InjectionTokens = {
             CHANNEL_ID: Symbol.for('CHANNEL_ID'),
             PRODUCER_ID: Symbol.for('PRODUCER_ID'),
             DEVICE_ID: Symbol.for('DEVICE_ID'),
+            SESSION_ID: Symbol.for('SESSION_ID'),
+            APP_VERSION: Symbol.for('APP_VERSION'),
         },
         api: {
             HOST: Symbol.for('HOST'),
@@ -16,6 +18,7 @@ export const InjectionTokens = {
             }
         },
         HTTP_SERVICE: Symbol.for('HTTP_SERVICE'),
+        CLIENT_STORAGE: Symbol.for('CLIENT_STORAGE'),
     },
     services: {
         user: {
@@ -27,6 +30,7 @@ export const InjectionTokens = {
             GROUP_SERVICE_DATA_API_PATH: Symbol.for('GROUP_SERVICE_DATA_API_PATH'),
             GROUP_SERVICE: Symbol.for('GROUP_SERVICE'),
             GROUP_ACTIVITY_SERVICE: Symbol.for('GROUP_ACTIVITY_SERVICE'),
+            GROUP_SERVICE_UPDATE_GUIDELINES_API_PATH: Symbol.for('GROUP_SERVICE_UPDATE_GUIDELINES_API_PATH'),
         },
         framework: {
             FRAMEWORK_SERVICE_API_PATH: Symbol.for('FRAMEWORK_SERVICE_API_PATH'),
@@ -44,6 +48,14 @@ export const InjectionTokens = {
         form: {
             FORM_SERVICE_API_PATH: Symbol.for('FORM_SERVICE_API_PATH'),
             FORM_SERVICE: Symbol.for('FORM_SERVICE')
+        },
+        systemSettings: {
+            SYSTEM_SETTINGS_SERVICE_API_PATH: Symbol.for('SYSTEM_SETTINGS_SERVICE_API_PATH'),
+            SYSTEM_SETTINGS_SERVICE: Symbol.for('SYSTEM_SETTINGS_SERVICE')
+        },
+        discussion: {
+            DISCUSSION_SERVICE_API_PATH: Symbol.for('DISCUSSION_SERVICE_API_PATH'),
+            DISCUSSION_SERVICE: Symbol.for('DISCUSSION_SERVICE')
         }
     }
 };

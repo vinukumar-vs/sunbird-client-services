@@ -1,7 +1,6 @@
 export interface User {
     id: string;
     userId: string;
-    identifier: string;
     firstName: string;
     lastName?: string;
     rootOrg: RootOrg;
@@ -21,6 +20,14 @@ export interface User {
         provider: string;
     }[];
     declarations?: UserDeclaration[];
+    allTncAccepted?: {
+        [key: string]: {
+            tncAcceptedOn: string,
+            version: string
+        } | undefined;
+    };
+    userType?: string;
+    userSubType?: string;
 }
 
 export enum UserDeclarationOperation {
@@ -62,17 +69,40 @@ export interface Location {
     type: string;
 }
 
-export interface Feed {
+export enum ConsentStatus {
+    ACTIVE = 'ACTIVE',
+    REVOKED = 'REVOKED'
+}
+
+export interface Consent {
+    status?: ConsentStatus;
+    userId: string;
+    consumerId: string;
+    objectId: string;
+    objectType?: string;
+    expiry?: string;
+    lastUpdatedOn?: string;
+}
+
+export enum UserFeedStatus {
+    READ = 'read',
+    UNREAD = 'unread'
+}
+
+export enum UserFeedCategory {
+    ORG_MIGRATION_ACTION = 'OrgMigrationAction',
+    NOTIFICATION = 'Notification'
+}
+
+export interface UserFeedEntry<T = any> {
     id: string;
     userId: string;
-    category: string;
+    category: UserFeedCategory;
     priority: number;
     createdBy: string;
     createdOn: string;
     channel: string;
-    status: string;
+    status: UserFeedStatus;
     expireOn: string;
-    data: {
-        prospectChannels: string[];
-    };
+    data: T;
 }

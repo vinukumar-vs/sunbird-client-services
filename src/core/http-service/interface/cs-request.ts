@@ -13,7 +13,8 @@ export enum CsHttpRequestType {
     GET = 'GET',
     POST = 'POST',
     PATCH = 'PATCH',
-    DELETE = 'DELETE'
+    DELETE = 'DELETE',
+    PUT = 'PUT'
 }
 
 export interface CsSerializedRequest {

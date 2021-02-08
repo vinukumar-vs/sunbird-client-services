@@ -1,26 +1,26 @@
 import {
     CsHttpRequestType,
     CsHttpResponseCode,
-    CsHttpSerializer,
     CsHttpService,
     CsRequest,
     CsRequestInterceptor,
     CsResponse,
     CsResponseInterceptor
 } from '../interface';
-import {from, Observable} from 'rxjs';
-import {Container, inject, injectable} from 'inversify';
-import * as qs from 'qs';
-import {InjectionTokens} from '../../../injection-tokens';
-import {HttpClient} from './http-client-adapters/http-client';
-import {BearerTokenInjectRequestInterceptor} from './interceptors/bearer-token-inject-request-interceptor';
-import {UserTokenInjectRequestInterceptor} from './interceptors/user-token-inject-request-interceptor';
-import {CsHttpClientError, CsHttpServerError} from '../errors';
+import { from, Observable } from 'rxjs';
+import { Container, inject, injectable, optional } from 'inversify';
+import { InjectionTokens } from '../../../injection-tokens';
+import { HttpClient } from './http-client-adapters/http-client';
+import { BearerTokenInjectRequestInterceptor } from './interceptors/bearer-token-inject-request-interceptor';
+import { UserTokenInjectRequestInterceptor } from './interceptors/user-token-inject-request-interceptor';
+import { CsHttpClientError, CsHttpServerError } from '../errors';
+import { CsClientStorage } from '../../cs-client-storage';
 
 @injectable()
 export class HttpServiceImpl implements CsHttpService {
     private _requestInterceptors: CsRequestInterceptor[] = [];
     private _responseInterceptors: CsResponseInterceptor[] = [];
+    private _traceId?: string;
 
     private _bearerTokenInjectRequestInterceptor?: BearerTokenInjectRequestInterceptor;
     get bearerTokenInjectRequestInterceptor(): BearerTokenInjectRequestInterceptor {
@@ -54,10 +54,27 @@ export class HttpServiceImpl implements CsHttpService {
         return this.container.get(InjectionTokens.core.global.PRODUCER_ID);
     }
 
+    get sessionId(): string {
+        return this.container.get(InjectionTokens.core.global.SESSION_ID);
+    }
+
+    get appVersion(): string {
+        return this.container.get(InjectionTokens.core.global.APP_VERSION);
+    }
+
     constructor(
         @inject(InjectionTokens.CONTAINER) private container: Container,
-        @inject(InjectionTokens.core.HTTP_ADAPTER) private http: HttpClient
+        @inject(InjectionTokens.core.HTTP_ADAPTER) private http: HttpClient,
+        @optional() @inject(InjectionTokens.core.CLIENT_STORAGE) private clientStorage?: CsClientStorage,
     ) {
+    }
+
+    public init() {
+        if (this.clientStorage) {
+            this.clientStorage.getItem(CsClientStorage.TRACE_ID).then((traceId) => {
+                this._traceId = traceId || '';
+            });
+        }
     }
 
     get requestInterceptors(): CsRequestInterceptor[] {
@@ -89,22 +106,34 @@ export class HttpServiceImpl implements CsHttpService {
                 switch (request.type) {
                     case CsHttpRequestType.GET:
                         localResponse = await this.http.get(
-                            request.host || this.host, request.path, request.headers, request.parameters
+                            request.host || this.host, request.path, request.headers, request.parameters, request.serializer
                         ).toPromise();
                         break;
                     case CsHttpRequestType.PATCH:
                         localResponse = await this.http.patch(
-                            request.host || this.host, request.path, request.headers, request.body
+                            request.host || this.host, request.path, request.headers, request.body, request.serializer
                         ).toPromise();
                         break;
                     case CsHttpRequestType.POST: {
                         localResponse = await this.http.post(
-                            request.host || this.host, request.path, request.headers, request.body
+                            request.host || this.host, request.path, request.headers, request.body, request.serializer
                         ).toPromise();
                         break;
                     }
+                    case CsHttpRequestType.DELETE:
+                        localResponse = await this.http.delete(
+                            request.host || this.host, request.path, request.headers, request.parameters, request.serializer
+                        ).toPromise();
+                        break;
                     default:
                         throw new Error('Unsupported type');
+                }
+
+                // TODO: Need to confirm the header key
+                const responseTraceId = localResponse.headers['X-Trace-Enabled'] || '';
+                if (this.clientStorage
+                    && responseTraceId !== this._traceId) {
+                    this.clientStorage.setItem(CsClientStorage.TRACE_ID, responseTraceId);
                 }
 
                 return await this.interceptResponse(request, localResponse);
@@ -143,14 +172,17 @@ export class HttpServiceImpl implements CsHttpService {
         return from(response as Promise<CsResponse<T>>);
     }
 
-    private addGlobalHeader() {
+    private async addGlobalHeader() {
         const header = {
-            'X-Channel-Id': this.channelId,
-            'X-App-Id': this.producerId,
-            'X-Device-Id': this.deviceId,
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            ...(this.channelId ? { 'X-Channel-Id': this.channelId } : {}),
+            ...(this.producerId ? { 'X-App-Id': this.producerId } : {}),
+            ...(this.deviceId ? { 'X-Device-Id': this.deviceId } : {}),
+            ...(this.sessionId ? { 'X-Session-Id': this.sessionId } : {}),
+            ...(this.appVersion ? { 'X-App-Ver': this.appVersion } : {}),
+            ...(this._traceId ? { 'X-Request-Id': this._traceId } : {}),
         };
         this.http.addHeaders(header);
     }
@@ -190,10 +222,6 @@ export class HttpServiceImpl implements CsHttpService {
 
         if (request.withUserToken && request.requestInterceptors.indexOf(this.userTokenInjectRequestInterceptor) === -1) {
             request.requestInterceptors.push(this.userTokenInjectRequestInterceptor);
-        }
-
-        if (this.http.setSerializer(request.serializer) === CsHttpSerializer.URLENCODED) {
-            request.body = qs.stringify(request.body);
         }
 
         this.http.setSerializer(request.serializer);

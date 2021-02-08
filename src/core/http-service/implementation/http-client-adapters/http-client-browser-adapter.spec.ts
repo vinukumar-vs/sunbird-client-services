@@ -1,7 +1,7 @@
-import {HttpClientBrowserAdapter} from './http-client-browser-adapter';
-import {HttpClient} from './http-client';
-import {CsHttpResponseCode, CsHttpSerializer} from '../../interface';
-import {CsHttpClientError, CsHttpServerError, CsNetworkError} from '../../errors';
+import { HttpClientBrowserAdapter } from './http-client-browser-adapter';
+import { HttpClient } from './http-client';
+import { CsHttpResponseCode, CsHttpSerializer } from '../../interface';
+import { CsHttpClientError, CsHttpServerError, CsNetworkError } from '../../errors';
 
 describe('HttpClientBrowserAdapter', () => {
     let httpClientBrowserAdapter: HttpClient;
@@ -33,7 +33,7 @@ describe('HttpClientBrowserAdapter', () => {
     describe('addHeaders()', () => {
         it('should not fail', () => {
             try {
-                httpClientBrowserAdapter.addHeaders({'KEY': 'VALUE', 'KEY1': 'VALUE1', 'KEY2': 'VALUE2'});
+                httpClientBrowserAdapter.addHeaders({ 'KEY': 'VALUE', 'KEY1': 'VALUE1', 'KEY2': 'VALUE2' });
             } catch (e) {
                 fail(e);
             }
@@ -64,15 +64,17 @@ describe('HttpClientBrowserAdapter', () => {
                     jest.spyOn(global, 'fetch' as any).mockImplementation(() => Promise.resolve({
                         ok: true,
                         status: CsHttpResponseCode.HTTP_SUCCESS,
-                        text: () => Promise.resolve(JSON.stringify({'key': 'value'}))
+                        text: () => Promise.resolve(JSON.stringify({ 'key': 'value' })),
+                        headers: new Headers()
                     } as Partial<Response>));
 
-                    httpClientBrowserAdapter.get('https://some_host', '/some_path', {}, {'KEY': 'VALUE'}).subscribe((r) => {
-                        expect(r.responseCode).toBe(CsHttpResponseCode.HTTP_SUCCESS);
-                        expect(typeof r.body === 'object').toBeTruthy();
-                        expect(r.body).toEqual({'key': 'value'});
-                        done();
-                    });
+                    httpClientBrowserAdapter.get('https://some_host', '/some_path', {}, { 'KEY': 'VALUE' },
+                        expect.anything()).subscribe((r) => {
+                            expect(r.responseCode).toBe(CsHttpResponseCode.HTTP_SUCCESS);
+                            expect(typeof r.body === 'object').toBeTruthy();
+                            expect(r.body).toEqual({ 'key': 'value' });
+                            done();
+                        });
                 });
             });
 
@@ -82,14 +84,16 @@ describe('HttpClientBrowserAdapter', () => {
                     jest.spyOn(global, 'fetch' as any).mockImplementation(() => Promise.resolve({
                         ok: true,
                         status: CsHttpResponseCode.HTTP_SUCCESS,
-                        text: () => Promise.resolve('SOME_SUCCESS_RESPONSE')
+                        text: () => Promise.resolve('SOME_SUCCESS_RESPONSE'),
+                        headers: new Headers()
                     } as Partial<Response>));
 
-                    httpClientBrowserAdapter.post('https://some_host', '/some_path', {}, {'KEY': 'VALUE'}).subscribe((r) => {
-                        expect(typeof r.body === 'string').toBeTruthy();
-                        expect(r.body).toEqual('SOME_SUCCESS_RESPONSE');
-                        done();
-                    });
+                    httpClientBrowserAdapter.post('https://some_host', '/some_path', {}, { 'KEY': 'VALUE' },
+                        expect.anything()).subscribe((r) => {
+                            expect(typeof r.body === 'string').toBeTruthy();
+                            expect(r.body).toEqual('SOME_SUCCESS_RESPONSE');
+                            done();
+                        });
                 });
             });
         });
@@ -103,12 +107,13 @@ describe('HttpClientBrowserAdapter', () => {
                         status: 999,
                     } as Partial<Response>));
 
-                    httpClientBrowserAdapter.patch('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}).subscribe((r) => {
-                        fail();
-                    }, (e) => {
-                        expect(CsNetworkError.isInstance(e)).toBeTruthy();
-                        done();
-                    });
+                    httpClientBrowserAdapter.patch('http://some_base_url', '/some_path', { 'KEY': 'VALUE' }, { 'KEY': 'VALUE' },
+                        expect.anything()).subscribe((r) => {
+                            fail();
+                        }, (e) => {
+                            expect(CsNetworkError.isInstance(e)).toBeTruthy();
+                            done();
+                        });
                 });
             });
 
@@ -119,16 +124,17 @@ describe('HttpClientBrowserAdapter', () => {
                         jest.spyOn(global, 'fetch' as any).mockImplementation(() => Promise.resolve({
                             ok: false,
                             status: CsHttpResponseCode.HTTP_UNAUTHORISED,
-                            text: () => Promise.resolve(JSON.stringify({'key': 'value'}))
+                            text: () => Promise.resolve(JSON.stringify({ 'key': 'value' })),
+                            headers: new Headers()
                         } as Partial<Response>));
 
-                        httpClientBrowserAdapter.delete('https://run.mocky.io', '/v3/4283da0f-9759-49e6-a045-6b577f73e65f', {}, {'KEY': 'VALUE'}).subscribe((r) => {
+                        httpClientBrowserAdapter.delete('https://run.mocky.io', '/v3/4283da0f-9759-49e6-a045-6b577f73e65f', {}, { 'KEY': 'VALUE' }, expect.anything()).subscribe((r) => {
                             fail();
                         }, (e) => {
                             expect(CsHttpClientError.isInstance(e)).toBeTruthy();
                             expect(typeof (e as CsHttpClientError).response.body).toBe('object');
                             expect((e as CsHttpClientError).response.responseCode).toBe(CsHttpResponseCode.HTTP_UNAUTHORISED);
-                            expect((e as CsHttpClientError).response.body).toEqual({'key': 'value'});
+                            expect((e as CsHttpClientError).response.body).toEqual({ 'key': 'value' });
                             done();
                         });
                     });
@@ -140,18 +146,20 @@ describe('HttpClientBrowserAdapter', () => {
                         jest.spyOn(global, 'fetch' as any).mockImplementation(() => Promise.resolve({
                             ok: false,
                             status: CsHttpResponseCode.HTTP_INTERNAL_SERVER_ERROR,
-                            text: () => Promise.resolve(JSON.stringify('SOME_ERROR_RESPONSE'))
+                            text: () => Promise.resolve(JSON.stringify('SOME_ERROR_RESPONSE')),
+                            headers: new Headers()
                         } as Partial<Response>));
 
-                        httpClientBrowserAdapter.delete('http://some_base_url', '/some_path', {'KEY': 'VALUE'}, {'KEY': 'VALUE'}).subscribe((r) => {
-                            fail();
-                        }, (e) => {
-                            expect(CsHttpServerError.isInstance(e)).toBeTruthy();
-                            expect(typeof (e as CsHttpServerError).response.body).toBe('string');
-                            expect((e as CsHttpClientError).response.responseCode).toBe(CsHttpResponseCode.HTTP_INTERNAL_SERVER_ERROR);
-                            expect((e as CsHttpClientError).response.body).toEqual('SOME_ERROR_RESPONSE');
-                            done();
-                        });
+                        httpClientBrowserAdapter.delete('http://some_base_url', '/some_path', { 'KEY': 'VALUE' }, { 'KEY': 'VALUE' },
+                            expect.anything()).subscribe((r) => {
+                                fail();
+                            }, (e) => {
+                                expect(CsHttpServerError.isInstance(e)).toBeTruthy();
+                                expect(typeof (e as CsHttpServerError).response.body).toBe('string');
+                                expect((e as CsHttpClientError).response.responseCode).toBe(CsHttpResponseCode.HTTP_INTERNAL_SERVER_ERROR);
+                                expect((e as CsHttpClientError).response.body).toEqual('SOME_ERROR_RESPONSE');
+                                done();
+                            });
                     });
                 });
             });
