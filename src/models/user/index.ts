@@ -1,7 +1,6 @@
 export interface User {
     id: string;
     userId: string;
-    identifier: string;
     firstName: string;
     lastName?: string;
     rootOrg: RootOrg;
@@ -96,7 +95,7 @@ export enum UserFeedCategory {
 }
 
 export interface UserFeedEntry<T = any> {
-    identifier: string;
+    id: string;
     userId: string;
     category: UserFeedCategory;
     priority: number;

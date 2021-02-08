@@ -127,7 +127,7 @@ export class UserServiceImpl implements CsUserService {
             const userFeed = await this.getUserFeed(uid, config).toPromise();
 
             const entry = userFeed.find((e) =>
-                e.identifier === feedEntryId && e.category === category
+                e.id === feedEntryId && e.category === category
             );
 
             if (!entry) {
@@ -144,7 +144,7 @@ export class UserServiceImpl implements CsUserService {
                         userId: uid,
                         priority: entry.priority,
                         category: entry.category,
-                        feedId: entry.identifier,
+                        feedId: entry.id,
                         status: request.status,
                         data: entry.data
                     }
