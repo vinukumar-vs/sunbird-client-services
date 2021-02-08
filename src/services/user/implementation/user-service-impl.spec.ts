@@ -504,7 +504,7 @@ describe('UserServiceImpl', () => {
     it('should be able to update user feed entry if response code is 200', (done) => {
       userService.getUserFeed = jest.fn(() => of([
         {
-          identifier: 'sample_feed_id',
+          id: 'sample_feed_id',
           category: UserFeedCategory.NOTIFICATION
         } as any
       ]));
@@ -558,7 +558,7 @@ describe('UserServiceImpl', () => {
     it('should be able to update user feed entry iwhen configuration is overridden', (done) => {
       userService.getUserFeed = jest.fn(() => of([
         {
-          identifier: 'sample_feed_id',
+          id: 'sample_feed_id',
           category: UserFeedCategory.NOTIFICATION
         } as any
       ]));

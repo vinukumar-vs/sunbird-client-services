@@ -4,7 +4,6 @@ export interface Organisation {
     id: string;
     provider: string;
     rootOrgId: string;
-    identifier: string;
     createdDate: string;
     createdBy: string;
     hashTagId: string;
