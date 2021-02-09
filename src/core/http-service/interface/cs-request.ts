@@ -32,7 +32,6 @@ export interface CsSerializedRequest {
 export class CsRequest {
     static fromJSON(json: Partial<CsSerializedRequest>): CsRequest {
         const builder = new CsRequest.Builder();
-
         /* istanbul ignore else */
         if (json.body) { builder.withBody(json.body); }
         /* istanbul ignore else */
@@ -51,7 +50,6 @@ export class CsRequest {
         if (json.headers) { builder.headers(json.headers); }
         /* istanbul ignore else */
         if (json.parameters) { builder.withParameters(json.parameters); }
-
         return builder.build();
     }
 
