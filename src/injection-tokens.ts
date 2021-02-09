@@ -25,6 +25,11 @@ export const InjectionTokens = {
             USER_SERVICE_API_PATH: Symbol.for('USER_SERVICE_API_PATH'),
             USER_SERVICE: Symbol.for('USER_SERVICE')
         },
+        content: {
+            CONTENT_SERVICE_HIERARCHY_API_PATH: Symbol.for('CONTENT_SERVICE_HIERARCHY_API_PATH'),
+            CONTENT_SERVICE_SEARCH_API_PATH: Symbol.for('CONTENT_SERVICE_SEARCH_API_PATH'),
+            CONTENT_SERVICE: Symbol.for('CONTENT_SERVICE')
+        },
         group: {
             GROUP_SERVICE_API_PATH: Symbol.for('GROUP_SERVICE_API_PATH'),
             GROUP_SERVICE_DATA_API_PATH: Symbol.for('GROUP_SERVICE_DATA_API_PATH'),
