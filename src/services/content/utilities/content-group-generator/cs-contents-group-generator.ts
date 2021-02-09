@@ -17,15 +17,19 @@ interface Section {
 }
 
 export class CsContentsGroupGenerator {
-    static generate(
+    static generate(config: {
         contents: Content[],
         groupBy: keyof Content,
         sortCriteria: CsContentSortCriteria | CsContentSortCriteria[],
         filterCriteria: CsContentFilterCriteria | CsContentFilterCriteria[],
         combination?: {
             [key in keyof Content]?: string[]
-        }
-    ): CsContentSection {
+        },
+        includeSearchable?: boolean
+    }): CsContentSection {
+        let {contents} = config;
+        const {groupBy, sortCriteria, filterCriteria, combination, includeSearchable} = config;
+
         contents = CsContentsGroupGenerator.filterItems(contents, Array.isArray(filterCriteria) ? filterCriteria : [filterCriteria]);
         contents = CsContentsGroupGenerator.sortItems(contents, Array.isArray(sortCriteria) ? sortCriteria : [sortCriteria]);
 
@@ -61,16 +65,20 @@ export class CsContentsGroupGenerator {
         let sections = Array.from(
             contents
                 .reduce<Map<string, Content[]>>((acc, content) => {
-                    if (CsContentsGroupGenerator.isMultiValueAttribute(content, groupBy)) {
-                        content[groupBy].forEach((value) => {
+                    let _groupBy: string = groupBy;
+                    if (includeSearchable && content['se_' + groupBy]) {
+                        _groupBy = 'se_' + groupBy;
+                    }
+                    if (CsContentsGroupGenerator.isMultiValueAttribute(content, _groupBy)) {
+                        content[_groupBy].forEach((value) => {
                             const c = acc.get(value) || [];
                             c.push(content);
                             acc.set(value, c);
                         });
                     } else {
-                        const c = acc.get(content[groupBy]) || [];
+                        const c = acc.get(content[_groupBy]) || [];
                         c.push(content);
-                        acc.set(content[groupBy] || 'Other', c);
+                        acc.set(content[_groupBy] || 'Other', c);
                     }
 
                     return acc;
