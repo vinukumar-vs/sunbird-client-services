@@ -2,8 +2,7 @@ import { Observable } from 'rxjs';
 import { CsContentServiceConfig } from '../../../index';
 
 export interface CsContentGetQuestionSetResponse {
-    contentId: string;
-    // need to add
+    response: {};
 }
 
 export interface CsContentService {
