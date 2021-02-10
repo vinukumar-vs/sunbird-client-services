@@ -59,4 +59,26 @@ describe('CsRequest', () => {
 
         expect(apiRequest).toBeTruthy();
     });
+
+    it('should be able to create an instance from a serialised JSON', () => {
+        const request = CsRequest.fromJSON({
+            type: 'POST',
+            path: '/api/content/v1/search',
+            withBearerToken: true,
+            body: {
+                request: {
+                    'facets': [
+                        'primaryCategory'
+                    ],
+                    'filters': {
+                        'primaryCategory': [
+                            'Course'
+                        ]
+                    }
+                }
+            }
+        } as any);
+
+        expect(request instanceof CsRequest).toBeTruthy();
+    });
 });

@@ -48,5 +48,47 @@ export class Aggregator {
     });
   }
 
+  public static filtered<T>(list: T[], filter: { [key: string]: { operation: '==' | '<=' | '>=' | '!=', value: any } }[] ): T[] {
+    return list.filter((l) => {
+      let toFilter = true;
+
+      for (const filterBy of filter) {
+        if (!toFilter) {
+          break;
+        }
+
+        for (const key in filterBy) {
+          if (!(key in filterBy)) {
+            continue;
+          }
+
+          const lValue = Aggregator.deepGet(l, key.split('.'));
+          const {operation, value} = filterBy[key];
+
+          switch (operation) {
+            case '==': {
+              toFilter = lValue === value;
+              break;
+            }
+            case '<=': {
+              toFilter = lValue <= value;
+              break;
+            }
+            case '>=': {
+              toFilter = lValue <= value;
+              break;
+            }
+            case '!=': {
+              toFilter = lValue !== value;
+              break;
+            }
+          }
+        }
+      }
+
+      return toFilter;
+    });
+  }
+
   private static deepGet = (obj, props) => props.reduce((agg, prop) => (agg && agg[prop]) ? agg[prop] : null, obj);
 }

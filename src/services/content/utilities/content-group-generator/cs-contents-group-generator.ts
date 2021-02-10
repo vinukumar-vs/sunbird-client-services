@@ -1,5 +1,5 @@
-import {Content} from '../../../../models/content';
-import {CsContentSortCriteria, CsSortOrder} from '../../interface';
+import {Content} from '../../../../models';
+import {CsContentFilterCriteria, CsContentSortCriteria, CsSortOrder} from '../../interface';
 import {Aggregator} from '../../../../utilities/aggregator';
 
 export interface CsContentSection {
@@ -17,15 +17,21 @@ interface Section {
 }
 
 export class CsContentsGroupGenerator {
-    static generate(
+    static generate(config: {
         contents: Content[],
         groupBy: keyof Content,
         sortCriteria: CsContentSortCriteria | CsContentSortCriteria[],
+        filterCriteria: CsContentFilterCriteria | CsContentFilterCriteria[],
         combination?: {
             [key in keyof Content]?: string[]
-        }
-    ): CsContentSection {
-        CsContentsGroupGenerator.sortItems(contents, Array.isArray(sortCriteria) ? sortCriteria : [sortCriteria]);
+        },
+        includeSearchable?: boolean
+    }): CsContentSection {
+        let {contents} = config;
+        const {groupBy, sortCriteria, filterCriteria, combination, includeSearchable} = config;
+
+        contents = CsContentsGroupGenerator.filterItems(contents, Array.isArray(filterCriteria) ? filterCriteria : [filterCriteria]);
+        contents = CsContentsGroupGenerator.sortItems(contents, Array.isArray(sortCriteria) ? sortCriteria : [sortCriteria]);
 
         let resultingCombination: {
             [key in keyof Content]?: string
@@ -45,7 +51,7 @@ export class CsContentsGroupGenerator {
                     }
 
                     const beforeFilterLength = contents.length;
-                    const filteredContents = CsContentsGroupGenerator.filterContents(contents, attribute, value);
+                    const filteredContents = CsContentsGroupGenerator.filterContentsByAttribute(contents, attribute, value);
                     const afterFilterLength = filteredContents.length;
 
                     if (afterFilterLength && afterFilterLength <= beforeFilterLength) {
@@ -56,19 +62,23 @@ export class CsContentsGroupGenerator {
             }
         }
 
-        const sections = Array.from(
+        let sections = Array.from(
             contents
                 .reduce<Map<string, Content[]>>((acc, content) => {
-                    if (CsContentsGroupGenerator.isMultiValueAttribute(content, groupBy)) {
-                        content[groupBy].forEach((value) => {
+                    let _groupBy: string = groupBy;
+                    if (includeSearchable && content['se_' + groupBy]) {
+                        _groupBy = 'se_' + groupBy;
+                    }
+                    if (CsContentsGroupGenerator.isMultiValueAttribute(content, _groupBy)) {
+                        content[_groupBy].forEach((value) => {
                             const c = acc.get(value) || [];
                             c.push(content);
                             acc.set(value, c);
                         });
                     } else {
-                        const c = acc.get(content[groupBy]) || [];
+                        const c = acc.get(content[_groupBy]) || [];
                         c.push(content);
-                        acc.set(content[groupBy] || 'Other', c);
+                        acc.set(content[_groupBy] || 'Other', c);
                     }
 
                     return acc;
@@ -82,7 +92,7 @@ export class CsContentsGroupGenerator {
             };
         });
 
-        CsContentsGroupGenerator.sortItems(sections, Array.isArray(sortCriteria) ? sortCriteria : [sortCriteria]);
+        sections = CsContentsGroupGenerator.sortItems(sections, Array.isArray(sortCriteria) ? sortCriteria : [sortCriteria]);
 
         return {
             name: groupBy,
@@ -91,7 +101,7 @@ export class CsContentsGroupGenerator {
         };
     }
 
-    private static filterContents(contents: Content[], attribute: string, acceptedValue: string): Content[] {
+    private static filterContentsByAttribute(contents: Content[], attribute: string, acceptedValue: string): Content[] {
         return contents.filter((content) => {
             if (CsContentsGroupGenerator.isMultiValueAttribute(content, attribute)) {
                 return content[attribute].map((c) => (c || '').toLowerCase()).includes((acceptedValue || '').toLowerCase());
@@ -103,9 +113,15 @@ export class CsContentsGroupGenerator {
 
     private static isMultiValueAttribute = (content, attr) => Array.isArray(content[attr]);
 
-    private static sortItems<T>(items: T[], sortCriteria: CsContentSortCriteria[]): void {
-        Aggregator.sorted(items, sortCriteria.map((c) => ({
+    private static sortItems<T>(items: T[], sortCriteria: CsContentSortCriteria[]): T[] {
+        return Aggregator.sorted(items, sortCriteria.map((c) => ({
             [c.sortAttribute]: c.sortOrder === CsSortOrder.ASC ? 'asc' : 'desc'
         })) as { [key: string]: 'asc' | 'desc' }[]);
+    }
+
+    private static filterItems<T>(items: T[], filterCriteria: CsContentFilterCriteria[]): T[] {
+        return Aggregator.filtered(items, filterCriteria.map((c) => ({
+            [c.filterAttribute]: {operation: c.filterCondition.operation, value: c.filterCondition.value}
+        })) as { [key: string]: { operation: '==' | '<=' | '>=' | '!=', value: any } }[]);
     }
 }
