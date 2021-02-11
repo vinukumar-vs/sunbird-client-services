@@ -33,6 +33,24 @@ export interface CsCreateUserResponse {
     result: any
 }
 
+export interface CsAttachForumRequest {
+    sbType: string,
+    sbIdentifier: string,
+    cid: number
+}
+
+export interface CsAttachForumResponse {
+}
+
+export interface CsRemoveForumRequest {
+    sbType: string,
+    sbIdentifier: string,
+    cid: number
+}
+
+export interface CsRemoveForumResponse {
+}
+
 
 
 export interface CsDiscussionService {
@@ -99,4 +117,8 @@ export interface CsDiscussionService {
     editPost(pid: number, data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
     deletePost(pid: number, uid: number, config?: CsDiscussionServiceConfig): Observable<any>;
+
+    attachForum( data: CsAttachForumRequest, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse>;
+
+    removeForum(data: CsRemoveForumRequest, config?: CsDiscussionServiceConfig): Observable<CsRemoveForumResponse>;
 }

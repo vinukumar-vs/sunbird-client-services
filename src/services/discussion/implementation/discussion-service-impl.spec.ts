@@ -1176,5 +1176,116 @@ describe('DiscussionServiceImpl', () => {
         });
     });
 
+    describe('attachForum()', () => {
+        it('should attach forum to group with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_FORUM_ID'
+                };
+                return of(response);
+            });
+            const req = {
+                sbType: 'some_type',
+                sbIdentifier: 'id',
+                cid: 1
+            }
+            discussionService.attachForum(req).subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'POST',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_FORUM_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should attach forum to group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_FORUM_ID'
+                    };
+                    return of(response);
+                });
+                const req = {
+                    sbType: 'some_type',
+                    sbIdentifier: 'id',
+                    cid: 1
+                }
+
+                discussionService.attachForum(req, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'POST',
+                        path: '/some_api_path/forum/v2/create'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_FORUM_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('attachForum()', () => {
+        it('should remove forum from group with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_FORUM_ID'
+                };
+                return of(response);
+            });
+            const req = {
+                sbType: 'some_type',
+                sbIdentifier: 'id',
+                cid: 1
+            }
+            discussionService.removeForum(req).subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'POST',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_FORUM_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should remove forum from group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_FORUM_ID'
+                    };
+                    return of(response);
+                });
+                const req = {
+                    sbType: 'some_type',
+                    sbIdentifier: 'id',
+                    cid: 1
+                }
+
+                discussionService.removeForum(req, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'POST',
+                        path: '/some_api_path/forum/v2/remove'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_FORUM_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
 
 });

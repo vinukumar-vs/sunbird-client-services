@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map} from 'rxjs/operators';
-import { CsDiscussionService } from '../interface/cs-discussion-service';
+import { CsAttachForumRequest, CsAttachForumResponse, CsDiscussionService, CsRemoveForumRequest, CsRemoveForumResponse } from '../interface/cs-discussion-service';
 
 @injectable()
 export class DiscussionServiceImpl implements CsDiscussionService {
@@ -400,6 +400,42 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             .withBearerToken(true)
             .withUserToken(true)
             .build();
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    attachForum(data: CsAttachForumRequest, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.POST)
+        .withPath(`${config ? config.apiPath : this.apiPath}/forum/v2/create`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody({
+            request: {
+                ...data
+            }
+        })
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    removeForum(data: CsRemoveForumRequest, config?: CsDiscussionServiceConfig): Observable<CsRemoveForumResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.POST)
+        .withPath(`${config ? config.apiPath : this.apiPath}/forum/v2/remove`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody({
+            request: {
+                ...data
+            }
+        })
+        .build();
+
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
             map((r) => r.body)
         );
