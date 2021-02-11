@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map} from 'rxjs/operators';
-import { CsDiscussionService } from '../interface/cs-discussion-service';
+import { CsAttachForumRequest, CsAttachForumResponse, CsDiscussionService, CsRemoveForumRequest, CsRemoveForumResponse } from '../interface/cs-discussion-service';
 
 @injectable()
 export class DiscussionServiceImpl implements CsDiscussionService {
@@ -405,7 +405,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    attachForum(data, config?) {
+    attachForum(data: CsAttachForumRequest, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.POST)
         .withPath(`${config ? config.apiPath : this.apiPath}/forum/v2/create`)
@@ -423,7 +423,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    removeForum(data, config?) {
+    removeForum(data: CsRemoveForumRequest, config?: CsDiscussionServiceConfig): Observable<CsRemoveForumResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.POST)
         .withPath(`${config ? config.apiPath : this.apiPath}/forum/v2/remove`)
