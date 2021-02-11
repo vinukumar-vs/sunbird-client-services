@@ -404,4 +404,40 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             map((r) => r.body)
         );
     }
+
+    attachForum(data, config?) {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.POST)
+        .withPath(`${config ? config.apiPath : this.apiPath}/forum/v2/create`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody({
+            request: {
+                ...data
+            }
+        })
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    removeForum(data, config?) {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.POST)
+        .withPath(`${config ? config.apiPath : this.apiPath}/forum/v2/remove`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody({
+            request: {
+                ...data
+            }
+        })
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
 }

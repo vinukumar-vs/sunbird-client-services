@@ -33,6 +33,13 @@ export interface CsCreateUserResponse {
     result: any
 }
 
+// export interface CsAttachFoumRequest {
+//     result: any
+//     "sbType": "course",
+//     "sbIdentifier": "do_2131644496197959681724",
+//     "cid": 7
+// }
+
 
 
 export interface CsDiscussionService {
@@ -99,4 +106,8 @@ export interface CsDiscussionService {
     editPost(pid: number, data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
     deletePost(pid: number, uid: number, config?: CsDiscussionServiceConfig): Observable<any>;
+
+    attachForum( data, config?: CsDiscussionServiceConfig): Observable<any>;
+
+    removeForum(data, config?: CsDiscussionServiceConfig): Observable<any>;
 }
