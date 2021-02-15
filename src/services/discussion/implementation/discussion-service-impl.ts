@@ -440,4 +440,18 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             map((r) => r.body)
         );
     }
+
+    createForum(data: any, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.POST)
+        .withPath(`${config ? config.apiPath : this.apiPath}/forum/v3/create`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody(data)
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
 }

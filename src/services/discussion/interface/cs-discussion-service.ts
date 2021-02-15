@@ -121,4 +121,6 @@ export interface CsDiscussionService {
     attachForum( data: CsAttachForumRequest, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse>;
 
     removeForum(data: CsRemoveForumRequest, config?: CsDiscussionServiceConfig): Observable<CsRemoveForumResponse>;
+
+    createForum( data: any, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse>;
 }
