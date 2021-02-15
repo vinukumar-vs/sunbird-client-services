@@ -1288,4 +1288,60 @@ describe('DiscussionServiceImpl', () => {
         });
     });
 
+    describe('createForum()', () => {
+        it('should create forum to group with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_FORUM_ID'
+                };
+                return of(response);
+            });
+            const req = {
+                sbType: 'some_type',
+                sbIdentifier: 'id',
+                cid: 1
+            }
+            discussionService.createForum(req).subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'POST',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_FORUM_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should create forum to group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_FORUM_ID'
+                    };
+                    return of(response);
+                });
+                const req = {
+                    sbType: 'some_type',
+                    sbIdentifier: 'id',
+                    cid: 1
+                }
+
+                discussionService.createForum(req, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'POST',
+                        path: '/some_api_path/forum/v3/create'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_FORUM_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
 });
