@@ -76,7 +76,7 @@ export class CsContentsGroupGenerator {
                             acc.set(value, c);
                         });
                     } else {
-                        const c = acc.get(content[_groupBy]) || [];
+                        const c = acc.get(content[_groupBy] || 'Other') || [];
                         c.push(content);
                         acc.set(content[_groupBy] || 'Other', c);
                     }
