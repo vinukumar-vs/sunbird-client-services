@@ -4,11 +4,13 @@ import {InjectionTokens} from '../../../injection-tokens';
 import {CsDiscussionService} from '../interface';
 import {of} from 'rxjs';
 import {DiscussionServiceImpl} from './discussion-service-impl';
+import { CsFormService } from '../../form/interface/cs-form-service';
 
 describe('DiscussionServiceImpl', () => {
     let discussionService: CsDiscussionService;
     const mockHttpService: Partial<CsHttpService> = {};
     const mockApiPath = 'MOCK_API_PATH';
+    const mockFormService: Partial<CsFormService> = {};
 
     beforeAll(() => {
         const container = new Container();
@@ -18,6 +20,7 @@ describe('DiscussionServiceImpl', () => {
 
         container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(container);
         container.bind<CsDiscussionService>(InjectionTokens.services.discussion.DISCUSSION_SERVICE).to(DiscussionServiceImpl).inSingletonScope();
+        container.bind<CsFormService>(InjectionTokens.services.form.FORM_SERVICE).toConstantValue(mockFormService as CsFormService);
 
         discussionService = container.get<CsDiscussionService>(InjectionTokens.services.discussion.DISCUSSION_SERVICE);
     });
@@ -1169,118 +1172,6 @@ describe('DiscussionServiceImpl', () => {
                     }));
                     expect(r).toEqual({
                         topicId: 'SOME_TOPIC_ID'
-                    });
-                    done();
-                });
-            });
-        });
-    });
-
-    describe('attachForum()', () => {
-        it('should attach forum to group with appropriate request', (done) => {
-            mockHttpService.fetch = jest.fn(() => {
-                const response = new CsResponse();
-                response.responseCode = 200;
-                response.body = {
-                    forumId: 'SOME_FORUM_ID'
-                };
-                return of(response);
-            });
-            const req = {
-                sbType: 'some_type',
-                sbIdentifier: 'id',
-                cid: 1
-            }
-            discussionService.attachForum(req).subscribe((r) => {
-                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'POST',
-                }));
-                expect(r).toEqual({
-                    forumId: 'SOME_FORUM_ID'
-                });
-                done();
-            });
-        });
-
-        describe('when configuration is overridden', () => {
-            it('should attach forum to group with appropriate request', (done) => {
-                mockHttpService.fetch = jest.fn(() => {
-                    const response = new CsResponse();
-                    response.responseCode = 200;
-                    response.body = {
-                        forumId: 'SOME_FORUM_ID'
-                    };
-                    return of(response);
-                });
-                const req = {
-                    sbType: 'some_type',
-                    sbIdentifier: 'id',
-                    cid: 1
-                }
-
-                discussionService.attachForum(req, {apiPath: '/some_api_path'}).subscribe((r) => {
-                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                        type: 'POST',
-                        path: '/some_api_path/forum/v2/create'
-                    }));
-                    expect(r).toEqual({
-                        forumId: 'SOME_FORUM_ID'
-                    });
-                    done();
-                });
-            });
-        });
-    });
-
-    describe('attachForum()', () => {
-        it('should remove forum from group with appropriate request', (done) => {
-            mockHttpService.fetch = jest.fn(() => {
-                const response = new CsResponse();
-                response.responseCode = 200;
-                response.body = {
-                    forumId: 'SOME_FORUM_ID'
-                };
-                return of(response);
-            });
-            const req = {
-                sbType: 'some_type',
-                sbIdentifier: 'id',
-                cid: 1
-            }
-            discussionService.removeForum(req).subscribe((r) => {
-                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'POST',
-                }));
-                expect(r).toEqual({
-                    forumId: 'SOME_FORUM_ID'
-                });
-                done();
-            });
-        });
-
-        describe('when configuration is overridden', () => {
-            it('should remove forum from group with appropriate request', (done) => {
-                mockHttpService.fetch = jest.fn(() => {
-                    const response = new CsResponse();
-                    response.responseCode = 200;
-                    response.body = {
-                        forumId: 'SOME_FORUM_ID'
-                    };
-                    return of(response);
-                });
-                const req = {
-                    sbType: 'some_type',
-                    sbIdentifier: 'id',
-                    cid: 1
-                }
-
-                discussionService.removeForum(req, {apiPath: '/some_api_path'}).subscribe((r) => {
-                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                        type: 'POST',
-                        path: '/some_api_path/forum/v2/remove'
-                    }));
-                    expect(r).toEqual({
-                        forumId: 'SOME_FORUM_ID'
                     });
                     done();
                 });
