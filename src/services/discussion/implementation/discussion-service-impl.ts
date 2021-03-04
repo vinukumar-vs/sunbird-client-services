@@ -4,8 +4,9 @@ import {CsDiscussionServiceConfig} from '../../..';
 import {Observable} from 'rxjs';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
-import {map} from 'rxjs/operators';
-import { CsAttachForumRequest, CsAttachForumResponse, CsDiscussionService, CsRemoveForumRequest, CsRemoveForumResponse } from '../interface/cs-discussion-service';
+import {map, mergeMap} from 'rxjs/operators';
+import { CsAttachForumRequest, CsAttachForumResponse, CsDiscussionService, CsGetContextBasedDiscussionRequest, CsGetContextBasedDiscussionResponse, CsRemoveForumRequest, CsRemoveForumResponse } from '../interface/cs-discussion-service';
+import { CsFormService } from 'src/services/form/interface/cs-form-service';
 
 @injectable()
 export class DiscussionServiceImpl implements CsDiscussionService {
@@ -13,6 +14,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService,
         @inject(InjectionTokens.services.discussion.DISCUSSION_SERVICE_API_PATH) private apiPath: string,
         @inject(InjectionTokens.CONTAINER) private container: Container,
+        @inject(InjectionTokens.services.form.FORM_SERVICE) private formService: CsFormService
     ) {
     }
 
@@ -405,24 +407,6 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    attachForum(data: CsAttachForumRequest, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse> {
-        const apiRequest: CsRequest = new CsRequest.Builder()
-        .withType(CsHttpRequestType.POST)
-        .withPath(`${config ? config.apiPath : this.apiPath}/forum/v2/create`)
-        .withBearerToken(true)
-        .withUserToken(true)
-        .withBody({
-            request: {
-                ...data
-            }
-        })
-        .build();
-
-        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
-            map((r) => r.body)
-        );
-    }
-
     removeForum(data: CsRemoveForumRequest, config?: CsDiscussionServiceConfig): Observable<CsRemoveForumResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.POST)
@@ -454,4 +438,23 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             map((r) => r.body)
         );
     }
+
+    attachForum(request:CsAttachForumRequest): Observable<CsAttachForumResponse>{
+        let createForumRequest;
+        const req = {
+            type: 'forum',
+            action: 'create',
+            subType: request.type
+        };
+        return this.formService.getForm(req).pipe(
+            mergeMap((formData: any) => {
+                createForumRequest = formData.data.fields[0];
+                createForumRequest['category']['context'] = [request.context];
+                return this.createForum(createForumRequest).pipe(
+                    map((response:any) => response.result[0])
+                )
+            })
+        )
+    }
+      
 }

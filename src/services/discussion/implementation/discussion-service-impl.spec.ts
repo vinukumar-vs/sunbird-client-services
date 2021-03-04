@@ -1344,4 +1344,10 @@ describe('DiscussionServiceImpl', () => {
         });
     });
 
+    describe('attachForum', () => {
+        it('It should attach forum', () => {
+
+        });
+    })
+
 });
