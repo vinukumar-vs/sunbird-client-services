@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map, mergeMap} from 'rxjs/operators';
-import { CsAttachForumRequest, CsAttachForumResponse, CsDiscussionService, CsGetContextBasedDiscussionRequest, CsGetContextBasedDiscussionResponse, CsRemoveForumRequest, CsRemoveForumResponse } from '../interface/cs-discussion-service';
+import { CsAttachForumRequest, CsAttachForumResponse, CsDiscussionService, CsGetContextBasedDiscussionRequest, CsGetContextBasedDiscussionResponse, CsGetContextBasedTagDiscussionRequest, CsGetContextBasedTagDiscussionResponse, CsRemoveForumRequest, CsRemoveForumResponse } from '../interface/cs-discussion-service';
 import { CsFormService } from 'src/services/form/interface/cs-form-service';
 
 @injectable()
@@ -455,6 +455,94 @@ export class DiscussionServiceImpl implements CsDiscussionService {
                 )
             })
         )
+    }
+
+    getContextBasedDiscussion(data: CsGetContextBasedDiscussionRequest, config?: CsDiscussionServiceConfig): Observable<CsGetContextBasedDiscussionResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.POST)
+        .withPath(`${config ? config.apiPath : this.apiPath}/category/list`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody({
+            request: {
+                ...data
+            }
+        })
+        .build();
+    
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    getContextBasedTagDiscussion(data: CsGetContextBasedTagDiscussionRequest, config?: CsDiscussionServiceConfig): Observable<CsGetContextBasedTagDiscussionResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.POST)
+        .withPath(`${config ? config.apiPath : this.apiPath}/tags/list`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody({
+            request: {
+                ...data
+            }
+        })
+        .build();
+    
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    recentPost(config?: CsDiscussionServiceConfig) {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.GET)
+        .withPath(`${config ? config.apiPath : this.apiPath}/recent`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    popularPost(config?: CsDiscussionServiceConfig) {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.GET)
+        .withPath(`${config ? config.apiPath : this.apiPath}/popular`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    getSingleCategoryDetails(cid: number, config?: CsDiscussionServiceConfig) {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.GET)
+        .withPath(`${config ? config.apiPath : this.apiPath}/category/${cid}`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    getTagBasedDiscussion(tag: string, config?: CsDiscussionServiceConfig) {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.GET)
+        .withPath(`${config ? config.apiPath : this.apiPath}/tags/${tag}`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
     }
       
 }

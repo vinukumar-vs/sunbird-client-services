@@ -59,6 +59,14 @@ export interface CsGetContextBasedDiscussionRequest {
 export interface CsGetContextBasedDiscussionResponse {
 }
 
+export interface CsGetContextBasedTagDiscussionRequest {
+}
+
+export interface CsGetContextBasedTagDiscussionResponse {
+}
+
+
+
 
 export interface CsDiscussionService {
     // appendPage(page: any, url: string);
@@ -130,4 +138,17 @@ export interface CsDiscussionService {
     removeForum(data: CsRemoveForumRequest, config?: CsDiscussionServiceConfig): Observable<CsRemoveForumResponse>;
 
     createForum( data: any, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse>;
+
+    getContextBasedDiscussion( data: CsGetContextBasedDiscussionRequest, config?: CsDiscussionServiceConfig): Observable<CsGetContextBasedDiscussionResponse>;
+
+    getContextBasedTagDiscussion( data: CsGetContextBasedTagDiscussionRequest, config?: CsDiscussionServiceConfig): Observable<CsGetContextBasedTagDiscussionResponse>;
+
+    recentPost(config?: CsDiscussionServiceConfig): Observable<any>;
+
+    popularPost(config?: CsDiscussionServiceConfig): Observable<any>;
+
+    getSingleCategoryDetails(cid: number, config?: CsDiscussionServiceConfig): Observable<any>;
+    
+    getTagBasedDiscussion(tag: string, config?: CsDiscussionServiceConfig): Observable<any>;
+    
 }
