@@ -1238,17 +1238,15 @@ describe('DiscussionServiceImpl', () => {
     describe('attachForum', () => {
         it('It should attach forum', () => {
             const formData = {
-                form: {
-                    data: {
-                        fields: [
-                            {
-                                uid: 40,
-                                category: {
-                                    context: ''
-                                }
+                data: {
+                    fields: [
+                        {
+                            uid: 40,
+                            category: {
+                                context: ''
                             }
-                        ]
-                    }
+                        }
+                    ]
                 }
             }
             mockFormService.getForm = jest.fn(() => of(formData)as any )
