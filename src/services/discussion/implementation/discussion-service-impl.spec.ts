@@ -1237,7 +1237,39 @@ describe('DiscussionServiceImpl', () => {
 
     describe('attachForum', () => {
         it('It should attach forum', () => {
-
+            const formData = {
+                form: {
+                    data: {
+                        fields: [
+                            {
+                                uid: 40,
+                                category: {
+                                    context: ''
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+            mockFormService.getForm = jest.fn(() => of(formData)as any )
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    result: ['SOME_FORUM_ID']
+                };
+                return of(response);
+            });
+            const req = {
+                type: 'group',
+                context: {
+                    type: 'group',
+                    identifier: 'some_id'
+                }
+            }
+            discussionService.attachForum(req).subscribe((resp) => {
+                expect(resp).toEqual('SOME_FORUM_ID');
+            })
         });
     })
 
