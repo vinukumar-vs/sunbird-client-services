@@ -11,6 +11,7 @@ export enum CsMimeType {
     EPUB = 'application/epub',
     ZIP = 'application/zip',
     TXT = 'text/plain',
+    TXT_X_URL = 'text/x-url',
     ECAR = 'application/ecar',
     EPAR = 'application/epar'
 }

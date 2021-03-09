@@ -1,0 +1,17 @@
+export enum CsPrimaryCategory {
+    ASSET = 'Asset',
+    CONTENT_PLAYLIST = 'Content PlayList',
+    COURSE = 'Course',
+    COURSE_ASSESSMENT = 'Course Assessment',
+    COURSE_UNIT = 'Course Unit',
+    DIGITAL_TEXTBOOK = 'Digital Textbook',
+    E_TEXTBOOK = 'eTextbook',
+    EXPLANATION_CONTENT = 'Explanation Content',
+    LEARNING_RESOURCE = 'Learning Resource',
+    LESSON_PLAN_UNIT = 'Lesson Plan Unit',
+    PLUGIN = 'Plugin',
+    PRACTICE_QUESTION_SET = 'Practice Question Set',
+    TEACHER_RESOURCE = 'Teacher Resource',
+    TEMPLATE = 'Template',
+    TEXTBOOK_UNIT = 'Textbook Unit',
+}
