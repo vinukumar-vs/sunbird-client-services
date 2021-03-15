@@ -28,7 +28,7 @@ describe('ContentServiceImpl', () => {
         jest.restoreAllMocks();
     });
 
-    describe('when question list is called', () => {
+    describe('when question APIs is called', () => {
         it('should be able to get question list response', (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();
