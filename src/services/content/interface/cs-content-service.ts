@@ -2,9 +2,11 @@ import { Observable } from 'rxjs';
 import { CsContentServiceConfig } from '../../../index';
 
 export interface CsContentGetQuestionSetResponse {
-    response: {};
 }
 
+export interface CsContentGetQuestionListResponse {
+}
 export interface CsContentService {
-    getQuestionSet(contentId: string, config?: CsContentServiceConfig): Observable<CsContentGetQuestionSetResponse>;
+    getQuestionSetHierarchy(contentId: string, config?: CsContentServiceConfig): Observable<CsContentGetQuestionSetResponse>;
+    getQuestionList(contentIds: string[], config?: CsContentServiceConfig): Observable<CsContentGetQuestionListResponse>;
 }

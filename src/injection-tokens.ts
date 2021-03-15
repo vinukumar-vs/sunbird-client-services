@@ -27,7 +27,7 @@ export const InjectionTokens = {
         },
         content: {
             CONTENT_SERVICE_HIERARCHY_API_PATH: Symbol.for('CONTENT_SERVICE_HIERARCHY_API_PATH'),
-            CONTENT_SERVICE_SEARCH_API_PATH: Symbol.for('CONTENT_SERVICE_SEARCH_API_PATH'),
+            CONTENT_SERVICE_QUESTION_LIST_API_PATH: Symbol.for('CONTENT_SERVICE_QUESTION_LIST_API_PATH'),
             CONTENT_SERVICE: Symbol.for('CONTENT_SERVICE')
         },
         group: {

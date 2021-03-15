@@ -47,7 +47,7 @@ export interface CsGroupServiceConfig {
 
 export interface CsContentServiceConfig {
     hierarchyApiPath: string;
-    searchApiPath: string;
+    questionListApiPath: string;
 }
 
 export interface CsFrameworkServiceConfig {
@@ -274,8 +274,8 @@ export class CsModule {
         if (config.services.contentServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.content.CONTENT_SERVICE_HIERARCHY_API_PATH)
                 .toConstantValue(config.services.contentServiceConfig.hierarchyApiPath);
-                this._container[mode]<string>(InjectionTokens.services.content.CONTENT_SERVICE_SEARCH_API_PATH)
-                .toConstantValue(config.services.contentServiceConfig.searchApiPath);
+                this._container[mode]<string>(InjectionTokens.services.content.CONTENT_SERVICE_QUESTION_LIST_API_PATH)
+                .toConstantValue(config.services.contentServiceConfig.questionListApiPath);
         }
 
         // userService
