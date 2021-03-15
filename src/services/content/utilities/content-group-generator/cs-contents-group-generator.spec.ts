@@ -3,7 +3,8 @@ import {
     searchResult,
     searchResultWithMultiValueAttributes,
     searchResultWithNullAttributes,
-    searchResultWithMultiValueSearchableAttributes
+    searchResultWithMultiValueSearchableAttributes,
+    searchResultWithMultiValueSearchableAttributesAndTargetedContent
 } from './cs-contents-group-generator.spec.data';
 import {CsSortOrder} from '../../interface';
 
@@ -191,6 +192,63 @@ describe('ContentGroupGenerator', () => {
                     count: 1,
                     name: 'English',
                     contents: expect.any(Array)
+                }
+            ]
+        });
+    });
+
+    it('should be able to generate contents grouped by its attributes with targeted contents prioritised', () => {
+        expect(
+            CsContentsGroupGenerator.generate({
+                prioritiseTargetedContents: {
+                    categories: ['board', 'medium', 'gradeLevel'],
+                    sourceFramework: {
+                        board: ['State (Andhra Pradesh)'],
+                        medium: ['English'],
+                        gradeLevel: ['Class 1', 'Class 4']
+                    }
+                },
+                contents: searchResultWithMultiValueSearchableAttributesAndTargetedContent.result.content as any,
+                groupBy: 'subject',
+                sortCriteria: [{
+                    sortAttribute: 'name',
+                    sortOrder: CsSortOrder.DESC,
+                }],
+                filterCriteria: [],
+            })
+        ).toEqual({
+            name: 'subject',
+            combination: undefined,
+            sections: [
+                {
+                    count: 2,
+                    name: 'Geography',
+                    contents: expect.arrayContaining([
+                        expect.objectContaining({
+                            name: 'b (targeted)'
+                        }),
+                        expect.objectContaining({
+                            name: 'a (non-targeted)'
+                        })
+                    ]),
+                    targetedContents: [
+                        expect.objectContaining({
+                            board: 'State (Other than Andhra Pradesh)',
+                            se_boards: expect.arrayContaining(['State (Andhra Pradesh)', 'State (Other than Andhra Pradesh)'])
+                        })
+                    ]
+                },
+                {
+                    count: 1,
+                    name: 'Physical Science',
+                    contents: expect.any(Array),
+                    targetedContents: undefined
+                },
+                {
+                    count: 1,
+                    name: 'English',
+                    contents: expect.any(Array),
+                    targetedContents: undefined
                 }
             ]
         });
