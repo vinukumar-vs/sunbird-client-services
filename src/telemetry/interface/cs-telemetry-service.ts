@@ -20,4 +20,5 @@ export abstract class TelemetryService {
     public abstract raiseFeedBackTelemetry(feedbackEventObject);
     public abstract raiseFeedBackTelemetryWith(cdata: Array<ICDataEntry>, env: string, edata: any, telemetryObject?: ITelemetryObject);
     public abstract setTelemetryAttributes(pdata: IProducerdata, actor: IActor, channel: string , sid: string, did: string);
+    public abstract raiseAssesTelemetry(data: any , options: any);
 }
