@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { CsContentGetQuestionSetResponse, CsContentService, CsContentGetQuestionListResponse } from '../interface';
 import { CsContentServiceConfig } from '../../..';
-import { defer, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { InjectionTokens } from '../../../injection-tokens';
 import { CsHttpRequestType, CsHttpService, CsRequest } from '../../../core/http-service/interface';
 import { map } from 'rxjs/operators';
