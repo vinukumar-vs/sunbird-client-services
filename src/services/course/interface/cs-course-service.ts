@@ -58,10 +58,24 @@ export interface ContentState {
     bestScore?: ContentStateScore;
 }
 
+export interface CsUpdateContentStateRequest {
+    userId: string;
+    batchId: string;
+    courseId: string;
+    contentId?: string;
+    status?: ContentStateStatus;
+}
+
+export interface CsUpdateContentStateResponse {
+    response: string;
+}
+
 export interface CsCourseService {
     getUserEnrolledCourses(request: GetUserEnrolledCoursesRequest, additionalParams?: { [key: string]: string }, config?: CsCourseServiceConfig): Observable<Course[]>;
 
     getSignedCourseCertificate(certificateId: string, config?: CsCourseServiceConfig): Observable<CertificateUrlResponse>;
 
     getContentState(request: GetContentStateRequest, config?: CsCourseServiceConfig): Observable<ContentState[]>;
+
+    updateContentState(request: CsUpdateContentStateRequest, config?: CsCourseServiceConfig): Observable<CsUpdateContentStateResponse>;
 }
