@@ -472,7 +472,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
 
     editTopic(tid: number, data: any, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
-        .withType(CsHttpRequestType.PUT)
+        .withType(CsHttpRequestType.POST)
         .withPath(`${config ? config.apiPath : this.apiPath}/v2/topics/${tid}`)
         .withBearerToken(true)
         .withUserToken(true)
