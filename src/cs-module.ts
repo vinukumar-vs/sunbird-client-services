@@ -6,6 +6,8 @@ import {CsHttpService} from './core/http-service/interface';
 import {HttpServiceImpl} from './core/http-service/implementation/http-service-impl';
 import {GroupServiceImpl} from './services/group/implementation/group-service-impl';
 import {CsGroupService} from './services/group/interface';
+import {CsContentService} from './services/content/interface';
+import {ContentServiceImpl} from './services/content/implementation/content-service-impl';
 import {InjectionTokens} from './injection-tokens';
 import {CsFrameworkService} from './services/framework/interface';
 import {FrameworkServiceImpl} from './services/framework/implementation/framework-service-impl';
@@ -41,6 +43,11 @@ export interface CsGroupServiceConfig {
     apiPath: string;
     dataApiPath: string;
     updateGroupGuidelinesApiPath?: string;
+}
+
+export interface CsContentServiceConfig {
+    hierarchyApiPath: string;
+    questionListApiPath: string;
 }
 
 export interface CsFrameworkServiceConfig {
@@ -87,7 +94,8 @@ export interface CsConfig {
         courseServiceConfig?: CsCourseServiceConfig,
         formServiceConfig?: CsFormServiceConfig,
         systemSettingsServiceConfig?: CsSystemSettingsServiceConfig,
-        discussionServiceConfig?: CsDiscussionServiceConfig
+        discussionServiceConfig?: CsDiscussionServiceConfig,
+        contentServiceConfig?: CsContentServiceConfig
     };
 }
 
@@ -124,6 +132,10 @@ export class CsModule {
 
     get groupService(): CsGroupService {
         return this._container.get<CsGroupService>(InjectionTokens.services.group.GROUP_SERVICE);
+    }
+
+    get contentService(): CsContentService {
+        return this._container.get<CsContentService>(InjectionTokens.services.content.CONTENT_SERVICE);
     }
 
     get frameworkService(): CsFrameworkService {
@@ -254,6 +266,16 @@ export class CsModule {
                 this._container[mode]<string>(InjectionTokens.services.course.COURSE_SERVICE_CERT_REGISTRATION_API_PATH)
                     .toConstantValue(config.services.courseServiceConfig.certRegistrationApiPath);
             }
+        }
+
+        // contentService
+        this._container[mode]<CsContentService>(InjectionTokens.services.content.CONTENT_SERVICE)
+            .to(ContentServiceImpl).inSingletonScope();
+        if (config.services.contentServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.content.CONTENT_SERVICE_HIERARCHY_API_PATH)
+                .toConstantValue(config.services.contentServiceConfig.hierarchyApiPath);
+                this._container[mode]<string>(InjectionTokens.services.content.CONTENT_SERVICE_QUESTION_LIST_API_PATH)
+                .toConstantValue(config.services.contentServiceConfig.questionListApiPath);
         }
 
         // userService

@@ -2,7 +2,7 @@ import {
     CertificateUrlResponse, ContentState, ContentStateScore,
     CsCourseService,
     GetContentStateRequest,
-    GetUserEnrolledCoursesRequest
+    GetUserEnrolledCoursesRequest, CsUpdateContentStateRequest, CsUpdateContentStateResponse
 } from '../interface';
 import {Course} from '../../../models/course';
 import {Observable} from 'rxjs';
@@ -89,5 +89,22 @@ export class CourseServiceImpl implements CsCourseService {
                 });
             })
         );
+    }
+
+    updateContentState(request: CsUpdateContentStateRequest, config?: CsCourseServiceConfig): Observable<CsUpdateContentStateResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+          .withType(CsHttpRequestType.PATCH)
+          .withPath((config ? config.apiPath : this.apiPath) + '/content/state/update')
+          .withBearerToken(true)
+          .withUserToken(true)
+          .withBody({request})
+          .build();
+
+        return this.httpService.fetch<{ result: CsUpdateContentStateResponse }>(apiRequest)
+          .pipe(
+            map((response) => {
+                return response.body.result;
+            })
+          );
     }
 }

@@ -456,5 +456,32 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             })
         )
     }
+
+    deleteTopic(tid: number, config?: CsDiscussionServiceConfig): Observable<any> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.DELETE)
+        .withPath(`${config ? config.apiPath : this.apiPath}/v2/topics/${tid}`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    editTopic(tid: number, data: any, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.POST)
+        .withPath(`${config ? config.apiPath : this.apiPath}/v2/topics/${tid}`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody(data)
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
       
 }

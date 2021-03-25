@@ -130,4 +130,8 @@ export interface CsDiscussionService {
     removeForum(data: CsRemoveForumRequest, config?: CsDiscussionServiceConfig): Observable<CsRemoveForumResponse>;
 
     createForum( data: any, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse>;
+
+    deleteTopic( tid: number, config?: CsDiscussionServiceConfig): Observable<any>;
+
+    editTopic(tid: number, data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 }
