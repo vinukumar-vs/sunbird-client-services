@@ -1,5 +1,10 @@
 import {Content} from '../../../../models';
-import {CsContentFilterCriteria, CsContentSortCriteria, CsSortOrder} from '../../interface';
+import {
+    CsContentFilterCriteria,
+    CsContentSortCriteria,
+    CsFilterCriteria,
+    CsSortCriteria
+} from '../../interface';
 import {Aggregator} from '../../../../utilities/aggregator';
 
 export interface CsContentSection {
@@ -7,15 +12,18 @@ export interface CsContentSection {
     combination?: {
         [key in keyof Content]?: string
     };
-    sections: Section[];
+    sections: CsContentGroup[];
 }
 
-interface Section {
+export interface CsContentGroup {
     count?: number;
     name?: string;
     contents?: Content[];
     targetedContents?: Content[];
 }
+
+export interface CsContentGroupSortCriteria extends CsSortCriteria<CsContentGroup> {}
+export interface CsContentGroupFilterCriteria extends CsFilterCriteria<CsContentGroup> {}
 
 export class CsContentsGroupGenerator {
     static generate(config: {
@@ -26,17 +34,28 @@ export class CsContentsGroupGenerator {
         includeSearchable?: boolean
         contents: Content[],
         groupBy: keyof Content,
-        sortCriteria: CsContentSortCriteria | CsContentSortCriteria[],
-        filterCriteria: CsContentFilterCriteria | CsContentFilterCriteria[],
+        sortBy?: CsContentSortCriteria | CsContentSortCriteria[],
+        filterBy?: CsContentFilterCriteria | CsContentFilterCriteria[],
+        groupSortBy?: CsContentGroupSortCriteria | CsContentGroupSortCriteria[],
+        groupFilterBy?: CsContentGroupFilterCriteria | CsContentGroupFilterCriteria[],
         combination?: Partial<{
             [key in keyof Content]?: string[]
         }>
     }): CsContentSection {
         let {contents} = config;
-        const {groupBy, sortCriteria, filterCriteria, combination, includeSearchable, prioritiseTargetedContents} = config;
+        const {
+            groupBy,
+            groupSortBy = [],
+            groupFilterBy = [],
+            sortBy = [],
+            filterBy = [],
+            combination,
+            includeSearchable,
+            prioritiseTargetedContents
+        } = config;
 
-        contents = CsContentsGroupGenerator.filterItems(contents, Array.isArray(filterCriteria) ? filterCriteria : [filterCriteria]);
-        contents = CsContentsGroupGenerator.sortItems(contents, Array.isArray(sortCriteria) ? sortCriteria : [sortCriteria]);
+        contents = CsContentsGroupGenerator.filterItems(contents, Array.isArray(filterBy) ? filterBy : [filterBy]);
+        contents = CsContentsGroupGenerator.sortItems(contents, Array.isArray(sortBy) ? sortBy : [sortBy]);
 
         let resultingCombination: {
             [key in keyof Content]?: string
@@ -130,7 +149,7 @@ export class CsContentsGroupGenerator {
                     return acc;
                 }, new Map<string, Content[]>())
                 .entries()
-        ).map<Section>(([groupedBy, contentsList]) => {
+        ).map<CsContentGroup>(([groupedBy, contentsList]) => {
             const targetedContents = contentsList.filter((c) => allTargetedContents.indexOf(c) > -1);
 
             return {
@@ -141,23 +160,26 @@ export class CsContentsGroupGenerator {
             };
         });
 
-        sections = CsContentsGroupGenerator.sortItems(sections, Array.isArray(sortCriteria) ? sortCriteria : [sortCriteria]);
+        sections = CsContentsGroupGenerator.filterItems(sections, Array.isArray(groupFilterBy) ? groupFilterBy : [groupFilterBy]);
+        sections = CsContentsGroupGenerator.sortItems(sections, Array.isArray(groupSortBy) ? groupSortBy : [groupSortBy]);
 
-        sections = sections.sort((a , b) => {
-            if (
-                a.targetedContents && a.targetedContents.length &&
-                !(b.targetedContents && b.targetedContents.length)
-            ) {
-                return -1;
-            } else if (
-                !(a.targetedContents && a.targetedContents.length) &&
-                b.targetedContents && b.targetedContents.length
-            ) {
-                return 1;
-            }
+        if (prioritiseTargetedContents) {
+            sections = sections.sort((a , b) => {
+                if (
+                    a.targetedContents && a.targetedContents.length &&
+                    !(b.targetedContents && b.targetedContents.length)
+                ) {
+                    return -1;
+                } else if (
+                    !(a.targetedContents && a.targetedContents.length) &&
+                    b.targetedContents && b.targetedContents.length
+                ) {
+                    return 1;
+                }
 
-            return 0;
-        });
+                return 0;
+            });
+        }
 
         return {
             name: groupBy,
@@ -178,13 +200,13 @@ export class CsContentsGroupGenerator {
 
     private static isMultiValueAttribute = (content, attr) => Array.isArray(content[attr]);
 
-    private static sortItems<T>(items: T[], sortCriteria: CsContentSortCriteria[]): T[] {
+    private static sortItems<T>(items: T[], sortCriteria: CsSortCriteria<any>[]): T[] {
         return Aggregator.sorted(items, sortCriteria.map((c) => ({
-            [c.sortAttribute]: c.sortOrder === CsSortOrder.ASC ? 'asc' : 'desc'
+            [c.sortAttribute]: c.sortOrder
         })) as { [key: string]: 'asc' | 'desc' }[]);
     }
 
-    private static filterItems<T>(items: T[], filterCriteria: CsContentFilterCriteria[]): T[] {
+    private static filterItems<T>(items: T[], filterCriteria: CsFilterCriteria<any>[]): T[] {
         return Aggregator.filtered(items, filterCriteria.map((c) => ({
             [c.filterAttribute]: {operation: c.filterCondition.operation, value: c.filterCondition.value}
         })) as { [key: string]: { operation: '==' | '<=' | '>=' | '!=', value: any } }[]);

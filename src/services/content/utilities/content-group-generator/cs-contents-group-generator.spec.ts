@@ -15,11 +15,16 @@ describe('ContentGroupGenerator', () => {
             CsContentsGroupGenerator.generate({
                 contents: searchResult.result.content as any,
                 groupBy: 'subject',
-                sortCriteria: {
+                sortBy: {
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.ASC,
                 },
-                filterCriteria: [],
+                filterBy: [],
+                groupSortBy: {
+                    sortAttribute: 'name',
+                    sortOrder: CsSortOrder.ASC,
+                },
+                groupFilterBy: [],
                 combination: {
                     medium: ['invalid_medium', 'english', 'hindi'],
                     gradeLevel: ['class 2', 'invalid']
@@ -31,11 +36,16 @@ describe('ContentGroupGenerator', () => {
             CsContentsGroupGenerator.generate({
                 contents: searchResult.result.content as any,
                 groupBy: 'subject',
-                sortCriteria: [{
+                sortBy: [{
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.ASC,
                 }],
-                filterCriteria: [],
+                filterBy: [],
+                groupSortBy: [{
+                    sortAttribute: 'name',
+                    sortOrder: CsSortOrder.ASC,
+                }],
+                groupFilterBy: [],
                 combination: {
                     medium: ['invalid_medium', 'english', 'hindi'],
                     gradeLevel: ['class 2', 'invalid']
@@ -69,11 +79,16 @@ describe('ContentGroupGenerator', () => {
             CsContentsGroupGenerator.generate({
                 contents: searchResultWithMultiValueAttributes.result.content as any,
                 groupBy: 'subject',
-                sortCriteria: [{
+                sortBy: [{
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.DESC,
                 }],
-                filterCriteria: []
+                filterBy: [],
+                groupSortBy: [{
+                    sortAttribute: 'name',
+                    sortOrder: CsSortOrder.DESC,
+                }],
+                groupFilterBy: [],
             })
         ).toEqual({
             name: 'subject',
@@ -101,11 +116,13 @@ describe('ContentGroupGenerator', () => {
             CsContentsGroupGenerator.generate({
                 contents: searchResultWithNullAttributes.result.content as any,
                 groupBy: 'subject',
-                sortCriteria: [{
+                sortBy: [{
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.DESC,
                 }],
-                filterCriteria: [],
+                filterBy: [],
+                groupSortBy: [],
+                groupFilterBy: [],
                 combination: {
                     medium: ['', 'invalid_medium', 'english', 'hindi'],
                     gradeLevel: [''],
@@ -124,17 +141,19 @@ describe('ContentGroupGenerator', () => {
             CsContentsGroupGenerator.generate({
                 contents: searchResultWithMultiValueAttributes.result.content as any,
                 groupBy: 'subject',
-                sortCriteria: [{
+                sortBy: [{
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.DESC,
                 }],
-                filterCriteria: [{
+                filterBy: [{
                     filterAttribute: 'variants.online.size',
                     filterCondition: {
                         operation: '!=',
                         value: 3045
                     }
-                }]
+                }],
+                groupSortBy: [],
+                groupFilterBy: [],
             })
         ).toEqual({
             name: 'subject',
@@ -162,11 +181,16 @@ describe('ContentGroupGenerator', () => {
             CsContentsGroupGenerator.generate({
                 contents: searchResultWithMultiValueSearchableAttributes.result.content as any,
                 groupBy: 'subject',
-                sortCriteria: [{
+                sortBy: [{
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.DESC,
                 }],
-                filterCriteria: [],
+                filterBy: [],
+                groupSortBy: [{
+                    sortAttribute: 'name',
+                    sortOrder: CsSortOrder.DESC,
+                }],
+                groupFilterBy: [],
                 includeSearchable: true
             })
         ).toEqual({
@@ -210,11 +234,13 @@ describe('ContentGroupGenerator', () => {
                 },
                 contents: searchResultWithMultiValueSearchableAttributesAndTargetedContent.result.content as any,
                 groupBy: 'subject',
-                sortCriteria: [{
+                sortBy: [{
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.DESC,
                 }],
-                filterCriteria: [],
+                groupSortBy: [],
+                groupFilterBy: [],
+                filterBy: [],
             })
         ).toEqual({
             name: 'subject',
