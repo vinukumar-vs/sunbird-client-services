@@ -238,7 +238,10 @@ describe('ContentGroupGenerator', () => {
                     sortAttribute: 'name',
                     sortOrder: CsSortOrder.DESC,
                 }],
-                groupSortBy: [],
+                groupSortBy: [{
+                    sortAttribute: 'name',
+                    sortOrder: CsSortOrder.DESC,
+                }],
                 groupFilterBy: [],
                 filterBy: [],
             })
