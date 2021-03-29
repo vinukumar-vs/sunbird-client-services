@@ -35,27 +35,45 @@ export class HttpClientCordovaAdapter implements HttpClient {
         this.http.setHeader('*', key, value);
     }
 
-    get(baseUrl: string, path: string, headers: any, parameters: { [key: string]: string }): Observable<CsResponse> {
-        return this.invokeRequest(CsHttpRequestType.GET, baseUrl + path, parameters, headers);
+    get(baseUrl: string, path: string, headers: any, parameters: { [key: string]: string }, httpSerializer: CsHttpSerializer): Observable<CsResponse> {
+        return this.invokeRequest(CsHttpRequestType.GET, baseUrl + path, parameters, headers, httpSerializer);
     }
 
-    delete(baseUrl: string, path: string, headers: any, parameters: { [key: string]: string }): Observable<CsResponse> {
-        return this.invokeRequest(CsHttpRequestType.DELETE, baseUrl + path, parameters, headers);
+    delete(baseUrl: string, path: string, headers: any, parameters: { [key: string]: string }, httpSerializer: CsHttpSerializer): Observable<CsResponse> {
+        return this.invokeRequest(CsHttpRequestType.DELETE, baseUrl + path, parameters, headers, httpSerializer);
     }
 
-    patch(baseUrl: string, path: string, headers: any, body: {}): Observable<CsResponse> {
-        return this.invokeRequest(CsHttpRequestType.PATCH, baseUrl + path, body, headers);
+    patch(baseUrl: string, path: string, headers: any, body: {}, httpSerializer: CsHttpSerializer): Observable<CsResponse> {
+        return this.invokeRequest(CsHttpRequestType.PATCH, baseUrl + path, body, headers, httpSerializer);
     }
 
-    post(baseUrl: string, path: string, headers: any, body: {}): Observable<CsResponse> {
-        return this.invokeRequest(CsHttpRequestType.POST, baseUrl + path, body, headers);
+    post(baseUrl: string, path: string, headers: any, body: {}, httpSerializer: CsHttpSerializer): Observable<CsResponse> {
+        return this.invokeRequest(CsHttpRequestType.POST, baseUrl + path, body, headers, httpSerializer);
     }
 
     private invokeRequest(type: CsHttpRequestType, url: string, parametersOrData: any,
-                          headers: { [key: string]: string }): Observable<CsResponse> {
+                          headers: { [key: string]: string }, httpSerializer: CsHttpSerializer): Observable<CsResponse> {
         const observable = new Subject<CsResponse>();
 
-        this.http[type.toLowerCase()](url, parametersOrData, headers, (response: CordovaHttpClientResponse) => {
+        const requestOptions = {
+            method: type.toLowerCase(),
+            headers: headers,
+            serializer: httpSerializer,
+        };
+
+        if (
+          type === CsHttpRequestType.POST ||
+          type === CsHttpRequestType.PATCH
+        ) {
+            requestOptions['data']  = parametersOrData;
+        } else if (
+          type === CsHttpRequestType.GET ||
+          type === CsHttpRequestType.DELETE
+        ) {
+            requestOptions['params']  = parametersOrData;
+        }
+
+        this.http.sendRequest(url, requestOptions, (response: CordovaHttpClientResponse) => {
             const r = new CsResponse();
 
             try {
@@ -66,6 +84,7 @@ export class HttpClientCordovaAdapter implements HttpClient {
 
             r.responseCode = response.status;
             r.errorMesg = '';
+            r.headers = response.headers;
             observable.next(r);
             observable.complete();
 

@@ -19,6 +19,19 @@ import {CsGroupActivityService} from './services/group/activity/interface';
 import {GroupActivityServiceImpl} from './services/group/activity/implementation/group-activity-service-impl';
 import {CsFormService} from './services/form/interface/cs-form-service';
 import {FormServiceImpl} from './services/form/implementation/form-service-impl';
+import {CsSystemSettingsService} from './services/system-settings/interface';
+import {SystemSettingsServiceImpl} from './services/system-settings/implementation/system-settings-service-impl';
+import {CsClientStorage} from './core/cs-client-storage';
+import { CsDiscussionService } from './services/discussion';
+import { DiscussionServiceImpl } from './services/discussion/implementation/discussion-service-impl';
+
+export interface CsDiscussionServiceConfig {
+    apiPath: string;
+}
+
+export interface CsSystemSettingsServiceConfig {
+    apiPath: string;
+}
 
 export interface CsUserServiceConfig {
     apiPath: string;
@@ -27,6 +40,7 @@ export interface CsUserServiceConfig {
 export interface CsGroupServiceConfig {
     apiPath: string;
     dataApiPath: string;
+    updateGroupGuidelinesApiPath?: string;
 }
 
 export interface CsFrameworkServiceConfig {
@@ -53,6 +67,8 @@ export interface CsConfig {
             channelId?: string;
             producerId?: string;
             deviceId?: string;
+            sessionId?: string;
+            appVersion?: string;
         },
         api: {
             host: string;
@@ -70,6 +86,8 @@ export interface CsConfig {
         locationServiceConfig?: CsLocationServiceConfig,
         courseServiceConfig?: CsCourseServiceConfig,
         formServiceConfig?: CsFormServiceConfig,
+        systemSettingsServiceConfig?: CsSystemSettingsServiceConfig,
+        discussionServiceConfig?: CsDiscussionServiceConfig
     };
 }
 
@@ -77,7 +95,8 @@ export class CsModule {
     private _container: Container;
     private onUpdateConfigCallback?: () => void;
 
-    private static _instance?: CsModule;
+    // tslint:disable-next-line:member-ordering
+    static _instance?: CsModule;
 
     public static get instance(): CsModule {
         if (!CsModule._instance) {
@@ -127,7 +146,15 @@ export class CsModule {
         return this._container.get<CsFormService>(InjectionTokens.services.form.FORM_SERVICE);
     }
 
-    public async init(config: CsConfig, onConfigUpdate?: () => void) {
+    get systemSettingsService(): CsSystemSettingsService {
+        return this._container.get<CsSystemSettingsService>(InjectionTokens.services.systemSettings.SYSTEM_SETTINGS_SERVICE);
+    }
+
+    get discussionService(): CsDiscussionService {
+        return this._container.get<CsDiscussionService>(InjectionTokens.services.discussion.DISCUSSION_SERVICE);
+    }
+
+    public async init(config: CsConfig, onConfigUpdate?: () => void, clientStorage?: CsClientStorage) {
         if (onConfigUpdate) {
             this.onUpdateConfigCallback = onConfigUpdate;
         }
@@ -141,6 +168,12 @@ export class CsModule {
         this.updateConfig(config);
 
         this._isInitialised = true;
+
+        if (clientStorage) {
+            this._container.bind<CsClientStorage>(InjectionTokens.core.CLIENT_STORAGE).toConstantValue(clientStorage);
+        }
+
+        this.httpService.init();
     }
 
     updateConfig(config: CsConfig) {
@@ -164,6 +197,10 @@ export class CsModule {
             .toConstantValue(config.core.global.producerId);
         this._container[mode]<string | undefined>(InjectionTokens.core.global.DEVICE_ID)
             .toConstantValue(config.core.global.deviceId);
+        this._container[mode]<string | undefined>(InjectionTokens.core.global.SESSION_ID)
+            .toConstantValue(config.core.global.sessionId);
+        this._container[mode]<string | undefined>(InjectionTokens.core.global.APP_VERSION)
+            .toConstantValue(config.core.global.appVersion);
         this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.BEARER_TOKEN)
             .toConstantValue(config.core.api.authentication.bearerToken);
         this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
@@ -185,6 +222,10 @@ export class CsModule {
                 .toConstantValue(config.services.groupServiceConfig.apiPath);
             this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_DATA_API_PATH)
                 .toConstantValue(config.services.groupServiceConfig.dataApiPath);
+            if (config.services.groupServiceConfig.updateGroupGuidelinesApiPath) {
+                this._container[mode]<string>(InjectionTokens.services.group.GROUP_SERVICE_UPDATE_GUIDELINES_API_PATH)
+                    .toConstantValue(config.services.groupServiceConfig.updateGroupGuidelinesApiPath);
+            }
         }
 
         // frameworkService
@@ -208,10 +249,10 @@ export class CsModule {
             .to(CourseServiceImpl).inSingletonScope();
         if (config.services.courseServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.course.COURSE_SERVICE_API_PATH)
-            .toConstantValue(config.services.courseServiceConfig.apiPath);
+                .toConstantValue(config.services.courseServiceConfig.apiPath);
             if (config.services.courseServiceConfig.certRegistrationApiPath) {
                 this._container[mode]<string>(InjectionTokens.services.course.COURSE_SERVICE_CERT_REGISTRATION_API_PATH)
-                .toConstantValue(config.services.courseServiceConfig.certRegistrationApiPath);
+                    .toConstantValue(config.services.courseServiceConfig.certRegistrationApiPath);
             }
         }
 
@@ -231,8 +272,24 @@ export class CsModule {
                 .toConstantValue(config.services.formServiceConfig.apiPath);
         }
 
+        // systemSettings
+        this._container[mode]<CsSystemSettingsService>(InjectionTokens.services.systemSettings.SYSTEM_SETTINGS_SERVICE)
+          .to(SystemSettingsServiceImpl).inSingletonScope();
+        if (config.services.systemSettingsServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.systemSettings.SYSTEM_SETTINGS_SERVICE_API_PATH)
+              .toConstantValue(config.services.systemSettingsServiceConfig.apiPath);
+        }
+
         if (mode === 'rebind' && this.onUpdateConfigCallback) {
             this.onUpdateConfigCallback();
+        }
+
+        // discussion service
+        this._container[mode]<CsDiscussionService>(InjectionTokens.services.discussion.DISCUSSION_SERVICE)
+            .to(DiscussionServiceImpl).inSingletonScope();
+        if (config.services.discussionServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.discussion.DISCUSSION_SERVICE_API_PATH)
+                .toConstantValue(config.services.discussionServiceConfig.apiPath);
         }
     }
 }

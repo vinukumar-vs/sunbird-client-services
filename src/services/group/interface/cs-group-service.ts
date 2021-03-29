@@ -1,3 +1,4 @@
+import { CsGroup } from './../../../models/group/index';
 import {Group, GroupEntityStatus, GroupMemberRole, GroupMembershipType} from '../../../models/group';
 import {Observable} from 'rxjs';
 import {CsGroupServiceConfig} from '../../../index';
@@ -61,6 +62,7 @@ export interface CsGroupUpdateMembersRequest {
         userId: string;
         role?: GroupMemberRole;
         status?: GroupEntityStatus;
+        visited?: boolean;
     }[];
 }
 
@@ -123,6 +125,14 @@ export interface CsGroupSearchCriteria {
 export interface CsGroupDeleteResponse {
 }
 
+// tslint:disable-next-line:no-empty-interface
+export interface CsGroupSuspendResponse {
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface CsGroupReactivateResponse {
+}
+
 export interface CsGroupRemoveActivitiesRequest {
     activityIds: string[];
 }
@@ -137,26 +147,43 @@ export interface CsGroupRemoveActivitiesResponse {
     };
 }
 
-export interface CsGroupSearchResponse extends Group {
+export interface CsGroupSearchResponse extends CsGroup {
     memberRole: GroupMemberRole;
+    visited?: boolean;
 }
 
 export interface CsGroupSupportedActivitiesFormField {
     index: number;
     title: string;
+    translations: string;
+    isEnabled: boolean;
     activityType: string;
     objectType: string;
+    searchQuery: string;
     sortBy: {
         [key: string]: 'asc' | 'desc'
     }[];
 }
+
+export interface CsGroupUpdateGroupGuidelinesRequest {
+    userId: string;
+    groups: {
+        groupId: string;
+        visited: boolean;
+    }[];
+}
+
+export interface CsGroupUpdateGroupGuidelinesResponse {
+}
+
+
 
 export interface CsGroupService {
     activityService: CsGroupActivityService;
 
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse>;
 
-    getById(id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig): Observable<Group>;
+    getById(id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig): Observable<CsGroup>;
 
     search(searchCriteria: CsGroupSearchCriteria, config?: CsGroupServiceConfig): Observable<CsGroupSearchResponse[]>;
 
@@ -177,4 +204,10 @@ export interface CsGroupService {
     removeActivities(groupId: string, removeActivitiesRequest: CsGroupRemoveActivitiesRequest, config?: CsGroupServiceConfig): Observable<CsGroupRemoveActivitiesResponse>;
 
     getSupportedActivities(config?: CsGroupServiceConfig): Observable<Form<CsGroupSupportedActivitiesFormField>>;
+
+    suspendById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupSuspendResponse>;
+
+    reactivateById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactivateResponse>;
+
+    updateGroupGuidelines(request: CsGroupUpdateGroupGuidelinesRequest, config?: CsGroupServiceConfig): Observable<CsGroupUpdateGroupGuidelinesResponse>;
 }
