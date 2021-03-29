@@ -8,4 +8,5 @@ export interface CsHttpService {
     requestInterceptors: CsRequestInterceptor[];
     responseInterceptors: CsResponseInterceptor[];
     fetch<T>(request: CsRequest): Observable<CsResponse<T>>;
+    init();
 }

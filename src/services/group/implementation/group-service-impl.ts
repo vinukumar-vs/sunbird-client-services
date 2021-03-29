@@ -1,4 +1,6 @@
-import {Container, inject, injectable} from 'inversify';
+import { CsGroupSuspendResponse, CsGroupReactivateResponse, CsGroupUpdateGroupGuidelinesResponse, CsGroupUpdateGroupGuidelinesRequest } from './../interface/cs-group-service';
+import { CsGroup } from './../../../models/group/index';
+import {Container, inject, injectable, optional} from 'inversify';
 import {
     CsGroupAddActivitiesRequest,
     CsGroupAddActivitiesResponse,
@@ -24,7 +26,7 @@ import {
 } from '../interface';
 import {CsGroupServiceConfig} from '../../..';
 import {Observable} from 'rxjs';
-import {Group, GroupEntityStatus, GroupMemberRole} from '../../../models/group';
+import {Group, GroupEntityStatus} from '../../../models/group';
 import {InjectionTokens} from '../../../injection-tokens';
 import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
 import {map, mergeMap} from 'rxjs/operators';
@@ -39,6 +41,7 @@ export class GroupServiceImpl implements CsGroupService {
         @inject(InjectionTokens.services.group.GROUP_SERVICE_API_PATH) private apiPath: string,
         @inject(InjectionTokens.CONTAINER) private container: Container,
         @inject(InjectionTokens.services.form.FORM_SERVICE) private formService: CsFormService,
+        @optional() @inject(InjectionTokens.services.group.GROUP_SERVICE_UPDATE_GUIDELINES_API_PATH) private updateGroupGuidelinesApiPath: string,
     ) {
     }
 
@@ -226,8 +229,10 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
     getById(
-        id: string, options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean }, config?: CsGroupServiceConfig
-    ): Observable<Group> {
+        id: string,
+        options?: { includeMembers?: boolean, includeActivities?: boolean, groupActivities?: boolean },
+        config?: CsGroupServiceConfig
+    ): Observable<CsGroup> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath(`${config ? config.apiPath : this.apiPath}/read/${id}`)
@@ -251,7 +256,7 @@ export class GroupServiceImpl implements CsGroupService {
             map((r) => r.body.result),
             mergeMap(async (result) => {
                 if (!options || !options.groupActivities || !options.includeActivities) {
-                    return result;
+                    return CsGroup.fromJSON(result);
                 }
 
                 const supportedActivitiesConfig = await this.getSupportedActivities().toPromise();
@@ -286,12 +291,15 @@ export class GroupServiceImpl implements CsGroupService {
 
                     return {
                         title: field.title,
+                        translations: field.translations,
                         count: activitiesByActivityType.length,
+                        isEnabled: field.isEnabled,
+                        objectType: field.objectType,
                         items: activitiesByActivityType
                     };
                 });
 
-                return result;
+                return CsGroup.fromJSON(result);
             })
         );
     }
@@ -306,41 +314,85 @@ export class GroupServiceImpl implements CsGroupService {
                 request: searchCriteria
             })
             .build();
-
         return this.httpService.fetch<{ result: { count: number; group: CsGroupSearchResponse[] } }>(apiRequest).pipe(
             map((r) =>
                 r.body.result.group.sort((a, b) => {
-                    if (a.memberRole === GroupMemberRole.ADMIN && b.memberRole === GroupMemberRole.MEMBER) {
-                        return -1;
-                    } else if (a.memberRole === GroupMemberRole.MEMBER && b.memberRole === GroupMemberRole.ADMIN) {
+                    const bLastActivity = b.updatedOn || b.createdOn!;
+                    const aLastActivity = a.updatedOn || a.createdOn!;
+
+                    if (a.status === GroupEntityStatus.SUSPENDED && b.status !== GroupEntityStatus.SUSPENDED) {
                         return 1;
+                    } else if (b.status === GroupEntityStatus.SUSPENDED && a.status !== GroupEntityStatus.SUSPENDED) {
+                        return -1;
                     }
 
-                    return new Date(b.createdOn!).getTime() - new Date(a.createdOn!).getTime();
+                    return new Date(bLastActivity).getTime() - new Date(aLastActivity).getTime();
                 })
+                .map((g) => CsGroup.fromJSON(g) as CsGroupSearchResponse)
             )
         );
     }
 
     deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse> {
-        return this.updateById(id, {status: GroupEntityStatus.INACTIVE}, config);
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.POST)
+        .withPath(`${config ? config.apiPath : this.apiPath}/delete`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody({
+            request: {
+                groupId: id,
+            }
+        })
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body.result)
+        );
+    }
+
+    suspendById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupSuspendResponse> {
+        return this.updateById(id, {status: GroupEntityStatus.SUSPENDED}, config);
+    }
+
+    reactivateById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupReactivateResponse> {
+        return this.updateById(id, {status: GroupEntityStatus.ACTIVE}, config);
     }
 
     getSupportedActivities(config?: CsGroupServiceConfig): Observable<Form<CsGroupSupportedActivitiesFormField>> {
         const request = {
             'type': 'group',
-            'subType': 'activities_v2',
+            'subType': 'supported_activities',
             'action': 'list'
         };
 
-        return this.formService.getForm<{
-            index: number;
-            title: string;
-            activityType: string;
-            objectType: string;
-            sortBy: {
-                [key: string]: 'asc' | 'desc'
-            }[];
-        }>(request);
+        return this.formService.getForm<CsGroupSupportedActivitiesFormField>(request)
+            .pipe(
+                // TODO: remove objectType: content filter
+                map((result) => {
+                    result.data.fields = result.data.fields
+                        .filter((field) => field.objectType.toLowerCase() === 'content');
+                    return result;
+                })
+            );
+    }
+    updateGroupGuidelines(
+        request: CsGroupUpdateGroupGuidelinesRequest, config?: CsGroupServiceConfig
+    ): Observable<CsGroupUpdateGroupGuidelinesResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+            .withType(CsHttpRequestType.PATCH)
+            .withPath(`${config ? config.apiPath : this.updateGroupGuidelinesApiPath}/update`)
+            .withBearerToken(true)
+            .withUserToken(true)
+            .withBody({
+                request: {
+                    ...request
+                }
+            })
+            .build();
+
+        return this.httpService.fetch<{ result: CsGroupUpdateGroupGuidelinesResponse }>(apiRequest).pipe(
+            map((r) => r.body.result)
+        );
     }
 }

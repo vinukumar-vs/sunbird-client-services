@@ -46,4 +46,13 @@ export class CsResponse<T = any> {
     set headers(value: any) {
         this._headers = value;
     }
+
+    toJSON(): string {
+        return JSON.stringify({
+            responseCode: this._responseCode,
+            errorMesg: this._errorMesg,
+            body: this._body,
+            headers: this._headers,
+        });
+    }
 }

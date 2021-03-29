@@ -28,7 +28,7 @@ export interface Content {
     osId: string;
     contentType: string;
     resourceType: string;
-    mimeType: string;
+    mimeType: ContentMimeType;
     artifactMimeType: string;
     versionKey: string;
     contentEncoding: string;
@@ -60,6 +60,11 @@ export interface Content {
     itemSetPreviewUrl?: string;
     leafNodes?: string[];
     leafNodesCount?: number;
+    primaryCategory?: string;
+    trackable?: Trackable;
+    userConsent?: UserConsent;
+    additionalCategories?: string[];
+    forumId?: string;
 }
 
 export interface LicenseDetails {
@@ -79,4 +84,139 @@ export interface OriginData {
     author?: string;
     license?: string;
     organisation?: string;
+}
+
+export enum TrackingEnabled {
+    YES = 'Yes',
+    NO = 'No'
+}
+
+export enum AutoBatch {
+    YES = 'Yes',
+    NO = 'No'
+}
+
+export enum UserConsent {
+    YES = 'Yes',
+    NO = 'No'
+}
+
+export interface Trackable {
+    enabled: TrackingEnabled;
+    autoBatch: AutoBatch;
+}
+
+export type ContentMimeType =
+    'application/vnd.ekstep.ecml-archive' |
+    'application/vnd.ekstep.html-archive' |
+    'application/vnd.android.package-archive' |
+    'application/vnd.ekstep.content-archive' |
+    'application/vnd.ekstep.content-collection' |
+    'application/vnd.ekstep.plugin-archive' |
+    'application/vnd.ekstep.h5p-archive' |
+    'application/epub' |
+    'text/x-url' |
+    'video/x-youtube' |
+    'application/octet-stream' |
+    'application/msword' |
+    'application/pdf' |
+    'image/jpeg' |
+    'image/jpg' |
+    'image/png' |
+    'image/tiff' |
+    'image/bmp' |
+    'image/gif' |
+    'image/svg+xml' |
+    'video/avi' |
+    'video/mpeg' |
+    'video/quicktime' |
+    'video/3gpp' |
+    'video/mp4' |
+    'video/ogg' |
+    'video/webm' |
+    'audio/mp3' |
+    'audio/mp4' |
+    'audio/mpeg' |
+    'audio/ogg' |
+    'audio/webm' |
+    'audio/x-wav' |
+    'audio/wav';
+
+export enum MimeTypeCategory {
+    VIDEO = 'VIDEO',
+    AUDIO = 'AUDIO',
+    INTERACTION = 'INTERACTION',
+    DOC = 'DOC',
+    ALL = 'ALL'
+}
+
+export class MimeTypeCategoryMapping {
+    public static readonly [MimeTypeCategory.VIDEO]: ContentMimeType[] = [
+        'video/avi',
+        'video/mpeg',
+        'video/quicktime',
+        'video/3gpp',
+        'video/mpeg',
+        'video/mp4',
+        'video/ogg',
+        'video/webm',
+        'video/x-youtube'
+    ];
+    public static readonly [MimeTypeCategory.AUDIO]: ContentMimeType[] = [
+        'audio/mp3',
+        'audio/mp4',
+        'audio/mpeg',
+        'audio/ogg',
+        'audio/webm',
+        'audio/x-wav',
+        'audio/wav'
+    ];
+    public static readonly [MimeTypeCategory.INTERACTION]: ContentMimeType[] = [
+        'application/vnd.ekstep.ecml-archive',
+        'application/vnd.ekstep.html-archive',
+        'application/vnd.ekstep.content-archive',
+        'application/vnd.ekstep.h5p-archive'
+    ];
+    public static readonly [MimeTypeCategory.DOC]: ContentMimeType[] = [
+        'application/pdf',
+        'application/epub',
+        'application/msword'
+    ];
+    public static readonly [MimeTypeCategory.ALL]: ContentMimeType[] = [
+        'application/vnd.ekstep.ecml-archive',
+        'application/vnd.ekstep.html-archive',
+        'application/vnd.android.package-archive',
+        'application/vnd.ekstep.content-archive',
+        'application/vnd.ekstep.content-collection',
+        'application/vnd.ekstep.plugin-archive',
+        'application/vnd.ekstep.h5p-archive',
+        'application/epub',
+        'text/x-url',
+        'video/x-youtube',
+        'application/octet-stream',
+        'application/msword',
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/tiff',
+        'image/bmp',
+        'image/gif',
+        'image/svg+xml',
+        'video/avi',
+        'video/mpeg',
+        'video/quicktime',
+        'video/3gpp',
+        'video/mpeg',
+        'video/mp4',
+        'video/ogg',
+        'video/webm',
+        'audio/mp3',
+        'audio/mp4',
+        'audio/mpeg',
+        'audio/ogg',
+        'audio/webm',
+        'audio/x-wav',
+        'audio/wav'
+    ];
 }

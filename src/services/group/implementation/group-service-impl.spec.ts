@@ -77,6 +77,41 @@ describe('GroupServiceImpl', () => {
                 done();
             });
         });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to create a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            groupId: 'SOME_GROUP_ID'
+                        }
+                    };
+                    return of(response);
+                });
+
+                const request = {
+                    name: 'SOME_NAME',
+                    membershipType: GroupMembershipType.INVITE_ONLY,
+                    description: 'SOME_DESCRIPTION'
+                };
+
+                groupService.create(request, {apiPath: '/some_api_path', dataApiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'POST',
+                        path: '/some_api_path/create',
+                        body: {
+                            request
+                        }
+                    }));
+                    expect(r).toEqual({
+                        groupId: 'SOME_GROUP_ID'
+                    });
+                    done();
+                });
+            });
+        });
     });
 
     describe('updateById()', () => {
@@ -106,6 +141,41 @@ describe('GroupServiceImpl', () => {
                     }
                 }));
                 done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to create a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                const request = {
+                    name: 'SOME_NAME',
+                    membershipType: GroupMembershipType.INVITE_ONLY,
+                    description: 'SOME_DESCRIPTION',
+                    status: GroupEntityStatus.INACTIVE
+                };
+
+                groupService.updateById('SOME_GROUP_ID', request, {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                ...request
+                            }
+                        }
+                    }));
+                    done();
+                });
             });
         });
     });
@@ -147,6 +217,49 @@ describe('GroupServiceImpl', () => {
                 done();
             });
         });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to create a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                const request = {
+                    members: [
+                        {
+                            userId: 'SOME_USER_ID',
+                            role: GroupMemberRole.ADMIN
+                        },
+                        {
+                            userId: 'SOME_USER_ID_2',
+                            role: GroupMemberRole.MEMBER
+                        },
+                    ]
+                };
+
+                groupService.addMembers('SOME_GROUP_ID', request, {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                members: {
+                                    add: request.members
+                                }
+                            }
+                        }
+                    }));
+                    done();
+                });
+            });
+        });
     });
 
     describe('removeMembers()', () => {
@@ -175,6 +288,40 @@ describe('GroupServiceImpl', () => {
                     }
                 }));
                 done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to create a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                const request = {
+                    userIds: ['SOME_USER_ID', 'SOME_USER_ID_2']
+                };
+
+                groupService.removeMembers('SOME_GROUP_ID', request, {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                members: {
+                                    remove: request.userIds
+                                }
+                            }
+                        }
+                    }));
+                    done();
+                });
             });
         });
     });
@@ -216,6 +363,49 @@ describe('GroupServiceImpl', () => {
                 done();
             });
         });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to update members of a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                const request = {
+                    members: [
+                        {
+                            userId: 'SOME_USER_ID',
+                            role: GroupMemberRole.ADMIN
+                        },
+                        {
+                            userId: 'SOME_USER_ID_2',
+                            role: GroupMemberRole.MEMBER
+                        },
+                    ]
+                };
+
+                groupService.updateMembers('SOME_GROUP_ID', request, {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                members: {
+                                    edit: request.members
+                                }
+                            }
+                        }
+                    }));
+                    done();
+                });
+            });
+        });
     });
 
     describe('addActivities()', () => {
@@ -253,6 +443,49 @@ describe('GroupServiceImpl', () => {
                     }
                 }));
                 done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to add activity to a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                const request = {
+                    activities: [
+                        {
+                            id: 'SOME_ID',
+                            type: 'SOME_TYPE'
+                        },
+                        {
+                            id: 'SOME_ID_2',
+                            type: 'SOME_TYPE'
+                        },
+                    ]
+                };
+
+                groupService.addActivities('SOME_GROUP_ID', request, {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                activities: {
+                                    add: request.activities
+                                }
+                            }
+                        }
+                    }));
+                    done();
+                });
             });
         });
     });
@@ -294,6 +527,49 @@ describe('GroupServiceImpl', () => {
                 done();
             });
         });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to update activites from a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                const request = {
+                    activities: [
+                        {
+                            id: 'SOME_ID',
+                            type: 'SOME_TYPE'
+                        },
+                        {
+                            id: 'SOME_ID_2',
+                            type: 'SOME_TYPE'
+                        },
+                    ]
+                };
+
+                groupService.updateActivities('SOME_GROUP_ID', request, {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                activities: {
+                                    edit: request.activities
+                                }
+                            }
+                        }
+                    }));
+                    done();
+                });
+            });
+        });
     });
 
     describe('removeActivities()', () => {
@@ -322,6 +598,40 @@ describe('GroupServiceImpl', () => {
                     }
                 }));
                 done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to remove activities of a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                const request = {
+                    activityIds: ['SOME_ID', 'SOME_ID_2']
+                };
+
+                groupService.removeActivities('SOME_GROUP_ID', request, {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                activities: {
+                                    remove: request.activityIds
+                                }
+                            }
+                        }
+                    }));
+                    done();
+                });
             });
         });
     });
@@ -549,6 +859,30 @@ describe('GroupServiceImpl', () => {
                 done();
             });
         });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to get a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {}
+                    };
+                    return of(response);
+                });
+
+                groupService.getById('SOME_GROUP_ID', undefined, {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        path: expect.stringContaining('/some_api_path'),
+                        type: 'GET'
+                    }));
+                    done();
+                });
+            });
+        });
     });
 
     describe('search()', () => {
@@ -581,7 +915,8 @@ describe('GroupServiceImpl', () => {
             });
         });
 
-        it('should sort groups with order -> groups where user is admin, other groups -> ordered by recent first', (done) => {
+        it('should sort groups with order -> active then suspended -> within active lastUpdatedOn -> within suspended lastUpdatedOn',
+        (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();
                 response.responseCode = 200;
@@ -606,12 +941,12 @@ describe('GroupServiceImpl', () => {
                                 'id': 'cf3b680e-01da-4a81-a39c-da74c1202ab1',
                                 'name': 'Managed user group',
                                 'description': '',
-                                'status': 'active',
+                                'status': 'suspended',
                                 'membershipType': 'moderated',
                                 'activities': [],
                                 'createdOn': '2020-07-16 08:54:45:061+0000',
                                 'createdBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
-                                'updatedOn': '2020-07-16 09:05:40:622+0000',
+                                'updatedOn': '2020-07-05 09:05:40:622+0000',
                                 'updatedBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
                                 'members': null,
                                 'memberRole': 'admin'
@@ -623,9 +958,21 @@ describe('GroupServiceImpl', () => {
                                 'status': 'active',
                                 'membershipType': 'moderated',
                                 'activities': [],
+                                'createdOn': '2020-07-02 10:05:25:939+0000',
+                                'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'members': null,
+                                'memberRole': 'member'
+                            },
+                            {
+                                'id': 'dcbb4d49-f3be-4ffd-8de9-d09a452ea4c1',
+                                'name': 'Test 396',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [],
                                 'createdOn': '2020-07-17 10:05:25:939+0000',
                                 'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
-                                'updatedOn': '2020-07-16 10:11:33:240+0000',
+                                'updatedOn': '2020-07-13 10:05:25:939+0000',
                                 'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
                                 'members': null,
                                 'memberRole': 'member'
@@ -639,22 +986,8 @@ describe('GroupServiceImpl', () => {
                                 'activities': [{'id': 'do_21303485870433894411338', 'type': 'Course'}],
                                 'createdOn': '2020-07-16 09:12:47:833+0000',
                                 'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
-                                'updatedOn': '2020-07-16 10:03:22:887+0000',
+                                'updatedOn': '2020-07-20 10:03:22:887+0000',
                                 'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
-                                'members': null,
-                                'memberRole': 'admin'
-                            },
-                            {
-                                'id': 'ee854e1c-4e66-4ca3-a375-593b002c7f27',
-                                'name': 'Manage user with admin role',
-                                'description': '',
-                                'status': 'active',
-                                'membershipType': 'moderated',
-                                'activities': [{'id': 'do_2130654356933754881407', 'type': 'Course'}],
-                                'createdOn': '2020-07-16 09:06:06:590+0000',
-                                'createdBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
-                                'updatedOn': '2020-07-16 12:29:54:511+0000',
-                                'updatedBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
                                 'members': null,
                                 'memberRole': 'admin'
                             },
@@ -665,35 +998,106 @@ describe('GroupServiceImpl', () => {
                                 'status': 'active',
                                 'membershipType': 'moderated',
                                 'activities': [],
+                                'createdOn': '2020-07-03 10:05:25:939+0000',
+                                'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'members': null,
+                                'memberRole': 'member'
+                            },
+                            {
+                                'id': 'ee854e1c-4e66-4ca3-a375-593b002c7f27',
+                                'name': 'Manage user with admin role',
+                                'description': '',
+                                'status': 'suspended',
+                                'membershipType': 'moderated',
+                                'activities': [{'id': 'do_2130654356933754881407', 'type': 'Course'}],
+                                'createdOn': '2020-07-16 09:06:06:590+0000',
+                                'createdBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
+                                'updatedOn': '2020-07-21 12:29:54:511+0000',
+                                'updatedBy': 'ca828836-ebec-4c7a-a6e7-393692ac0549',
+                                'members': null,
+                                'memberRole': 'admin'
+                            },
+                            {
+                                'id': 'dcbb4d49-f3be-4ffd-8de9-d09a452ea4c1',
+                                'name': 'Test 396',
+                                'description': '',
+                                'status': 'suspended',
+                                'membershipType': 'moderated',
+                                'activities': [],
                                 'createdOn': '2020-07-16 10:05:25:939+0000',
                                 'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
-                                'updatedOn': '2020-07-16 10:11:33:240+0000',
+                                'updatedOn': '2020-07-20 10:11:33:240+0000',
                                 'updatedBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
                                 'members': null,
                                 'memberRole': 'member'
-                            }
+                            },
+                            {
+                                'id': 'dcbb4d49-f3be-4ffd-8de9-d09a452ea4c1',
+                                'name': 'Test 396',
+                                'description': '',
+                                'status': 'active',
+                                'membershipType': 'moderated',
+                                'activities': [],
+                                'createdOn': '2020-07-01 10:05:25:939+0000',
+                                'createdBy': '9f9766d3-b054-41e0-af50-85a7c556863c',
+                                'members': null,
+                                'memberRole': 'member'
+                            },
                         ]
                     }
                 };
                 return of(response);
             });
-
             const request = {
                 filters: {
                     userId: 'SOME_USER_ID'
                 }
             };
-
             groupService.search(request).subscribe((groups) => {
-                expect(groups.map((g) => g.memberRole + '-' + g.createdOn)).toEqual([
-                    'admin-2020-07-16 12:22:45:719+0000',
-                    'admin-2020-07-16 09:12:47:833+0000',
-                    'admin-2020-07-16 09:06:06:590+0000',
-                    'admin-2020-07-16 08:54:45:061+0000',
-                    'member-2020-07-17 10:05:25:939+0000',
-                    'member-2020-07-16 10:05:25:939+0000'
+                expect(groups.map((g) => g.status + '_' + (g.updatedOn ? g.updatedOn : 'created_' + g.createdOn))).toEqual([
+                    'active_2020-07-20 10:03:22:887+0000',
+                    'active_2020-07-16 12:23:33:615+0000',
+                    'active_2020-07-13 10:05:25:939+0000',
+                    'active_created_2020-07-03 10:05:25:939+0000',
+                    'active_created_2020-07-02 10:05:25:939+0000',
+                    'active_created_2020-07-01 10:05:25:939+0000',
+                    'suspended_2020-07-21 12:29:54:511+0000',
+                    'suspended_2020-07-20 10:11:33:240+0000',
+                    'suspended_2020-07-05 09:05:40:622+0000'
                 ]);
                 done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to search groups of a user with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            group: []
+                        }
+                    };
+                    return of(response);
+                });
+
+                const request = {
+                    filters: {
+                        userId: 'SOME_USER_ID'
+                    }
+                };
+
+                groupService.search(request, {apiPath: '/some_api_path', dataApiPath: '/some_api_path'}).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'POST',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request
+                        }
+                    }));
+                    done();
+                });
             });
         });
     });
@@ -709,15 +1113,207 @@ describe('GroupServiceImpl', () => {
 
             groupService.deleteById('SOME_GROUP_ID').subscribe(() => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'PATCH',
+                    type: 'POST',
                     body: {
                         request: {
-                            groupId: 'SOME_GROUP_ID',
-                            status: GroupEntityStatus.INACTIVE
+                            groupId: 'SOME_GROUP_ID'
                         }
                     }
                 }));
                 done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to delete a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                groupService.deleteById( 'SOME_GROUP_ID', {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'POST',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                               groupId: 'SOME_GROUP_ID'
+                            }
+                        }
+                    }));
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('suspendById()', () => {
+        it('should be able to suspend a group with appropriate request ', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {};
+                return of(response);
+            });
+
+            groupService.suspendById('SOME_GROUP_ID').subscribe(() => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'PATCH',
+                    body: {
+                        request: {
+                            groupId: 'SOME_GROUP_ID',
+                            status: GroupEntityStatus.SUSPENDED
+                        }
+                    }
+                }));
+                done();
+            });
+        });
+        describe('when configuration is overridden', () => {
+            it('should be able to suspend a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                groupService.suspendById('SOME_GROUP_ID', { apiPath: '/some_api_path', dataApiPath: '/some_api_path' }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                status: GroupEntityStatus.SUSPENDED
+                            }
+                        }
+                    }));
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('reactivateById()', () => {
+        it('should be able to reactive a group with appropriate request ', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {};
+                return of(response);
+            });
+
+            groupService.reactivateById('SOME_GROUP_ID').subscribe(() => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'PATCH',
+                    body: {
+                        request: {
+                            groupId: 'SOME_GROUP_ID',
+                            status: GroupEntityStatus.ACTIVE
+                        }
+                    }
+                }));
+                done();
+            });
+        });
+        describe('when configuration is overridden', () => {
+            it('should be able to reactive a group with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                groupService.reactivateById('SOME_GROUP_ID', { apiPath: '/some_api_path', dataApiPath: '/some_api_path' }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                groupId: 'SOME_GROUP_ID',
+                                status: GroupEntityStatus.ACTIVE
+                            }
+                        }
+                    }));
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('updateGroupGuidelines()', () => {
+        it('should be able to update  group guidelines with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {};
+                return of(response);
+            });
+
+            const request = {
+                userId: 'SOME_USER_ID',
+                groups: [
+                    {
+                        groupId: 'SOME_GROUP_ID',
+                        visited: true
+                    }
+                ]
+            };
+
+            groupService.updateGroupGuidelines( request).subscribe(() => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'PATCH',
+                    body: {
+                        request: {
+                            ...request
+                        }
+                    }
+                }));
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should be able to update group guidelines with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {};
+                    return of(response);
+                });
+
+                const request = {
+                    userId: 'SOME_USER_ID',
+                    groups: [
+                        {
+                            groupId: 'SOME_GROUP_ID',
+                            visited: true
+                        }
+                    ]
+                };
+
+                groupService.updateGroupGuidelines( request, {
+                    apiPath: '/some_api_path',
+                    dataApiPath: '/some_api_path'
+                }).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        path: expect.stringContaining('/some_api_path'),
+                        body: {
+                            request: {
+                                ...request
+                            }
+                        }
+                    }));
+                    done();
+                });
             });
         });
     });

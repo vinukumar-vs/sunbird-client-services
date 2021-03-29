@@ -13,7 +13,8 @@ export enum CsHttpRequestType {
     GET = 'GET',
     POST = 'POST',
     PATCH = 'PATCH',
-    DELETE = 'DELETE'
+    DELETE = 'DELETE',
+    PUT = 'PUT'
 }
 
 export interface CsSerializedRequest {
@@ -29,6 +30,29 @@ export interface CsSerializedRequest {
 }
 
 export class CsRequest {
+    static fromJSON(json: Partial<CsSerializedRequest>): CsRequest {
+        const builder = new CsRequest.Builder();
+        /* istanbul ignore else */
+        if (json.body) { builder.withBody(json.body); }
+        /* istanbul ignore else */
+        if (json.type) { builder.withType(json.type); }
+        /* istanbul ignore else */
+        if (json.host) { builder.withHost(json.host); }
+        /* istanbul ignore else */
+        if (json.path) { builder.withPath(json.path); }
+        /* istanbul ignore else */
+        if (json.serializer) { builder.withSerializer(json.serializer); }
+        /* istanbul ignore else */
+        if (json.withBearerToken) { builder.withBearerToken(json.withBearerToken); }
+        /* istanbul ignore else */
+        if (json.withUserToken) { builder.withUserToken(json.withUserToken); }
+        /* istanbul ignore else */
+        if (json.headers) { builder.headers(json.headers); }
+        /* istanbul ignore else */
+        if (json.parameters) { builder.withParameters(json.parameters); }
+        return builder.build();
+    }
+
     static Builder: any = class Builder {
 
         protected request: CsRequest;
