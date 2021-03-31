@@ -29,6 +29,26 @@ describe('ContentServiceImpl', () => {
     });
 
     describe('when question APIs is called', () => {
+        it('should be able to get question hierarchy response', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    result: {}
+                };
+                return of(response);
+            });
+            contentService.getQuestionSetHierarchy('do_1132131785524101121151', {
+                hierarchyApiPath: '/some_api_path',
+                questionListApiPath: '/some_api_path'
+            }).subscribe(() => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET'
+                }));
+                done();
+            });
+        });
+
         it('should be able to get question list response', (done) => {
             mockHttpService.fetch = jest.fn(() => {
                 const response = new CsResponse();
@@ -51,26 +71,6 @@ describe('ContentServiceImpl', () => {
                             },
                         }
                     }
-                }));
-                done();
-            });
-        });
-
-        it('should be able to get question hierarchy response', (done) => {
-            mockHttpService.fetch = jest.fn(() => {
-                const response = new CsResponse();
-                response.responseCode = 200;
-                response.body = {
-                    result: {}
-                };
-                return of(response);
-            });
-            contentService.getQuestionSetHierarchy('do_1132131785524101121151', {
-                hierarchyApiPath: '/some_api_path',
-                questionListApiPath: '/some_api_path'
-            }).subscribe(() => {
-                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'GET'
                 }));
                 done();
             });
