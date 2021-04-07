@@ -130,4 +130,10 @@ export class TelemetryServiceImpl implements TelemetryService {
             this.telemetryProvider.assess(data , options);
         }
     }
+
+    public raiseResponseTelemetry(data, options){
+        if(this.isTelemetryInitialised()){
+            this.telemetryProvider.response(data , options);
+        }
+    }
 }
