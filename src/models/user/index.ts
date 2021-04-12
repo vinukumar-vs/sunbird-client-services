@@ -28,6 +28,7 @@ export interface User {
     };
     userType?: string;
     userSubType?: string;
+    dob?: string;
 }
 
 export enum UserDeclarationOperation {
