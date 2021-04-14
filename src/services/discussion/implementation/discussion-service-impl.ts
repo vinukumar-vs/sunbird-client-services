@@ -563,7 +563,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
     contextBasedTags(data: CsGetContextBasedTagRequest, config?: CsDiscussionServiceConfig): Observable<CsGetContextBasedTagResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
-            .withPath(`${config ? config.apiPath : this.apiPath}/context/tags`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/forum/tags`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
