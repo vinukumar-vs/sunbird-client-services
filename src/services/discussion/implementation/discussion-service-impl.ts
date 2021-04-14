@@ -1,10 +1,10 @@
 
-import { Container, inject, injectable } from 'inversify';
-import { CsDiscussionServiceConfig } from '../../..';
-import { Observable } from 'rxjs';
-import { InjectionTokens } from '../../../injection-tokens';
-import { CsHttpRequestType, CsHttpService, CsRequest } from '../../../core/http-service/interface';
-import { map, mergeMap } from 'rxjs/operators';
+import {Container, inject, injectable} from 'inversify';
+import {CsDiscussionServiceConfig} from '../../..';
+import {Observable} from 'rxjs';
+import {InjectionTokens} from '../../../injection-tokens';
+import {CsHttpRequestType, CsHttpService, CsRequest} from '../../../core/http-service/interface';
+import {map, mergeMap} from 'rxjs/operators';
 import { CsAttachForumRequest, CsAttachForumResponse, CsDiscussionService, CsGetContextBasedDiscussionRequest, CsGetContextBasedDiscussionResponse, CsGetContextBasedTagDiscussionRequest, CsGetContextBasedTagDiscussionResponse, CsGetContextBasedTagRequest, CsGetContextBasedTagResponse, CsRemoveForumRequest, CsRemoveForumResponse } from '../interface/cs-discussion-service';
 import { CsFormService } from 'src/services/form/interface/cs-form-service';
 
@@ -457,7 +457,34 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         )
     }
 
-    getContextBasedDiscussion(data: CsGetContextBasedDiscussionRequest, config?: CsDiscussionServiceConfig): Observable<CsGetContextBasedDiscussionResponse> {
+    deleteTopic(tid: number, config?: CsDiscussionServiceConfig): Observable<any> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.DELETE)
+        .withPath(`${config ? config.apiPath : this.apiPath}/v2/topics/${tid}`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    editTopic(tid: number, data: any, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+        .withType(CsHttpRequestType.POST)
+        .withPath(`${config ? config.apiPath : this.apiPath}/v2/topics/${tid}`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .withBody(data)
+        .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    getContextBasedDiscussion(data: CsGetContextBasedDiscussionRequest, config?: CsDiscussionServiceConfig): Observable<any> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
             .withPath(`${config ? config.apiPath : this.apiPath}/category/list`)
@@ -563,5 +590,5 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             map((r) => r.body)
         );
     }
-
+      
 }

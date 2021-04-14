@@ -1271,4 +1271,389 @@ describe('DiscussionServiceImpl', () => {
         });
     })
 
+    describe('deleteTopic()', () => {
+        it('should delete topic with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_TOPIC_ID'
+                };
+                return of(response);
+            });
+            discussionService.deleteTopic(10).subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'DELETE',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_TOPIC_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should delete with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_TOPIC_ID'
+                    };
+                    return of(response);
+                });
+                discussionService.deleteTopic(10, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'DELETE',
+                        path: '/some_api_path/v2/topics/10'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_TOPIC_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('editTopic()', () => {
+        it('should edit a topic with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_TOPIC_ID'
+                };
+                return of(response);
+            });
+            const req = {
+                sbType: 'some_type',
+                sbIdentifier: 'id',
+                cid: 1
+            }
+            discussionService.editTopic(10, req).subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'POST',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_TOPIC_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should edit a topic with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_TOPIC_ID'
+                    };
+                    return of(response);
+                });
+                const req = {
+                    sbType: 'some_type',
+                    sbIdentifier: 'id',
+                    cid: 1
+                }
+
+                discussionService.editTopic(10, req, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'POST',
+                        path: '/some_api_path/v2/topics/10'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_TOPIC_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('getContextBasedDiscussion()', () => {
+        it('should return context based discussion with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_FORUM_ID'
+                };
+                return of(response);
+            });
+            const req = {
+                cids: [1],
+            }
+            discussionService.getContextBasedDiscussion(req).subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'POST',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_FORUM_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should return context based discussion with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_FORUM_ID'
+                    };
+                    return of(response);
+                });
+                const req = {
+                    cids: [1],
+                }
+                discussionService.getContextBasedDiscussion(req, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'POST',
+                        path: '/some_api_path/category/list'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_FORUM_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('getContextBasedTagDiscussion()', () => {
+        it('should return context based tagged discussion with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_FORUM_ID'
+                };
+                return of(response);
+            });
+            const req = {
+                cids: [1],
+                tag : "some_tag"
+            }
+            discussionService.getContextBasedTagDiscussion(req).subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'POST',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_FORUM_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should return context based tagged discussion with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_FORUM_ID'
+                    };
+                    return of(response);
+                });
+                const req = {
+                    cids: [1],
+                    tag : "some_tag"
+                }
+                discussionService.getContextBasedTagDiscussion(req, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'POST',
+                        path: '/some_api_path/tags/list'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_FORUM_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('recentPost()', () => {
+        it('should return recent discussions with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_FORUM_ID'
+                };
+                return of(response);
+            });
+            discussionService.recentPost().subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_FORUM_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should return recent discussion with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_FORUM_ID'
+                    };
+                    return of(response);
+                });
+                discussionService.recentPost({apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/recent'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_FORUM_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('popularPost()', () => {
+        it('should return popular discussions with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_FORUM_ID'
+                };
+                return of(response);
+            });
+            discussionService.popularPost().subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_FORUM_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should return popular discussion with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_FORUM_ID'
+                    };
+                    return of(response);
+                });
+                discussionService.popularPost({apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/popular'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_FORUM_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('getSingleCategoryDetails()', () => {
+        it('should call getSingleCategoryDetails API with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_FORUM_ID'
+                };
+                return of(response);
+            });
+            discussionService.getSingleCategoryDetails(10).subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_FORUM_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should call getSingleCategoryDetails API with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_FORUM_ID'
+                    };
+                    return of(response);
+                });
+                discussionService.getSingleCategoryDetails(10, {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/category/10'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_FORUM_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('getTagBasedDiscussion()', () => {
+        it('should call getTagBasedDiscussion API with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    forumId: 'SOME_FORUM_ID'
+                };
+                return of(response);
+            });
+            discussionService.getTagBasedDiscussion('some_tag').subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    forumId: 'SOME_FORUM_ID'
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should call getTagBasedDiscussion API with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        forumId: 'SOME_FORUM_ID'
+                    };
+                    return of(response);
+                });
+                discussionService.getTagBasedDiscussion('some_tag', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/tags/some_tag'
+                    }));
+                    expect(r).toEqual({
+                        forumId: 'SOME_FORUM_ID'
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
 });

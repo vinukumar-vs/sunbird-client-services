@@ -54,9 +54,12 @@ export interface CsRemoveForumResponse {
 }
 
 export interface CsGetContextBasedDiscussionRequest {
+    cids: any[]
 }
 
 export interface CsGetContextBasedDiscussionResponse {
+    cids: any[],
+    tag: string
 }
 
 export interface CsGetContextBasedTagDiscussionRequest {
@@ -142,7 +145,11 @@ export interface CsDiscussionService {
 
     removeForum(data: CsRemoveForumRequest, config?: CsDiscussionServiceConfig): Observable<CsRemoveForumResponse>;
 
-    createForum(data: any, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse>;
+    createForum( data: any, config?: CsDiscussionServiceConfig): Observable<CsAttachForumResponse>;
+
+    deleteTopic( tid: number, config?: CsDiscussionServiceConfig): Observable<any>;
+
+    editTopic(tid: number, data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
     getContextBasedDiscussion(data: CsGetContextBasedDiscussionRequest, config?: CsDiscussionServiceConfig): Observable<CsGetContextBasedDiscussionResponse>;
 

@@ -63,6 +63,7 @@ export interface CsProfileUpdateRequest {
     }[];
     userType?: string;
     userSubType?: string;
+    dob?: string;
 }
 
 export interface CsProfileUpdateResponse {
