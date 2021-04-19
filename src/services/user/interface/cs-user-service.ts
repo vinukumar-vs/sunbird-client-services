@@ -61,8 +61,10 @@ export interface CsProfileUpdateRequest {
         idType: string;
         provider: string;
     }[];
-    userType?: string;
-    userSubType?: string;
+    profileUserType?: {
+        type?: string;
+        subType?: string;
+    };
     dob?: string;
 }
 
