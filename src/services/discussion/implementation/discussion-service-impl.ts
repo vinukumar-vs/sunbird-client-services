@@ -319,14 +319,14 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         // return this.http.get<any>(urlConfig.userdetails(urlConfig.userName));
     }
 
-    getContextBasedTopic(slug: string, config?) {
+    getContextBasedTopic(slug: string, pageId: number, config?) {
+        console.log(slug, pageId, config, 'csl');
         const apiRequest: CsRequest = new CsRequest.Builder()
-            .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/category/${slug}`)
-            .withBearerToken(true)
-            .withUserToken(true)
-            .build();
-
+        .withType(CsHttpRequestType.GET)
+        .withPath(`${config ? config.apiPath : this.apiPath}/category/${slug}?page=${pageId}`)
+        .withBearerToken(true)
+        .withUserToken(true)
+        .build();
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
             map((r) => r.body)
         );

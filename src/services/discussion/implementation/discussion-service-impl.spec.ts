@@ -988,7 +988,7 @@ describe('DiscussionServiceImpl', () => {
                 return of(response);
             });
 
-            discussionService.getContextBasedTopic('some_id').subscribe((r) => {
+            discussionService.getContextBasedTopic('some_id', 1).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                 }));
@@ -1010,10 +1010,10 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.getContextBasedTopic('some_context', {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.getContextBasedTopic('some_context', 1,  {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/category/some_context'
+                        path: '/some_api_path/category/some_context?page=1'
                     }));
                     expect(r).toEqual({
                         name: 'some_name'

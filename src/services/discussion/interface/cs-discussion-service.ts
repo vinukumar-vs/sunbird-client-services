@@ -127,15 +127,13 @@ export interface CsDiscussionService {
 
     fetchNetworkProfile(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    getContextBasedTopic(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
-
     createUser(data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
     getForumIds(data: CsGetForumIdsRequest, config?: CsDiscussionServiceConfig): Observable<CsGetForumIdsResponse>;
 
     getUserDetails(data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    getContextBasedTopic(uid: string, config?: CsDiscussionServiceConfig): Observable<any>;
+    getContextBasedTopic(uid: string, pageId: number, config?: CsDiscussionServiceConfig): Observable<any>;
 
     editPost(pid: number, data: any, config?: CsDiscussionServiceConfig): Observable<any>;
 
