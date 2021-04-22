@@ -18,7 +18,7 @@ export class ContentServiceImpl implements CsContentService {
     getQuestionSetHierarchy(contentId: string, config?: CsContentServiceConfig): Observable<CsContentGetQuestionSetResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath((config ? config.hierarchyApiPath : this.hierarchyApiPath) + '/hierarchy/' + contentId + '?mode=edit')
+            .withPath((config ? config.hierarchyApiPath : this.hierarchyApiPath) + '/hierarchy/' + contentId)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
