@@ -88,7 +88,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
     //     return this.http.get(`${url}&sort=${sort}`);
     // }
 
-    votePost(pid: number,  data, config?) {
+    votePost(pid: number, data, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
             .withPath(`${config ? config.apiPath : this.apiPath}/v2/posts/${pid}/vote`)
@@ -439,7 +439,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    attachForum(request:CsAttachForumRequest): Observable<CsAttachForumResponse>{
+    attachForum(request: CsAttachForumRequest): Observable<CsAttachForumResponse> {
         let createForumRequest;
         const req = {
             type: 'forum',
@@ -451,7 +451,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
                 createForumRequest = formData.data.fields[0];
                 createForumRequest['category']['context'] = [request.context];
                 return this.createForum(createForumRequest).pipe(
-                    map((response:any) => response.result[0])
+                    map((response: any) => response.result[0])
                 )
             })
         )
@@ -563,7 +563,7 @@ export class DiscussionServiceImpl implements CsDiscussionService {
     contextBasedTags(data: CsGetContextBasedTagRequest, config?: CsDiscussionServiceConfig): Observable<CsGetContextBasedTagResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
-            .withPath(`${config ? config.apiPath : this.apiPath}/context/tags`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/forum/tags`)
             .withBearerToken(true)
             .withUserToken(true)
             .withBody({
