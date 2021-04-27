@@ -48,7 +48,10 @@ export interface CsProfileUpdateRequest {
     email?: string;
     phoneVerified?: boolean;
     emailVerified?: boolean;
-    locationCodes?: Array<string>;
+    profileLocation?: {
+        code: string;
+        type: string;
+    }[];
     firstName?: string;
     lastName?: string;
     framework?: { [key: string]: any };
