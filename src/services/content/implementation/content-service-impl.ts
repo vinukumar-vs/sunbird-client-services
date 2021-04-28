@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { CsContentGetQuestionSetResponse, CsContentService, CsContentGetQuestionListResponse } from '../interface';
+import { CsContentGetQuestionSetResponse, CsContentService, CsContentGetQuestionListResponse, CsContentGetQuestionSetHierarchyResponse } from '../interface';
 import { CsContentServiceConfig } from '../../..';
 import { Observable } from 'rxjs';
 import { InjectionTokens } from '../../../injection-tokens';
@@ -15,10 +15,25 @@ export class ContentServiceImpl implements CsContentService {
     ) {
     }
 
-    getQuestionSetHierarchy(contentId: string, config?: CsContentServiceConfig): Observable<CsContentGetQuestionSetResponse> {
+    getQuestionSetHierarchy(contentId: string, config?: CsContentServiceConfig): Observable<CsContentGetQuestionSetHierarchyResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
             .withPath((config ? config.hierarchyApiPath : this.hierarchyApiPath) + '/hierarchy/' + contentId)
+            .withBearerToken(true)
+            .withUserToken(true)
+            .build();
+        return this.httpService.fetch<{ result: { questionSet: { children: { identifier: string }[] } } }>(apiRequest).pipe(
+            map((response) => {
+                return response.body.result;
+            })
+        );
+    }
+
+    getQuestionSetRead(contentId: string, params?:any,  config?: CsContentServiceConfig): Observable<CsContentGetQuestionSetResponse> {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+            .withType(CsHttpRequestType.GET)
+            .withPath((config ? config.hierarchyApiPath : this.hierarchyApiPath) + '/read/' + contentId)
+            .withParameters(params || {})
             .withBearerToken(true)
             .withUserToken(true)
             .build();
