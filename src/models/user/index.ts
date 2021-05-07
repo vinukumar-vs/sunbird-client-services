@@ -31,6 +31,7 @@ export interface User {
         subType?: string;
     };
     dob?: string;
+    isMinor?: boolean;
 }
 
 export enum UserDeclarationOperation {
