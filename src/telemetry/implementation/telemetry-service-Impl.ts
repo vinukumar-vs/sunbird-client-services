@@ -136,4 +136,10 @@ export class TelemetryServiceImpl implements TelemetryService {
             this.telemetryProvider.response(data , options);
         }
     }
+
+    public raiseSummaryTelemetry(data, options){
+        if(this.isTelemetryInitialised()){
+            this.telemetryProvider.summary(data , options);
+        }
+    }
 }
