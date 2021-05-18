@@ -22,5 +22,6 @@ export abstract class TelemetryService {
     public abstract setTelemetryAttributes(pdata: IProducerdata, actor: IActor, channel: string , sid: string, did: string);
     public abstract raiseAssesTelemetry(data: any , options: any);
     public abstract raiseResponseTelemetry(data: any , options: any);
+    public abstract raiseSummaryTelemetry(data: any , options: any);
 
 }
