@@ -151,4 +151,78 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
             })
         );
     }
+
+    // getDataForDashlets(hierarchyData, groupId: string,
+    //     activity: Pick<GroupActivity, 'id' | 'type'>,
+    //     mergeGroup?: Group,
+    //     leafNodesCount?: number,
+    //     config?: CsGroupServiceConfig) {
+    //     this.getDataAggregation(
+    //         groupId,
+    //         activity,
+    //         mergeGroup,
+    //         leafNodesCount,
+    //         config
+    //     ).subscribe((aggData) => {
+    //         const assessmentsMap = this.getAssessments(hierarchyData, {});
+    //         aggData.members.forEach(element => {
+    //             element.agg.forEach(e => {
+    //                 if(e.metric.indexOf('score') != -1){
+    //                     e.metric = assessmentsMap[e.metric.split(':')[1]]
+    //                 }
+    //             });
+    //         });
+    //         console.log('aggData', aggData.members[0].agg);
+    //     });
+    // }
+
+    getDataForDashlets(hierarchyData, aggData){
+        const assessmentsMap = this.getAssessments(hierarchyData, {});
+        let rows = [] as any;
+        aggData.members.forEach(element => {
+            const rowObj = {
+                name: element.name
+            }
+            element.agg.forEach(e => {
+                if(e.metric.indexOf('score') != -1){
+                    const name = assessmentsMap[e.metric.split(':')[1]]
+                    console.log('naame', name)
+                    e.metric = name;
+                    rowObj[name] = e.value;
+                }
+                if(e.metric == 'progress'){
+                    rowObj['progress'] = e.value
+                }
+            });
+            rows.push(rowObj);
+        });
+        console.log('aggData', aggData.members[0].agg);
+        let columns = [] as any;
+        for (const key in rows[0]){
+            const colObj = {
+                title: key,
+                data: key
+            }
+            columns.push(colObj)
+        }
+        console.log('rows', rows);
+        console.log('columns', columns);
+
+        return {
+            rows: rows,
+            columns: columns
+        }
+    }
+
+    getAssessments(contents, nameIdMap) {
+        contents.forEach(content => {
+            if (content.children && content.children.length){
+                this.getAssessments(content.children, nameIdMap)
+            } else {
+                nameIdMap[content.identifier] = content.name
+            }
+        });
+        console.log('nameIdMap', nameIdMap);
+        return nameIdMap;
+    }
 }
