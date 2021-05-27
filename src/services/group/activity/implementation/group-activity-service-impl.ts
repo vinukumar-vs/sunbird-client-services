@@ -196,9 +196,19 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
             });
             rows.push(rowObj);
         });
+        let index = 0;
+        let len = 0;
+        rows.forEach((e, idx) => {
+
+            if(Object.keys(e).length > len) {
+                len = Object.keys(e).length;
+                index = idx;
+            }
+        });
+        console.log('idx', index);
         console.log('aggData', aggData.members[0].agg);
         let columns = [] as any;
-        for (const key in rows[0]){
+        for (const key in rows[index]){
             const colObj = {
                 title: key,
                 data: key
@@ -208,10 +218,10 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
         console.log('rows', rows);
         console.log('columns', columns);
 
-        return {
+        return of({
             rows: rows,
             columns: columns
-        }
+        })
     }
 
     getAssessments(contents, nameIdMap) {
