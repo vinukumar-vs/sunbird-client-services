@@ -208,10 +208,10 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
         console.log('rows', rows);
         console.log('columns', columns);
 
-        return {
+        return of({
             rows: rows,
             columns: columns
-        }
+        })
     }
 
     getAssessments(contents, nameIdMap) {
