@@ -6,6 +6,7 @@ import {GroupActivityServiceImpl} from './group-activity-service-impl';
 import {of, throwError} from 'rxjs';
 import {Group} from '../../../../models/group';
 import {CsHttpClientError} from '../../../../core/http-service/errors';
+import {HierarchyData, AggData, AggDataCSL} from './hierararchy.data';
 
 describe('GroupActivityServiceImpl', () => {
     let activityService: CsGroupActivityService;
@@ -847,5 +848,12 @@ describe('GroupActivityServiceImpl', () => {
                 done();
             });
         });
+    });
+
+    describe('getflatjson', () => {
+        it('should give assessments', () => {
+            // activityService.getAssessments(HierarchyData.result.content.children, {})
+            activityService.getDataForDashlets(HierarchyData.result.content.children, AggDataCSL)
+        })
     });
 });
