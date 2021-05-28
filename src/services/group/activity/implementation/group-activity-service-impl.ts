@@ -152,30 +152,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
         );
     }
 
-    // getDataForDashlets(hierarchyData, groupId: string,
-    //     activity: Pick<GroupActivity, 'id' | 'type'>,
-    //     mergeGroup?: Group,
-    //     leafNodesCount?: number,
-    //     config?: CsGroupServiceConfig) {
-    //     this.getDataAggregation(
-    //         groupId,
-    //         activity,
-    //         mergeGroup,
-    //         leafNodesCount,
-    //         config
-    //     ).subscribe((aggData) => {
-    //         const assessmentsMap = this.getAssessments(hierarchyData, {});
-    //         aggData.members.forEach(element => {
-    //             element.agg.forEach(e => {
-    //                 if(e.metric.indexOf('score') != -1){
-    //                     e.metric = assessmentsMap[e.metric.split(':')[1]]
-    //                 }
-    //             });
-    //         });
-    //         console.log('aggData', aggData.members[0].agg);
-    //     });
-    // }
-
     getDataForDashlets(hierarchyData, aggData){
         const assessmentsMap = this.getAssessments(hierarchyData, {});
         let rows = [] as any;
