@@ -156,7 +156,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
             });
             rows.push(rowObj);
         });
-           console.log('loop', rows);
         let index = 0;
         let len = 0;
         rows.forEach((e, idx) => {
@@ -165,8 +164,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                 index = idx;
             }
         });
-        // console.log('idx', index);
-        console.log('aggData', aggData.members[0].agg);
         let columns = [] as any;
         for (let key in rows[index]){
             const colObj = {
@@ -185,8 +182,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
             }
             columns.push(colObj)
         }
-        console.log('rows', rows);
-        console.log('columns', columns);
         return of({
             rows: rows,
             columns: columns
@@ -200,7 +195,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                 nameIdMap[content.identifier] = content.name
             }
         });
-        console.log('nameIdMap', nameIdMap);
         return nameIdMap;
     }
 }
