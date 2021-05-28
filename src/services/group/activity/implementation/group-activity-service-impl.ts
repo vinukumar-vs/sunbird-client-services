@@ -7,7 +7,6 @@ import {inject, injectable} from 'inversify';
 import {InjectionTokens} from '../../../../injection-tokens';
 import {Group, GroupActivity} from '../../../../models/group';
 import {CsHttpClientError} from '../../../../core/http-service/errors';
-
 @injectable()
 export class GroupActivityServiceImpl implements CsGroupActivityService {
     constructor(
@@ -15,7 +14,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
       @inject(InjectionTokens.services.group.GROUP_SERVICE_DATA_API_PATH) private dataApiPath: string
     ) {
     }
-
     getDataAggregation(
       groupId: string,
       activity: Pick<GroupActivity, 'id' | 'type'>,
@@ -37,7 +35,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
             }
         })
             .build();
-
         return this.httpService.fetch<{ result: CsGroupActivityDataAggregation }>(apiRequest).pipe(
             map((r) => r.body.result),
             catchError((e) => {
@@ -63,14 +60,12 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                         members: []
                     } as CsGroupActivityDataAggregation);
                 }
-
                 return throwError(e);
             }),
             map((response) => {
                 if (!mergeGroup) {
                     return response;
                 }
-
                 if (!leafNodesCount) {
                     const groupActivity = (mergeGroup.activities || []).find((a) => {
                         return a.id === activity.id &&
@@ -78,14 +73,12 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                           a.activityInfo &&
                           a.activityInfo.leafNodesCount;
                     });
-
                     if (groupActivity) {
                         response.activity.agg.push({
                             metric: CsGroupActivityAggregationMetric.LEAF_NODES_COUNT,
                             lastUpdatedOn: groupActivity.activityInfo.lastUpdatedOn ? (new Date(groupActivity.activityInfo.lastUpdatedOn)).getTime() : now,
                             value: groupActivity.activityInfo.leafNodesCount
                         });
-
                         leafNodesCount = groupActivity.activityInfo.leafNodesCount;
                     }
                 } else {
@@ -95,7 +88,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                         value: leafNodesCount
                     });
                 }
-
                 response.members = (mergeGroup.members || [])
                     .map((member) => {
                         const maxCompletedCountMember = response.members
@@ -103,24 +95,19 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                         .sort((a, b) => {
                             const aCompletedCount = a.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
                             const bCompletedCount = b.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
-
                             if (!aCompletedCount && !bCompletedCount) {
                                 return 0;
                             }
-
                             if (!aCompletedCount && bCompletedCount) {
                                 return 1;
                             } else if (aCompletedCount && !bCompletedCount) {
                                 return -1;
                             }
-
                             return bCompletedCount!.value - aCompletedCount!.value;
                         })[0];
-
                         if (maxCompletedCountMember) {
                             if (leafNodesCount) {
                                 const completedCountMetric = maxCompletedCountMember.agg.find((agg) => agg.metric === CsGroupActivityAggregationMetric.COMPLETED_COUNT);
-
                                 if (completedCountMetric) {
                                     maxCompletedCountMember.agg.push({
                                         metric: CsGroupActivityAggregationMetric.PROGRESS as any,
@@ -129,10 +116,8 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                                     });
                                 }
                             }
-
                             return maxCompletedCountMember;
                         }
-
                         return {
                             role: member.role,
                             createdBy: member.createdBy!,
@@ -146,28 +131,27 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                             }]
                         };
                     });
-
                 return response;
             })
         );
     }
-
+    
     getDataForDashlets(hierarchyData, aggData){
         const assessmentsMap = this.getAssessments(hierarchyData, {});
         let rows = [] as any;
         aggData.members.forEach(element => {
             const rowObj = {
-                name: element.name
+                name: element.name,
+                progress: 0
             }
             element.agg.forEach(e => {
                 if(e.metric.indexOf('score') != -1){
                     const name = assessmentsMap[e.metric.split(':')[1]]
-                    console.log('naame', name)
                     e.metric = name;
                     rowObj[name] = e.value;
                 }
-                if(e.metric == 'progress'){
-                    rowObj['progress'] = e.value
+                if (e.metric === 'progress') {
+                    rowObj['progress'] = e.value;
                 }
             });
             rows.push(rowObj);
@@ -175,31 +159,34 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
         let index = 0;
         let len = 0;
         rows.forEach((e, idx) => {
-
             if(Object.keys(e).length > len) {
                 len = Object.keys(e).length;
                 index = idx;
             }
         });
-        console.log('idx', index);
-        console.log('aggData', aggData.members[0].agg);
         let columns = [] as any;
-        for (const key in rows[index]){
+        for (let key in rows[index]){
             const colObj = {
                 title: key,
-                data: key
+                data: key,
+                render(data) {
+                    if (data || data === 0) {
+                        return data;
+                    } else {
+                 return  'NA';
+                    }
+                }
+            }
+            if (key === 'progress') {
+                colObj.title = 'progress%'
             }
             columns.push(colObj)
         }
-        console.log('rows', rows);
-        console.log('columns', columns);
-
         return of({
             rows: rows,
             columns: columns
         })
     }
-
     getAssessments(contents, nameIdMap) {
         contents.forEach(content => {
             if (content.children && content.children.length){
@@ -208,7 +195,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                 nameIdMap[content.identifier] = content.name
             }
         });
-        console.log('nameIdMap', nameIdMap);
         return nameIdMap;
     }
 }
