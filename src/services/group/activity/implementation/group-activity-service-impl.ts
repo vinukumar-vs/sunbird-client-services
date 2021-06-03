@@ -169,11 +169,12 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
             const colObj = {
                 title: key,
                 data: key,
-                render(data) {
-                    if (data || data === 0) {
-                        return data;
+                render(data, type, row) {
+                    const val = data || row[key];
+                    if (val || val === 0) {
+                        return val;
                     } else {
-                 return  'NA';
+                        return  'NA';
                     }
                 }
             }
