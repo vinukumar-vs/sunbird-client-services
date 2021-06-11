@@ -167,7 +167,7 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
         let columns = [] as any;
         for (let key in rows[index]){
             const colObj = {
-                title: key,
+                title: ((key.charAt(0).toUpperCase()) + (key.substr(1))),
                 data: key,
                 render(data, type, row) {
                     const val = data || row[key];
@@ -179,7 +179,7 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                 }
             }
             if (key === 'progress') {
-                colObj.title = 'progress%'
+                colObj.title = 'Progress%'
             }
             columns.push(colObj)
         }
