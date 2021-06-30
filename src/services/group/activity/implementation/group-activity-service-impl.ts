@@ -138,17 +138,13 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
     
     getDataForDashlets(hierarchyData, aggData){
         const assessmentsMap = this.getAssessments(hierarchyData, {});
-        console.log('assessmentsMap', assessmentsMap)
         let rows = [] as any;
-        console.log('aggData.members', aggData.members)
         aggData.members.forEach(element => {
             const rowObj = {
                 name: element.name,
                 progress: 0
             }
-            console.log('element', element)
             element.agg.forEach(e => {
-                console.log('each e', e);
                 if(e.metric.indexOf('score') != -1){
                     const name = assessmentsMap[e.metric.split(':')[1]]
                     e.metric = name;
@@ -165,8 +161,6 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
         let columns = [] as any;
         rows.forEach((e, idx) => {
             for (let key in e){
-                console.log('ee----', e);
-                console.log('columns.find(c => c.data === e)', columns.find(c => c.data === key))
                 if(!columns.find(c => c.data === key)) {
                     const colObj = {
                         title: ((key.charAt(0).toUpperCase()) + (key.substr(1))),
@@ -187,10 +181,9 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
                 }
             }
         });
-        console.log('columns', columns);
         return of({
             rows: rows,
-            columns: Array.from(columns)
+            columns: columns
         })
     }
     getAssessments(contents, nameIdMap) {
