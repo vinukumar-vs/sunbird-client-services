@@ -138,13 +138,17 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
     
     getDataForDashlets(hierarchyData, aggData){
         const assessmentsMap = this.getAssessments(hierarchyData, {});
+        console.log('assessmentsMap', assessmentsMap)
         let rows = [] as any;
+        console.log('aggData.members', aggData.members)
         aggData.members.forEach(element => {
             const rowObj = {
                 name: element.name,
                 progress: 0
             }
+            console.log('element', element)
             element.agg.forEach(e => {
+                console.log('each e', e);
                 if(e.metric.indexOf('score') != -1){
                     const name = assessmentsMap[e.metric.split(':')[1]]
                     e.metric = name;
@@ -158,34 +162,35 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
         });
         let index = 0;
         let len = 0;
-        rows.forEach((e, idx) => {
-            if(Object.keys(e).length > len) {
-                len = Object.keys(e).length;
-                index = idx;
-            }
-        });
         let columns = [] as any;
-        for (let key in rows[index]){
-            const colObj = {
-                title: ((key.charAt(0).toUpperCase()) + (key.substr(1))),
-                data: key,
-                render(data, type, row) {
-                    const val = data || row[key];
-                    if (val || val === 0) {
-                        return val;
-                    } else {
-                        return  'NA';
+        rows.forEach((e, idx) => {
+            for (let key in e){
+                console.log('ee----', e);
+                console.log('columns.find(c => c.data === e)', columns.find(c => c.data === key))
+                if(!columns.find(c => c.data === key)) {
+                    const colObj = {
+                        title: ((key.charAt(0).toUpperCase()) + (key.substr(1))),
+                        data: key,
+                        render(data, type, row) {
+                            const val = data || row[key];
+                            if (val || val === 0) {
+                                return val;
+                            } else {
+                                return  'NA';
+                            }
+                        }
                     }
+                    if (key === 'progress') {
+                        colObj.title = 'Progress%'
+                    }
+                    columns.push(colObj)
                 }
             }
-            if (key === 'progress') {
-                colObj.title = 'Progress%'
-            }
-            columns.push(colObj)
-        }
+        });
+        console.log('columns', columns);
         return of({
             rows: rows,
-            columns: columns
+            columns: Array.from(columns)
         })
     }
     getAssessments(contents, nameIdMap) {
