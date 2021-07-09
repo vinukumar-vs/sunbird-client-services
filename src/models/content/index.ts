@@ -65,6 +65,10 @@ export interface Content {
     userConsent?: UserConsent;
     additionalCategories?: string[];
     forumId?: string;
+    se_boards?: string;
+    se_mediums?: string | string[];
+    se_gradeLevels?: string[];
+    se_subjects?: string | string[];
 }
 
 export interface LicenseDetails {
