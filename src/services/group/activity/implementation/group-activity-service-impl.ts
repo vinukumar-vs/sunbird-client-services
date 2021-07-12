@@ -158,31 +158,29 @@ export class GroupActivityServiceImpl implements CsGroupActivityService {
         });
         let index = 0;
         let len = 0;
-        rows.forEach((e, idx) => {
-            if(Object.keys(e).length > len) {
-                len = Object.keys(e).length;
-                index = idx;
-            }
-        });
         let columns = [] as any;
-        for (let key in rows[index]){
-            const colObj = {
-                title: ((key.charAt(0).toUpperCase()) + (key.substr(1))),
-                data: key,
-                render(data, type, row) {
-                    const val = data || row[key];
-                    if (val || val === 0) {
-                        return val;
-                    } else {
-                        return  'NA';
+        rows.forEach((e, idx) => {
+            for (let key in e){
+                if(!columns.find(c => c.data === key)) {
+                    const colObj = {
+                        title: ((key.charAt(0).toUpperCase()) + (key.substr(1))),
+                        data: key,
+                        render(data, type, row) {
+                            const val = data || row[key];
+                            if (val || val === 0) {
+                                return val;
+                            } else {
+                                return  'NA';
+                            }
+                        }
                     }
+                    if (key === 'progress') {
+                        colObj.title = 'Progress%'
+                    }
+                    columns.push(colObj)
                 }
             }
-            if (key === 'progress') {
-                colObj.title = 'Progress%'
-            }
-            columns.push(colObj)
-        }
+        });
         return of({
             rows: rows,
             columns: columns
