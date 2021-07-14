@@ -26,8 +26,12 @@ export interface User {
             version: string
         } | undefined;
     };
-    userType?: string;
-    userSubType?: string;
+    profileUserType?: {
+        type?: string;
+        subType?: string;
+    };
+    dob?: string;
+    isMinor?: boolean;
 }
 
 export enum UserDeclarationOperation {

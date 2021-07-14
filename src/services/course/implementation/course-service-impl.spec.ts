@@ -296,5 +296,68 @@ describe('CourseServiceImpl', () => {
                 });
             });
         });
+
+        describe('updateContentState()', () => {
+            it('should updateContentState', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            response: 'SUCCESS'
+                        }
+                    };
+                    return of(response);
+                });
+
+                const request = {
+                    userId: 'SOME_USER_ID',
+                    courseId: 'SAMPLE_COURSE_ID',
+                    batchId: 'SAMPLE_BATCH_ID'
+                };
+
+                courseService.updateContentState(request).subscribe(() => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'PATCH',
+                        body: {
+                            request
+                        }
+                    }));
+                    done();
+                });
+            });
+
+            describe('when optional configuration is passed', () => {
+                it('should invoke updateContentState  with overridden apiPath', (done) => {
+                    mockHttpService.fetch = jest.fn(() => {
+                        const response = new CsResponse();
+                        response.responseCode = 200;
+                        response.body = {
+                            result: {
+                                response: 'SUCCESS'
+                            }
+                        };
+                        return of(response);
+                    });
+
+                    const request = {
+                        userId: 'SOME_USER_ID',
+                        courseId: 'SAMPLE_COURSE_ID',
+                        batchId: 'SAMPLE_BATCH_ID'
+                    };
+
+                    courseService.updateContentState(request, {apiPath: '/some_overridden_path'}).subscribe(() => {
+                        expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                            type: 'PATCH',
+                            path: '/some_overridden_path/content/state/update',
+                            body: {
+                                request
+                            }
+                        }));
+                        done();
+                    });
+                });
+            });
+        });
     });
 });

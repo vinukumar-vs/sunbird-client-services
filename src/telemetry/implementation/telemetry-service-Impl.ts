@@ -123,6 +123,23 @@ export class TelemetryServiceImpl implements TelemetryService {
         }
     }
     public raiseFeedBackTelemetryWith(cdata: Array<ICDataEntry>, env: string, edata: any, telemetryObject?: ITelemetryObject) {
+    }
 
+    public raiseAssesTelemetry(data , options) {
+        if(this.isTelemetryInitialised()){
+            this.telemetryProvider.assess(data , options);
+        }
+    }
+
+    public raiseResponseTelemetry(data, options){
+        if(this.isTelemetryInitialised()){
+            this.telemetryProvider.response(data , options);
+        }
+    }
+
+    public raiseSummaryTelemetry(data, options){
+        if(this.isTelemetryInitialised()){
+            this.telemetryProvider.summary(data , options);
+        }
     }
 }

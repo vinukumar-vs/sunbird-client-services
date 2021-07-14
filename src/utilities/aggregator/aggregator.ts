@@ -1,3 +1,14 @@
+type Primitive = string | number | boolean;
+
+interface SortCriteria {
+  [key: string]: 'asc' | 'desc' | SortComprehension;
+}
+
+interface SortComprehension {
+  order: 'asc' | 'desc';
+  preference?: Primitive[];
+}
+
 export class Aggregator {
   public static groupByIntoMap<T>(list: T[], field: keyof T | string): { [key: string]: T[] } {
     return list.reduce(
@@ -22,15 +33,11 @@ export class Aggregator {
     });
   }
 
-  public static sorted<T>(list: T[], sort: { [key: string]: 'asc' | 'desc' }[], comparator?: (a, b) => number): T[] {
+  public static sorted<T>(list: T[], sort: SortCriteria[], comparator?: (a, b) => number): T[] {
     return list.sort((a, b) => {
       let comparison = 0;
 
       for (const sortBy of sort) {
-        if (comparison !== 0) {
-          break;
-        }
-
         for (const key in sortBy) {
           if (!(key in sortBy)) {
             continue;
@@ -40,7 +47,28 @@ export class Aggregator {
           const bKeyValue = Aggregator.deepGet(b, key.split('.'));
 
           comparison = comparator ? comparator(aKeyValue, bKeyValue) : String(aKeyValue).localeCompare(bKeyValue);
-          comparison = sortBy[key] === 'asc' ? comparison : -comparison;
+          
+          if (sortBy[key] === 'asc' || sortBy[key] === 'desc') {
+            comparison = sortBy[key] === 'asc' ? comparison : -comparison;
+          } else {
+            const comprehension = sortBy[key] as SortComprehension;
+
+            if (comprehension.preference) {
+              if (comprehension.preference.indexOf(aKeyValue) > -1 && comprehension.preference.indexOf(bKeyValue) > -1) {
+                comparison = comprehension.preference.indexOf(aKeyValue) - comprehension.preference.indexOf(bKeyValue);
+              } else if (comprehension.preference.indexOf(aKeyValue) > -1 && comprehension.preference.indexOf(bKeyValue) === -1) {
+                comparison = -1;
+              } else if (comprehension.preference.indexOf(bKeyValue) > -1 && comprehension.preference.indexOf(aKeyValue) === -1) {
+                comparison = 1;
+              }
+            }
+
+            comparison = comprehension.order === 'asc' ? comparison : -comparison;
+          }
+        }
+
+        if (comparison !== 0) {
+          break;
         }
       }
 
