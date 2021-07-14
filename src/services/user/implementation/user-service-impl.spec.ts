@@ -714,7 +714,7 @@ describe('UserServiceImpl', () => {
 
       userService.updateProfile({
         userId: 'sample_user_id',
-        locationCodes: ['101', '102']
+        profileLocation: [{code: '101', type: 'district'}, {code: '102', type: 'state'}]
       }).subscribe((r) => {
         expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
           type: 'PATCH',
@@ -743,7 +743,7 @@ describe('UserServiceImpl', () => {
 
       userService.updateProfile({
         userId: 'sample_user_id',
-        locationCodes: ['101', '102']
+        profileLocation: [{code: '101', type: 'district'}, {code: '102', type: 'state'}]
       }, {
         apiPath: '/some_path'
       }).subscribe((r) => {

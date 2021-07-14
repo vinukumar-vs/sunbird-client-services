@@ -48,7 +48,10 @@ export interface CsProfileUpdateRequest {
     email?: string;
     phoneVerified?: boolean;
     emailVerified?: boolean;
-    locationCodes?: Array<string>;
+    profileLocation?: {
+        code: string;
+        type: string;
+    }[];
     firstName?: string;
     lastName?: string;
     framework?: { [key: string]: any };
@@ -61,8 +64,11 @@ export interface CsProfileUpdateRequest {
         idType: string;
         provider: string;
     }[];
-    userType?: string;
-    userSubType?: string;
+    profileUserType?: {
+        type?: string;
+        subType?: string;
+    };
+    dob?: string;
 }
 
 export interface CsProfileUpdateResponse {

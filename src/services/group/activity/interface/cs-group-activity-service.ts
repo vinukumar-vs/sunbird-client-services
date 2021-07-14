@@ -36,4 +36,6 @@ export interface CsGroupActivityDataAggregation {
 
 export interface CsGroupActivityService {
     getDataAggregation(groupId: string, activity: Pick<GroupActivity, 'id' | 'type'>, mergeGroup?: Group, leafNodesCount?: number, config?: CsGroupServiceConfig): Observable<CsGroupActivityDataAggregation>;
+    getAssessments(hierarchyData, map): any;
+    getDataForDashlets(hierarchyData, map): any;
 }
