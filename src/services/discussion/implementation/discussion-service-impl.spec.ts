@@ -836,6 +836,55 @@ describe('DiscussionServiceImpl', () => {
         });
     });
 
+
+    describe('fetchBestPost()', () => {
+        it('should fetch best post info with appropriate request', (done) => {
+            mockHttpService.fetch = jest.fn(() => {
+                const response = new CsResponse();
+                response.responseCode = 200;
+                response.body = {
+                    count: 5
+                };
+                return of(response);
+            });
+
+            discussionService.fetchBestPost('some_slug').subscribe((r) => {
+                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                    type: 'GET',
+                }));
+                expect(r).toEqual({
+                    count: 5
+                });
+                done();
+            });
+        });
+
+        describe('when configuration is overridden', () => {
+            it('should fetch best post info with appropriate request', (done) => {
+                mockHttpService.fetch = jest.fn(() => {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        count: 5
+                    };
+                    return of(response);
+                });
+
+                discussionService.fetchBestPost('some_slug', {apiPath: '/some_api_path'}).subscribe((r) => {
+                    expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
+                        type: 'GET',
+                        path: '/some_api_path/user/some_slug/best'
+                    }));
+                    expect(r).toEqual({
+                        count: 5
+                    });
+                    done();
+                });
+            });
+        });
+    });
+
+
     describe('fetchDownvoted()', () => {
         it('should fetch downvoted info with appropriate request', (done) => {
             mockHttpService.fetch = jest.fn(() => {
@@ -1060,7 +1109,7 @@ describe('DiscussionServiceImpl', () => {
                 discussionService.getUserDetails('some_name', {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/user/some_name'
+                        path: '/some_api_path/user/uid/some_name'
                     }));
                     expect(r).toEqual({
                         name: 'some_name'
@@ -1486,7 +1535,7 @@ describe('DiscussionServiceImpl', () => {
                 };
                 return of(response);
             });
-            discussionService.recentPost().subscribe((r) => {
+            discussionService.recentPost(7).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                 }));
@@ -1507,10 +1556,10 @@ describe('DiscussionServiceImpl', () => {
                     };
                     return of(response);
                 });
-                discussionService.recentPost({apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.recentPost(7, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/recent'
+                        path: '/some_api_path/recent?uid=7'
                     }));
                     expect(r).toEqual({
                         forumId: 'SOME_FORUM_ID'

@@ -369,10 +369,10 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    getUserDetails(username, config?) {
+    getUserDetails(userId, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/user/${username}`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/user/uid/${userId}`)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
@@ -520,10 +520,23 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    recentPost(config?: CsDiscussionServiceConfig) {
+    recentPost(uid: number, config?: CsDiscussionServiceConfig) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/recent`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/recent?uid=${uid}`)
+            .withBearerToken(true)
+            .withUserToken(true)
+            .build();
+
+        return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
+            map((r) => r.body)
+        );
+    }
+
+    fetchBestPost(userSlug: string, config?: CsDiscussionServiceConfig) {
+        const apiRequest: CsRequest = new CsRequest.Builder()
+            .withType(CsHttpRequestType.GET)
+            .withPath(`${config ? config.apiPath : this.apiPath}/user/${userSlug}/best`)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
