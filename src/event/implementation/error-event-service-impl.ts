@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { AppEvents } from '../interfaces/cs-app-events';
-import { BaseEvent } from './base-event-impl';
+import { BaseEventImpl } from './base-event-impl';
 
 @injectable()
 
@@ -9,7 +9,7 @@ import { BaseEvent } from './base-event-impl';
  * We have to define the `eventname` which is abstract property
  * Override the emit(data) method, if we have custom logic to generate the data
  */
-export class ErrorEventService extends BaseEvent {
+export class ErrorEventServiceImpl extends BaseEventImpl {
   eventName = AppEvents.ERROR;
   
   /**

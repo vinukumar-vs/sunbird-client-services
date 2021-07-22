@@ -1,14 +1,14 @@
 import { Subject } from 'rxjs';
 import { AppEvents } from '../interfaces/cs-app-events';
-import { BaseEvent } from './base-event-impl';
-import { ErrorEventService } from './error-event-service-impl';
+import { BaseEventImpl } from './base-event-impl';
+import { ErrorEventServiceImpl } from './error-event-service-impl';
 
-export class CsEventService {
+export class CsEventServiceImpl {
   // default event subject
-  private static defatltEvent: Subject<BaseEvent> = new Subject<BaseEvent>();
+  private static defatltEvent: Subject<BaseEventImpl> = new Subject<BaseEventImpl>();
 
   // Error event subject
-  public static errorEvent: Subject<ErrorEventService> =  new Subject<ErrorEventService>();
+  public static errorEvent: Subject<ErrorEventServiceImpl> =  new Subject<ErrorEventServiceImpl>();
 
   // Define other event subjects here & implement in events(method) switch case
   public init() {}

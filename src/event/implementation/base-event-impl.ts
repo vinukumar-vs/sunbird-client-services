@@ -1,7 +1,7 @@
 import { CsEvent } from '../interfaces/cs-event';
-import { CsEventService } from './event-service-impl';
+import { CsEventServiceImpl } from './event-service-impl';
 
-export abstract class BaseEvent implements CsEvent{
+export abstract class BaseEventImpl implements CsEvent{
     // All extending classes should define this property "eventName"
     public abstract eventName = 'default';
     data = {};
@@ -15,6 +15,6 @@ export abstract class BaseEvent implements CsEvent{
      */
     emit(data: any) {
         this.data = data
-        CsEventService.events(this.eventName).next(this);
+        CsEventServiceImpl.events(this.eventName).next(this);
     }
 }

@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { AppEvents } from '../interfaces/cs-app-events';
-import { ErrorEventService } from '../implementation/error-event-service-impl';
+import { ErrorEventServiceImpl } from '../implementation/error-event-service-impl';
 
 @injectable()
 
@@ -18,7 +18,7 @@ export class EventFactoryService {
     switch(eventName) {
       case AppEvents.ERROR :
         // Generate specific event instance based on EventName
-        let errorEventSerObj = new ErrorEventService();
+        let errorEventSerObj = new ErrorEventServiceImpl();
         errorEventSerObj.emit(data);
         break;
       default :  
