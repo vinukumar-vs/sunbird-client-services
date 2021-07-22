@@ -16,7 +16,7 @@ import { UserTokenInjectRequestInterceptor } from './interceptors/user-token-inj
 import { CsHttpClientError, CsHttpServerError } from '../errors';
 import { CsClientStorage } from '../../cs-client-storage';
 import { EventFactoryService } from '../../../event/factory/event-factory-service';
-import { AppEvents } from '../../../event/interfaces/cs-app-events';
+import { CsAppEvents } from '../../../event/interfaces/cs-app-events';
 
 @injectable()
 export class HttpServiceImpl implements CsHttpService {
@@ -162,7 +162,7 @@ export class HttpServiceImpl implements CsHttpService {
                     request: request,
                 }
                 // passing the data to EventFactoryService to emit the exception data
-                this._eventFactory.trigger(AppEvents.ERROR, eventData);
+                this._eventFactory.trigger(CsAppEvents.ERROR, eventData);
 
                 if (CsHttpClientError.isInstance(e) || CsHttpServerError.isInstance(e)) {
                     try {

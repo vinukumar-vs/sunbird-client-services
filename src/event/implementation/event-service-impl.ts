@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { AppEvents } from '../interfaces/cs-app-events';
+import { CsAppEvents } from '../interfaces/cs-app-events';
 import { BaseEventImpl } from './base-event-impl';
 import { ErrorEventServiceImpl } from './error-event-service-impl';
 
@@ -11,7 +11,6 @@ export class CsEventServiceImpl {
   public static errorEvent: Subject<ErrorEventServiceImpl> =  new Subject<ErrorEventServiceImpl>();
 
   // Define other event subjects here & implement in events(method) switch case
-  public init() {}
   /**
    * Application will subscribe to this method by passing eventName which there are interested
    * ex: EventService.events(AppEvents.ERROR).subscribe(err => ...)
@@ -22,7 +21,7 @@ export class CsEventServiceImpl {
   public static events(eventName: String): Subject<any> {
     let obsEvent;
     switch(eventName) {
-      case AppEvents.ERROR: 
+      case CsAppEvents.ERROR: 
         obsEvent = this.errorEvent; 
         break;
       default: 
