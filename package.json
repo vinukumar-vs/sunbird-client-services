@@ -18,7 +18,7 @@
   "dependencies": {
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "inversify": "^5.0.1",
-    "lodash-es": "^4.17.15",
+    "lodash-es": "^4.17.21",
     "qs": "^6.9.4",
     "reflect-metadata": "^0.1.13",
     "whatwg-fetch": "^3.1.0"
@@ -83,6 +83,9 @@
       "text",
       "json"
     ],
-    "transformIgnorePatterns": []
+    "transformIgnorePatterns": [],
+    "moduleNameMapper": {
+      "^lodash-es$": "lodash"
+  }
   }
 }
