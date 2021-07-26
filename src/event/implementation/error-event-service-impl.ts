@@ -1,6 +1,8 @@
 import { injectable } from 'inversify';
+import { CsErrorEventData } from '../interfaces';
 import { CsAppEvents } from '../interfaces/cs-app-events';
 import { BaseEventImpl } from './base-event-impl';
+import * as _ from 'lodash-es';
 
 /**
  * Extends abstract class BaseEvent
@@ -16,7 +18,20 @@ export class ErrorEventServiceImpl extends BaseEventImpl {
    * @param data 
    */
   emit(data:any){
-    // Add custom logic to modidy the data 
-    super.emit(data);
+    // generating telemetry edata based on the error response
+    const params = data.error.response.body.params;
+    if (params) {
+      params.errmsg = params.errmsg.length > 50 ? (params.errmsg.substring(0, 50) + '...') : params.errmsg;
+    }
+    const errRes = data.error;
+    const telemetryErrorData: CsErrorEventData = {
+    edata: {
+      err: _.get(params, 'err') || _.get(errRes, 'code'),
+      errtype: JSON.stringify(_.get(errRes, 'response.responseCode')) || JSON.stringify(_.get(errRes, 'code')),
+      traceid: _.get(params, 'msgid') || JSON.stringify(Math.random()),
+      stacktrace: _.get(params, 'errmsg') || _.get(errRes, 'response.errorMesg')
+      }
+    }
+    super.emit(telemetryErrorData);
   }
 }
