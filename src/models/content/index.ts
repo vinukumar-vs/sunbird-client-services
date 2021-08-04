@@ -118,6 +118,8 @@ export type ContentMimeType =
     'application/vnd.ekstep.content-collection' |
     'application/vnd.ekstep.plugin-archive' |
     'application/vnd.ekstep.h5p-archive' |
+    'application/vnd.sunbird.question' |
+    'application/vnd.sunbird.questionset' |
     'application/epub' |
     'text/x-url' |
     'video/x-youtube' |
