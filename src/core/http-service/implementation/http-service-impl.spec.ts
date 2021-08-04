@@ -291,7 +291,6 @@ describe('HttpServiceImpl', () => {
                     expect(response).toBe(mockSuccessResponse);
                     done();
                 }, (e) => {
-                    console.error(e);
                     fail(e);
                     done();
                 });
@@ -329,7 +328,6 @@ describe('HttpServiceImpl', () => {
                     fail();
                     done();
                 }, (e) => {
-                    console.error(e);
                     expect(apiRequest.responseInterceptors.length).toBeTruthy();
                     expect(apiRequest.responseInterceptors[0]).toBe(customInterceptor);
                     expect(CsHttpClientError.isInstance(e)).toBeTruthy();
@@ -370,7 +368,6 @@ describe('HttpServiceImpl', () => {
                     fail();
                     done();
                 }, (e) => {
-                    console.error(e);
                     expect(apiRequest.responseInterceptors.length).toBeTruthy();
                     expect(apiRequest.responseInterceptors[0]).toBe(customInterceptor);
                     expect(CsHttpClientError.isInstance(e)).toBeTruthy();
@@ -411,7 +408,6 @@ describe('HttpServiceImpl', () => {
                     fail();
                     done();
                 }, (e) => {
-                    console.error(e);
                     expect(apiRequest.responseInterceptors.length).toBeTruthy();
                     expect(apiRequest.responseInterceptors[0]).toBe(customInterceptor);
                     expect(CsHttpServerError.isInstance(e)).toBeTruthy();
