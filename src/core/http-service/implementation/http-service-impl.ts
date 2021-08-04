@@ -15,16 +15,12 @@ import { BearerTokenInjectRequestInterceptor } from './interceptors/bearer-token
 import { UserTokenInjectRequestInterceptor } from './interceptors/user-token-inject-request-interceptor';
 import { CsHttpClientError, CsHttpServerError } from '../errors';
 import { CsClientStorage } from '../../cs-client-storage';
-import { EventFactoryService } from '../../../event/factory/event-factory-service';
-import { AppEvents } from '../../../event/interfaces/cs-app-events';
 
 @injectable()
 export class HttpServiceImpl implements CsHttpService {
     private _requestInterceptors: CsRequestInterceptor[] = [];
     private _responseInterceptors: CsResponseInterceptor[] = [];
     private _traceId?: string;
-    // created the instance for EventFactoryService to trigger the Exception events
-    private _eventFactory = new EventFactoryService();
 
     private _bearerTokenInjectRequestInterceptor?: BearerTokenInjectRequestInterceptor;
     get bearerTokenInjectRequestInterceptor(): BearerTokenInjectRequestInterceptor {
@@ -156,14 +152,6 @@ export class HttpServiceImpl implements CsHttpService {
                     }
                     return res;
                 };
-                
-                const eventData = {
-                    error: e,
-                    request: request,
-                }
-                // passing the data to EventFactoryService to emit the exception data
-                this._eventFactory.trigger(AppEvents.ERROR, eventData);
-
                 if (CsHttpClientError.isInstance(e) || CsHttpServerError.isInstance(e)) {
                     try {
                         localResponse = await this.interceptResponse(request, e.response);
