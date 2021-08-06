@@ -155,7 +155,7 @@ export interface CsDiscussionService {
 
     contextBasedTags(data: CsGetContextBasedTagRequest, config?: CsDiscussionServiceConfig): Observable<CsGetContextBasedTagResponse>;
 
-    recentPost(uid: number, config?: CsDiscussionServiceConfig): Observable<any>;
+    recentPost(userSlug: string, config?: CsDiscussionServiceConfig): Observable<any>;
 
     fetchBestPost(userSlug: string, config?: CsDiscussionServiceConfig): Observable<any>;
 
