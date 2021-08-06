@@ -1535,7 +1535,7 @@ describe('DiscussionServiceImpl', () => {
                 };
                 return of(response);
             });
-            discussionService.recentPost(7).subscribe((r) => {
+            discussionService.recentPost('7').subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                 }));
@@ -1556,10 +1556,10 @@ describe('DiscussionServiceImpl', () => {
                     };
                     return of(response);
                 });
-                discussionService.recentPost(7, {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.recentPost('7', {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/recent?uid=7'
+                        path: '/some_api_path/user/7/posts'
                     }));
                     expect(r).toEqual({
                         forumId: 'SOME_FORUM_ID'
