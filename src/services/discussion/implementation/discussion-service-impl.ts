@@ -520,10 +520,10 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    recentPost(uid: number, pageId: number, config?: CsDiscussionServiceConfig) {
+    recentPost(userSlug: string,  pageId: number, config?: CsDiscussionServiceConfig) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/recent?uid=${uid}&&page=${pageId ? pageId : 1}`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/user/${userSlug}/posts?page=${pageId ? pageId : 1}`)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
