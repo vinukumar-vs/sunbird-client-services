@@ -115,11 +115,11 @@ export interface CsDiscussionService {
 
     fetchProfileInfo(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchUpvoted(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
+    fetchUpvoted(slug: string, pageId: number, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchDownvoted(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
+    fetchDownvoted(slug: string, pageId: number,  config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchSaved(slug: string, config?: CsDiscussionServiceConfig): Observable<any>;
+    fetchSaved(slug: string, pageId: number, config?: CsDiscussionServiceConfig): Observable<any>;
 
     // fetchSingleCategoryDetails(cid: number, page?: any);
 
@@ -155,9 +155,9 @@ export interface CsDiscussionService {
 
     contextBasedTags(data: CsGetContextBasedTagRequest, config?: CsDiscussionServiceConfig): Observable<CsGetContextBasedTagResponse>;
 
-    recentPost(uid: number, config?: CsDiscussionServiceConfig): Observable<any>;
+    recentPost(uid: number, pageId: number, config?: CsDiscussionServiceConfig): Observable<any>;
 
-    fetchBestPost(userSlug: string, config?: CsDiscussionServiceConfig): Observable<any>;
+    fetchBestPost(userSlug: string, pageId: number, config?: CsDiscussionServiceConfig): Observable<any>;
 
     popularPost(config?: CsDiscussionServiceConfig): Observable<any>;
 

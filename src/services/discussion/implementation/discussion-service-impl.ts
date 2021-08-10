@@ -265,10 +265,10 @@ export class DiscussionServiceImpl implements CsDiscussionService {
             map((r) => r.body)
         );
     }
-    fetchUpvoted(slug, config?) {
+    fetchUpvoted(slug, pageId: number, config?) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/user/${slug}/upvoted`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/user/${slug}/upvoted?page=${pageId}`)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
@@ -278,10 +278,10 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
         // return this.http.get(urlConfig.listUpVote(urlConfig.userName));
     }
-    fetchDownvoted(slug, config?) { // 0
+    fetchDownvoted(slug, pageId: number, config?) { // 0
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/user/${slug}/downvoted`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/user/${slug}/downvoted?page=${pageId}`)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
@@ -291,10 +291,10 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
         // return this.http.get(urlConfig.listDownVoted(urlConfig.userName));
     }
-    fetchSaved(slug, config?) { // 0 this.usr.userId
+    fetchSaved(slug, pageId: number, config?) { // 0 this.usr.userId
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/user/${slug}/bookmarks`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/user/${slug}/bookmarks?page=${pageId}`)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
@@ -520,10 +520,10 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    recentPost(uid: number, config?: CsDiscussionServiceConfig) {
+    recentPost(uid: number, pageId: number, config?: CsDiscussionServiceConfig) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/recent?uid=${uid}`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/recent?uid=${uid}&&page=${pageId ? pageId : 1}`)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
@@ -533,10 +533,10 @@ export class DiscussionServiceImpl implements CsDiscussionService {
         );
     }
 
-    fetchBestPost(userSlug: string, config?: CsDiscussionServiceConfig) {
+    fetchBestPost(userSlug: string, pageId: number, config?: CsDiscussionServiceConfig) {
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.GET)
-            .withPath(`${config ? config.apiPath : this.apiPath}/user/${userSlug}/best`)
+            .withPath(`${config ? config.apiPath : this.apiPath}/user/${userSlug}/best?page=${pageId}`)
             .withBearerToken(true)
             .withUserToken(true)
             .build();
