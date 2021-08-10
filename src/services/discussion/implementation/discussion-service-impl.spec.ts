@@ -525,10 +525,10 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.fetchUpvoted('SOME_SLUG', {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.fetchUpvoted('SOME_SLUG', 1, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/user/SOME_SLUG/upvoted'
+                        path: '/some_api_path/user/SOME_SLUG/upvoted?page=1'
                     }));
                     expect(r).toEqual({
                         postId: 'SOME_POST_ID'
@@ -549,10 +549,10 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.fetchDownvoted('SOME_SLUG', {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.fetchDownvoted('SOME_SLUG', 1, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/user/SOME_SLUG/downvoted'
+                        path: '/some_api_path/user/SOME_SLUG/downvoted?page=1'
                     }));
                     expect(r).toEqual({
                         postId: 'SOME_POST_ID'
@@ -573,10 +573,10 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.fetchSaved('SOME_SLUG', {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.fetchSaved('SOME_SLUG', 1, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/user/SOME_SLUG/bookmarks'
+                        path: '/some_api_path/user/SOME_SLUG/bookmarks?page=1'
                     }));
                     expect(r).toEqual({
                         postId: 'SOME_POST_ID'
@@ -800,7 +800,7 @@ describe('DiscussionServiceImpl', () => {
                 return of(response);
             });
 
-            discussionService.fetchUpvoted('some_id').subscribe((r) => {
+            discussionService.fetchUpvoted('some_id', 1).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                 }));
@@ -822,10 +822,10 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.fetchUpvoted('some_id', {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.fetchUpvoted('some_id', 1, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/user/some_id/upvoted'
+                        path: '/some_api_path/user/some_id/upvoted?page=1'
                     }));
                     expect(r).toEqual({
                         count: 10
@@ -848,7 +848,7 @@ describe('DiscussionServiceImpl', () => {
                 return of(response);
             });
 
-            discussionService.fetchBestPost('some_slug').subscribe((r) => {
+            discussionService.fetchBestPost('some_slug', 1).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                 }));
@@ -870,10 +870,10 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.fetchBestPost('some_slug', {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.fetchBestPost('some_slug', 1,  {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/user/some_slug/best'
+                        path: '/some_api_path/user/some_slug/best?page=1'
                     }));
                     expect(r).toEqual({
                         count: 5
@@ -896,7 +896,7 @@ describe('DiscussionServiceImpl', () => {
                 return of(response);
             });
 
-            discussionService.fetchDownvoted('some_id').subscribe((r) => {
+            discussionService.fetchDownvoted('some_id', 1).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                 }));
@@ -918,10 +918,10 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.fetchDownvoted('some_id', {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.fetchDownvoted('some_id', 1, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/user/some_id/downvoted'
+                        path: '/some_api_path/user/some_id/downvoted?page=1'
                     }));
                     expect(r).toEqual({
                         count: 10
@@ -943,7 +943,7 @@ describe('DiscussionServiceImpl', () => {
                 return of(response);
             });
 
-            discussionService.fetchSaved('some_id').subscribe((r) => {
+            discussionService.fetchSaved('some_id', 1).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                 }));
@@ -965,10 +965,10 @@ describe('DiscussionServiceImpl', () => {
                     return of(response);
                 });
 
-                discussionService.fetchSaved('some_id', {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.fetchSaved('some_id', 1, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/user/some_id/bookmarks'
+                        path: '/some_api_path/user/some_id/bookmarks?page=1'
                     }));
                     expect(r).toEqual({
                         count: 10
@@ -1535,7 +1535,7 @@ describe('DiscussionServiceImpl', () => {
                 };
                 return of(response);
             });
-            discussionService.recentPost('7').subscribe((r) => {
+            discussionService.recentPost('7', 1).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
                 }));
@@ -1556,10 +1556,10 @@ describe('DiscussionServiceImpl', () => {
                     };
                     return of(response);
                 });
-                discussionService.recentPost('7', {apiPath: '/some_api_path'}).subscribe((r) => {
+                discussionService.recentPost('7', 1, {apiPath: '/some_api_path'}).subscribe((r) => {
                     expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                         type: 'GET',
-                        path: '/some_api_path/user/7/posts'
+                        path: '/some_api_path/user/7/posts?page=1'
                     }));
                     expect(r).toEqual({
                         forumId: 'SOME_FORUM_ID'
