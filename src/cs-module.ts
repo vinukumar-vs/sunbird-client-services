@@ -315,11 +315,11 @@ export class CsModule {
         }
     }
 
-    updateAuthTokenConfig(config: CsConfig) {
-        this._config.core.api.authentication = config.core.api.authentication;
+    updateAuthTokenConfig(accessToken: string) {
+        this._config.core.api.authentication.userToken = accessToken;
 
         const mode: 'rebind' | 'bind' = this._isInitialised ? 'rebind' : 'bind';
         this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
-            .toConstantValue(config.core.api.authentication.userToken);
+            .toConstantValue(this._config.core.api.authentication.userToken);
     }
 }
