@@ -314,4 +314,12 @@ export class CsModule {
                 .toConstantValue(config.services.discussionServiceConfig.apiPath);
         }
     }
+
+    updateAuthTokenConfig(accessToken: string) {
+        this._config.core.api.authentication.userToken = accessToken;
+
+        const mode: 'rebind' | 'bind' = this._isInitialised ? 'rebind' : 'bind';
+        this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
+            .toConstantValue(this._config.core.api.authentication.userToken);
+    }
 }
