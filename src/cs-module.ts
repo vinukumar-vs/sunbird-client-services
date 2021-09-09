@@ -26,6 +26,8 @@ import {SystemSettingsServiceImpl} from './services/system-settings/implementati
 import {CsClientStorage} from './core/cs-client-storage';
 import { CsDiscussionService } from './services/discussion';
 import { DiscussionServiceImpl } from './services/discussion/implementation/discussion-service-impl';
+import { CsNotificationService } from './services/notification/interface/cs-notification-service';
+import { NotificationServiceImpl } from './services/notification/implementation/notification-service-impl';
 
 export interface CsDiscussionServiceConfig {
     apiPath: string;
@@ -67,6 +69,10 @@ export interface CsFormServiceConfig {
     apiPath: string;
 }
 
+export interface CsNotificationServiceConfig {
+    apiPath: string;
+}
+
 export interface CsConfig {
     core: {
         httpAdapter?: 'HttpClientBrowserAdapter' | 'HttpClientCordovaAdapter';
@@ -95,7 +101,8 @@ export interface CsConfig {
         formServiceConfig?: CsFormServiceConfig,
         systemSettingsServiceConfig?: CsSystemSettingsServiceConfig,
         discussionServiceConfig?: CsDiscussionServiceConfig,
-        contentServiceConfig?: CsContentServiceConfig
+        contentServiceConfig?: CsContentServiceConfig,
+        notificationServiceConfig?: CsNotificationServiceConfig
     };
 }
 
@@ -164,6 +171,10 @@ export class CsModule {
 
     get discussionService(): CsDiscussionService {
         return this._container.get<CsDiscussionService>(InjectionTokens.services.discussion.DISCUSSION_SERVICE);
+    }
+
+    get notificationService(): CsNotificationService {
+        return this._container.get<CsNotificationService>(InjectionTokens.services.notification.NOTIFICATION_SERVICE);
     }
 
     public async init(config: CsConfig, onConfigUpdate?: () => void, clientStorage?: CsClientStorage) {
@@ -313,6 +324,14 @@ export class CsModule {
             this._container[mode]<string>(InjectionTokens.services.discussion.DISCUSSION_SERVICE_API_PATH)
                 .toConstantValue(config.services.discussionServiceConfig.apiPath);
         }
+
+         // notification service
+         this._container[mode]<CsNotificationService>(InjectionTokens.services.notification.NOTIFICATION_SERVICE)
+         .to(NotificationServiceImpl).inSingletonScope();
+     if (config.services.notificationServiceConfig) {
+         this._container[mode]<string>(InjectionTokens.services.notification.NOTIFICATION_SERVICE_API_PATH)
+             .toConstantValue(config.services.notificationServiceConfig.apiPath);
+     }
     }
 
     updateAuthTokenConfig(accessToken: string) {

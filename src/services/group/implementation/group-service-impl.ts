@@ -56,6 +56,7 @@ export class GroupServiceImpl implements CsGroupService {
     }
 
     create(createRequest: CsGroupCreateRequest, config?: CsGroupServiceConfig): Observable<CsGroupCreateResponse> {
+        console.log('groups', this.apiPath, config)
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withType(CsHttpRequestType.POST)
             .withPath(`${config ? config.apiPath : this.apiPath}/create`)
@@ -65,7 +66,7 @@ export class GroupServiceImpl implements CsGroupService {
                 request: createRequest
             })
             .build();
-
+            console.log('apiRequest', apiRequest)
         return this.httpService.fetch<{ result: { groupId: string; } }>(apiRequest).pipe(
             map((r) => r.body.result)
         );
