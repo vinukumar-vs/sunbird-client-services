@@ -2,13 +2,18 @@ import { Observable } from "rxjs";
 import { CsNotificationServiceConfig } from "src";
 
 export interface CsNotificationService {
-  notificationRead( uid: number, config?: CsNotificationServiceConfig): Observable<CsNotificationReadResponse>;
+  notificationRead( uid: string, config?: CsNotificationServiceConfig): Observable<CsNotificationReadResponse>;
+  // notificationDelete( req: NotificationDeleteReq, config?: CsNotificationServiceConfig): Observable<any>;
 }
 
 export interface CsNotificationReadResponse {
-    result: { feed: Array<any> }
+    result: { userFeed: Array<Notification> }
+}
+
+export interface NotificationDeleteReq {
+  result: any
 }
 
 export interface CsNotificationUpdateResponse {
-    result: {}
+    result: any
 }
