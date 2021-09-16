@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CsNotificationServiceConfig } from '../../../cs-module';
 import { InjectionTokens } from '../../../injection-tokens';
-import { CsNotificationReadResponse, CsNotificationService, CsNotificationUpdateResponse, NotificationDeleteReq } from '../interface/cs-notification-service';
+import { CsNotificationReadResponse, CsNotificationService, CsNotificationUpdateResponse, CsNotificationDeleteReq, CsNotificationUpdateReq } from '../interface/cs-notification-service';
 
 @injectable()
 export class NotificationServiceImpl implements CsNotificationService {
@@ -28,21 +28,21 @@ export class NotificationServiceImpl implements CsNotificationService {
     );
   }
 
-  // notificationDelete(req: NotificationDeleteReq, config?: CsNotificationServiceConfig): Observable<any> {
-  //   console.log('request from portal notificationDelete', this.apiPath, config)
-  //   const apiRequest = new CsRequest.Builder()
-  //     .withType(CsHttpRequestType.GET)
-  //     .withPath(`${config ? config.apiPath : this.apiPath}/delete`)
-  //     .withBearerToken(true)
-  //     .withUserToken(true)
-  //     .build();
-  //   console.log('apiRequest: ', apiRequest)
-  //   return this.httpService.fetch<{ result: any }>(apiRequest).pipe(
-  //     map((response) => response.body.result)
-  //   );
-  // }
+  notificationDelete(req: CsNotificationDeleteReq, config?: CsNotificationServiceConfig): Observable<any> {
+    console.log('request from portal notificationDelete', this.apiPath, config)
+    const apiRequest = new CsRequest.Builder()
+      .withType(CsHttpRequestType.GET)
+      .withPath(`${config ? config.apiPath : this.apiPath}/delete`)
+      .withBearerToken(true)
+      .withUserToken(true)
+      .build();
+    console.log('apiRequest: ', apiRequest)
+    return this.httpService.fetch<{ result: any }>(apiRequest).pipe(
+      map((response) => response.body.result)
+    );
+  }
 
-  notificationUpdate(request: any, config?: CsNotificationServiceConfig): Observable<CsNotificationUpdateResponse> {
+  notificationUpdate(request: CsNotificationUpdateReq, config?: CsNotificationServiceConfig): Observable<CsNotificationUpdateResponse> {
     console.log('request from portal notificationUpdate', this.apiPath, config)
     const apiRequest = new CsRequest.Builder()
       .withType(CsHttpRequestType.PATCH)

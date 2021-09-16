@@ -27,7 +27,7 @@ export interface NotificationAction {
     groupRole: string
 }
 
-export interface Notification {
+export interface NotificationData {
     id: string,
     userId?: string,                    
     priority?: number,
