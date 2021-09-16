@@ -1,5 +1,5 @@
 import { CsHttpRequestType, CsHttpService, CsRequest } from '../../../core/http-service/interface';
-import { inject, injectable } from 'inversify';
+import { Container, inject, injectable } from 'inversify';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CsNotificationServiceConfig } from '../../../cs-module';
@@ -10,7 +10,8 @@ import { CsNotificationReadResponse, CsNotificationService, CsNotificationUpdate
 export class NotificationServiceImpl implements CsNotificationService {
   constructor(
     @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService,
-    @inject(InjectionTokens.services.notification.NOTIFICATION_SERVICE_API_PATH) private apiPath: string
+    @inject(InjectionTokens.services.notification.NOTIFICATION_SERVICE_API_PATH) private apiPath: string,
+    @inject(InjectionTokens.CONTAINER) private container: Container
   ) {
   }
 
@@ -28,13 +29,14 @@ export class NotificationServiceImpl implements CsNotificationService {
     );
   }
 
-  notificationDelete(req: CsNotificationDeleteReq, config?: CsNotificationServiceConfig): Observable<any> {
+  notificationDelete(request: CsNotificationDeleteReq, config?: CsNotificationServiceConfig): Observable<any> {
     console.log('request from portal notificationDelete', this.apiPath, config)
     const apiRequest = new CsRequest.Builder()
-      .withType(CsHttpRequestType.GET)
+      .withType(CsHttpRequestType.POST)
       .withPath(`${config ? config.apiPath : this.apiPath}/delete`)
       .withBearerToken(true)
       .withUserToken(true)
+      .withBody({ request })
       .build();
     console.log('apiRequest: ', apiRequest)
     return this.httpService.fetch<{ result: any }>(apiRequest).pipe(

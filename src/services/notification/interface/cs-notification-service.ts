@@ -9,11 +9,15 @@ export interface CsNotificationService {
 }
 
 export interface CsNotificationReadResponse {
-    result: { userFeed: Array<NotificationData> }
+    feeds: Array<NotificationData>
 }
 export interface CsNotificationUpdateReq {
+  ids: string[],
+  userId: string
 }
 export interface CsNotificationDeleteReq {
+  ids: string[],
+  userId: string
 }
 
 export interface CsNotificationUpdateResponse {
