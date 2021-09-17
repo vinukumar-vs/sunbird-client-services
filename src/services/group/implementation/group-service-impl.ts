@@ -65,6 +65,7 @@ export class GroupServiceImpl implements CsGroupService {
                 request: createRequest
             })
             .build();
+            
         return this.httpService.fetch<{ result: { groupId: string; } }>(apiRequest).pipe(
             map((r) => r.body.result)
         );
