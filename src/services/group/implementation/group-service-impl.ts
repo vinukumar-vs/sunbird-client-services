@@ -328,7 +328,7 @@ export class GroupServiceImpl implements CsGroupService {
 
                     return new Date(bLastActivity).getTime() - new Date(aLastActivity).getTime();
                 })
-                .map((g) => CsGroup.fromJSON(g) as CsGroupSearchResponse)
+                    .map((g) => CsGroup.fromJSON(g) as CsGroupSearchResponse)
             )
         );
     }
@@ -336,15 +336,15 @@ export class GroupServiceImpl implements CsGroupService {
     deleteById(id: string, config?: CsGroupServiceConfig): Observable<CsGroupDeleteResponse> {
         const apiRequest: CsRequest = new CsRequest.Builder()
         .withType(CsHttpRequestType.POST)
-        .withPath(`${config ? config.apiPath : this.apiPath}/delete`)
-        .withBearerToken(true)
-        .withUserToken(true)
-        .withBody({
-            request: {
-                groupId: id,
-            }
-        })
-        .build();
+            .withPath(`${config ? config.apiPath : this.apiPath}/delete`)
+            .withBearerToken(true)
+            .withUserToken(true)
+            .withBody({
+                request: {
+                    groupId: id,
+                }
+            })
+            .build();
 
         return this.httpService.fetch<{ result: {} }>(apiRequest).pipe(
             map((r) => r.body.result)
@@ -394,5 +394,36 @@ export class GroupServiceImpl implements CsGroupService {
         return this.httpService.fetch<{ result: CsGroupUpdateGroupGuidelinesResponse }>(apiRequest).pipe(
             map((r) => r.body.result)
         );
+    }
+
+    getActivityDataById(groupData: any, activity: any) {
+        const activitiesGrouped = groupData['activitiesGrouped'];
+        let selectedActivity = [];
+        if (activitiesGrouped) {
+            const activityList = this.groupContentsByActivityType(activitiesGrouped);
+            activityList.activities[activity.type].forEach(activityData => {
+                if (activity.id === activityData.identifier) {
+                    selectedActivity = activityData;
+                }
+            })
+            return selectedActivity;
+        }
+        return [];
+    }
+    groupContentsByActivityType(activitiesGrouped) {
+        const activityList = activitiesGrouped.reduce((acc, activityGroup) => {
+            acc[activityGroup.title] = activityGroup.items.map((i) => {
+                const activity = {
+                    ...i.activityInfo,
+                    type: i.type,
+                    cardImg: i['activityInfo.appIcon'] || '',
+                };
+                return activity;
+            });
+            return acc;
+
+        }, {});
+        Object.keys(activityList).forEach(key => activityList[key].length <= 0 && delete activityList[key]);
+        return { activities: activityList };
     }
 }
