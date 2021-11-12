@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
-import { CsNotificationServiceConfig } from "src";
-import { NotificationData } from "src/models/notification";
+import { CsNotificationServiceConfig } from "../../../cs-module";
+import { NotificationData } from "../../../models/notification";
 
 export interface CsNotificationService {
   notificationRead( uid: string, config?: CsNotificationServiceConfig): Observable<CsNotificationReadResponse>;

@@ -11,26 +11,22 @@ export class NotificationServiceImpl implements CsNotificationService {
   constructor(
     @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService,
     @inject(InjectionTokens.services.notification.NOTIFICATION_SERVICE_API_PATH) private apiPath: string,
-    @inject(InjectionTokens.CONTAINER) private container: Container
   ) {
   }
 
   notificationRead(uid: string, config?: CsNotificationServiceConfig): Observable<CsNotificationReadResponse> {
-    console.log('request from portal', this.apiPath, config)
     const apiRequest = new CsRequest.Builder()
       .withType(CsHttpRequestType.GET)
       .withPath(`${config ? config.apiPath : this.apiPath}/read/${uid}`)
       .withBearerToken(true)
       .withUserToken(true)
       .build();
-    console.log('apiRequest: ', apiRequest)
     return this.httpService.fetch<{ result: CsNotificationReadResponse }>(apiRequest).pipe(
       map((response) => response.body.result)
     );
   }
 
   notificationDelete(request: CsNotificationDeleteReq, config?: CsNotificationServiceConfig): Observable<any> {
-    console.log('request from portal notificationDelete', this.apiPath, config)
     const apiRequest = new CsRequest.Builder()
       .withType(CsHttpRequestType.POST)
       .withPath(`${config ? config.apiPath : this.apiPath}/delete`)
@@ -38,14 +34,12 @@ export class NotificationServiceImpl implements CsNotificationService {
       .withUserToken(true)
       .withBody({ request })
       .build();
-    console.log('apiRequest: ', apiRequest)
     return this.httpService.fetch<{ result: any }>(apiRequest).pipe(
       map((response) => response.body.result)
     );
   }
 
   notificationUpdate(request: CsNotificationUpdateReq, config?: CsNotificationServiceConfig): Observable<CsNotificationUpdateResponse> {
-    console.log('request from portal notificationUpdate', this.apiPath, config)
     const apiRequest = new CsRequest.Builder()
       .withType(CsHttpRequestType.PATCH)
       .withPath(`${config ? config.apiPath : this.apiPath}/update`)
@@ -53,7 +47,6 @@ export class NotificationServiceImpl implements CsNotificationService {
       .withUserToken(true)
       .withBody({ request })
       .build();
-    console.log('apiRequest: ', apiRequest)
 
     return this.httpService.fetch<{ result: CsNotificationUpdateResponse }>(apiRequest)
       .pipe(
