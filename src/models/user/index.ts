@@ -30,6 +30,10 @@ export interface User {
         type?: string;
         subType?: string;
     };
+    profileUserTypes?: {
+        type?: string;
+        subType?: string;
+    }[];
     dob?: string;
     isMinor?: boolean;
 }
