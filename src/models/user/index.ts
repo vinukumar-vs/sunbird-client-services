@@ -36,6 +36,9 @@ export interface User {
     }[];
     dob?: string;
     isMinor?: boolean;
+    roles?: {
+        role?: string;
+    }[];
 }
 
 export enum UserDeclarationOperation {
