@@ -28,6 +28,8 @@ import { CsDiscussionService } from './services/discussion';
 import { DiscussionServiceImpl } from './services/discussion/implementation/discussion-service-impl';
 import { CsNotificationService } from './services/notification/interface/cs-notification-service';
 import { NotificationServiceImpl } from './services/notification/implementation/notification-service-impl';
+import { CsCertificateService } from './services/certificate';
+import { CertificateServiceImpl } from './services/certificate/implementation/certificate-service-impl';
 
 export interface CsDiscussionServiceConfig {
     apiPath: string;
@@ -73,6 +75,10 @@ export interface CsNotificationServiceConfig {
     apiPath: string;
 }
 
+export interface CsCertificateServiceConfig {
+    apiPath: string;
+}
+
 export interface CsConfig {
     core: {
         httpAdapter?: 'HttpClientBrowserAdapter' | 'HttpClientCordovaAdapter';
@@ -102,7 +108,8 @@ export interface CsConfig {
         systemSettingsServiceConfig?: CsSystemSettingsServiceConfig,
         discussionServiceConfig?: CsDiscussionServiceConfig,
         contentServiceConfig?: CsContentServiceConfig,
-        notificationServiceConfig?: CsNotificationServiceConfig
+        notificationServiceConfig?: CsNotificationServiceConfig,
+        certificateServiceConfig?: CsCertificateServiceConfig
     };
 }
 
@@ -326,12 +333,20 @@ export class CsModule {
         }
 
          // notification service
-         this._container[mode]<CsNotificationService>(InjectionTokens.services.notification.NOTIFICATION_SERVICE)
-         .to(NotificationServiceImpl).inSingletonScope();
-     if (config.services.notificationServiceConfig) {
-         this._container[mode]<string>(InjectionTokens.services.notification.NOTIFICATION_SERVICE_API_PATH)
-             .toConstantValue(config.services.notificationServiceConfig.apiPath);
-     }
+        this._container[mode]<CsNotificationService>(InjectionTokens.services.notification.NOTIFICATION_SERVICE)
+            .to(NotificationServiceImpl).inSingletonScope();
+        if (config.services.notificationServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.notification.NOTIFICATION_SERVICE_API_PATH)
+            .toConstantValue(config.services.notificationServiceConfig.apiPath);
+        }
+
+        // certificate service
+        this._container[mode]<CsCertificateService>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE)
+            .to(CertificateServiceImpl).inSingletonScope();
+        if (config.services.certificateServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH)
+            .toConstantValue(config.services.certificateServiceConfig.apiPath);
+        }
     }
 
     updateAuthTokenConfig(accessToken: string) {

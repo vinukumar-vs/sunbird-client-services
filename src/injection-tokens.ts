@@ -65,6 +65,10 @@ export const InjectionTokens = {
         notification: {
             NOTIFICATION_SERVICE_API_PATH: Symbol.for('NOTIFICATION_SERVICE_API_PATH'),
             NOTIFICATION_SERVICE: Symbol.for('NOTIFICATION_SERVICE')
+        },
+        certificate: {
+            CERTIFICATE_SERVICE_API_PATH: Symbol.for('CERTIFICATE_SERVICE_API_PATH'),
+            CERTIFICATE_SERVICE: Symbol.for('CERTIFICATE_SERVICE')
         }
     }
 };
