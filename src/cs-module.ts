@@ -77,6 +77,7 @@ export interface CsNotificationServiceConfig {
 
 export interface CsCertificateServiceConfig {
     apiPath: string;
+    rcApiPath?: string;
 }
 
 export interface CsConfig {
@@ -182,6 +183,10 @@ export class CsModule {
 
     get notificationService(): CsNotificationService {
         return this._container.get<CsNotificationService>(InjectionTokens.services.notification.NOTIFICATION_SERVICE);
+    }
+
+    get certificateService(): CsCertificateService {
+        return this._container.get<CsCertificateService>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE);
     }
 
     public async init(config: CsConfig, onConfigUpdate?: () => void, clientStorage?: CsClientStorage) {
