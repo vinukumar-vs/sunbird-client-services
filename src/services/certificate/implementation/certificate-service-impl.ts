@@ -1,6 +1,6 @@
 import { Container, inject, injectable } from "inversify";
 import { map, mergeMap } from "rxjs/operators";
-import { CsLearnerCertificate, CsLearnerCertificateV1, CsLearnerCertificateV2 } from "src/models";
+import { CsLearnerCertificate, CsLearnerCertificateV1, CsLearnerCertificateV2 } from "../../../models";
 import { CSGetLearnerCerificateRequest } from "..";
 import { defer, iif, Observable, of } from "rxjs";
 import { CsCertificateServiceConfig } from '../../../index';
@@ -10,20 +10,20 @@ import {
   CsCertificateService,
   GetPublicKeyRequest,
   GetPublicKeyResponse,
-  DownloadCertificateResponse,
-  DownloadCertificateRequest,
+  FetchCertificateResponse,
+  FetchCertificateRequest,
   CertificateType
 } from "../interface";
-import { CsSystemSettingsService } from "src/services/system-settings";
+import { CsSystemSettingsService } from "../../system-settings/interface/";
 
 @injectable()
 export class CertificateServiceImpl implements CsCertificateService {
   constructor(
     @inject(InjectionTokens.core.HTTP_SERVICE) private httpService: CsHttpService,
     @inject(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH) private apiPath: string,
+    @inject(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH_LEGACY) private apiPathLegacy: string,
     @inject(InjectionTokens.services.certificate.RC_API_PATH) private rcApiPath: string,
     @inject(InjectionTokens.services.systemSettings.SYSTEM_SETTINGS_SERVICE) private systemSettingsService: CsSystemSettingsService,
-    @inject(InjectionTokens.CONTAINER) private container: Container
   ) {
   }
 
@@ -136,7 +136,7 @@ export class CertificateServiceImpl implements CsCertificateService {
   getPublicKey(request: GetPublicKeyRequest, config?: CsCertificateServiceConfig): Observable<GetPublicKeyResponse> {
     const apiRequest: CsRequest = new CsRequest.Builder()
       .withType(CsHttpRequestType.POST)
-      .withPath((config ? config.apiPath : this.apiPath) + `/${request.signingKey}`)
+      .withPath((config ? config.rcApiPath : this.rcApiPath) + `/${request.signingKey}`)
       .withBearerToken(true)
       .withUserToken(true)
       .withBody({ request })
@@ -150,7 +150,7 @@ export class CertificateServiceImpl implements CsCertificateService {
       );
   }
 
-  getCerificateDownloadURI(request: DownloadCertificateRequest, config?: CsCertificateServiceConfig): Observable<DownloadCertificateResponse> {
+  getCerificateDownloadURI(request: FetchCertificateRequest, config?: CsCertificateServiceConfig): Observable<FetchCertificateResponse> {
     return iif(
       () => (request.type === CertificateType.RC_CERTIFICATE_REGISTRY),
       defer(async () => {
@@ -162,7 +162,7 @@ export class CertificateServiceImpl implements CsCertificateService {
             throw new Error('Schema Name Not found');
           }
         }
-        const certificateRegistryRequest: CsRequest = new CsRequest.Builder()
+        const rcRequest: CsRequest = new CsRequest.Builder()
           .withType(CsHttpRequestType.GET)
           .withPath((config ? config.rcApiPath : this.rcApiPath)!!.replace("${schemaName}", schemaName) + '/download/' + request.certificateId)
           .withBearerToken(true)
@@ -170,7 +170,7 @@ export class CertificateServiceImpl implements CsCertificateService {
             'Accept': "image/svg+xml"
           })
           .build();
-        return this.httpService.fetch<string>(certificateRegistryRequest).pipe(
+        return this.httpService.fetch<string>(rcRequest).pipe(
           map((response) => {
             return {
               printUri: response.body
@@ -179,13 +179,13 @@ export class CertificateServiceImpl implements CsCertificateService {
         ).toPromise();
       }),
       defer(() => {
-        const rcCertficateRequest: CsRequest = new CsRequest.Builder()
+        const registryCertficateRequest: CsRequest = new CsRequest.Builder()
           .withType(CsHttpRequestType.GET)
-          .withPath((config ? config.apiPath : this.apiPath) + '/download/' + request.certificateId)
+          .withPath((config ? config.apiPath : this.apiPath) + '/certs/download/' + request.certificateId)
           .withBearerToken(true)
           .withUserToken(true)
           .build();
-        return this.httpService.fetch<{ result: { printUri: string } }>(rcCertficateRequest).pipe(
+        return this.httpService.fetch<{ result: { printUri: string } }>(registryCertficateRequest).pipe(
           map((response) => {
             return response.body.result;
           })
