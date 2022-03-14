@@ -68,7 +68,7 @@ export const InjectionTokens = {
         },
         certificate: {
             CERTIFICATE_SERVICE_API_PATH: Symbol.for('CERTIFICATE_SERVICE_API_PATH'),
-            CERTIFICATE_SERVICE_RC_API_PATH: Symbol.for('CERTIFICATE_SERVICE_RC_API_PATH'),
+            RC_API_PATH: Symbol.for('RC_API_PATH'),
             CERTIFICATE_SERVICE: Symbol.for('CERTIFICATE_SERVICE')
         }
     }

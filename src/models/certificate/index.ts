@@ -1,4 +1,4 @@
-export interface LearnerCertificateV1 {
+export interface CsLearnerCertificateV1 {
     _index: string;
     _type: string;
     _id: string;
@@ -29,7 +29,7 @@ export interface Signatory {
     designation: string
 }
 
-export interface LearnerCertificateV2 {
+export interface CsLearnerCertificateV2 {
         training: {
             osid: string,
             name: string,
@@ -54,7 +54,7 @@ export interface LearnerCertificateV2 {
         status: string
 }
 
-export interface LearnerCertificate {
+export interface CsLearnerCertificate {
     id: string;
     courseId?: string;
     name: string;
