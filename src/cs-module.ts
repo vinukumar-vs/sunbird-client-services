@@ -77,6 +77,7 @@ export interface CsNotificationServiceConfig {
 
 export interface CsCertificateServiceConfig {
     apiPath: string;
+    rcCertApiPath: string;
 }
 
 export interface CsConfig {
@@ -346,6 +347,8 @@ export class CsModule {
         if (config.services.certificateServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH)
             .toConstantValue(config.services.certificateServiceConfig.apiPath);
+            this._container[mode]<string>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_RC_API_PATH)
+            .toConstantValue(config.services.certificateServiceConfig.rcCertApiPath);
         }
     }
 
