@@ -1,3 +1,5 @@
+import { CertificateType } from "../../services/certificate";
+
 export interface CsLearnerCertificateV1 {
     _index: string;
     _type: string;
@@ -62,4 +64,5 @@ export interface CsLearnerCertificate {
     issuedOn?: string;
     issuerName: string;
     osSignedData?: string;
+    type: CertificateType
 }
