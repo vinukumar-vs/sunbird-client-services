@@ -145,7 +145,7 @@ export class CertificateServiceImpl implements CsCertificateService {
       }
 
       const apiRequest: CsRequest = new CsRequest.Builder()
-        .withType(CsHttpRequestType.POST)
+        .withType(CsHttpRequestType.GET)
         .withPath((config ? config.rcApiPath : this.rcApiPath).replace("${schemaName}", schemaName) + `/key/${request.osid}`)
         .withBearerToken(true)
         .withUserToken(true)
