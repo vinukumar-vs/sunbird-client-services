@@ -3,7 +3,7 @@ import { Container } from 'inversify';
 import { InjectionTokens } from '../../../injection-tokens';
 import { CsCertificateService, CertificateType } from '../interface';
 import { of, throwError } from 'rxjs';
-import {catchError} from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { CertificateServiceImpl } from './certificate-service-impl';
 import { CsSystemSettingsService } from '../../system-settings/interface';
 import { SystemSettingsServiceImpl } from '../../system-settings/implementation/system-settings-service-impl';
@@ -15,6 +15,7 @@ describe('CertificateServiceImpl', () => {
     const mockSystemSettingsService: Partial<CsSystemSettingsService> = {};
     const mockApiPath = 'MOCK_API_PATH';
     const mockRCApiPath = 'MOCK_RC_API_PATH/${schemaName}/v1';
+    const mockApiPathLegacy = 'MOCK_PATH_LEGACY';
 
     beforeAll(() => {
         const container = new Container();
@@ -22,6 +23,7 @@ describe('CertificateServiceImpl', () => {
         container.bind<CsHttpService>(InjectionTokens.core.HTTP_SERVICE).toConstantValue(mockHttpService as CsHttpService);
         container.bind<string>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH).toConstantValue(mockApiPath);
         container.bind<string>(InjectionTokens.services.certificate.RC_API_PATH).toConstantValue(mockRCApiPath);
+        container.bind<string>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH_LEGACY).toConstantValue(mockApiPathLegacy);
         container.bind<CsCertificateService>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE).to(CertificateServiceImpl).inSingletonScope();
         container.bind<CsSystemSettingsService>(InjectionTokens.services.systemSettings.SYSTEM_SETTINGS_SERVICE).to(SystemSettingsServiceImpl).inSingletonScope();
         container.bind<Container>(InjectionTokens.CONTAINER).toConstantValue(container);
@@ -41,30 +43,46 @@ describe('CertificateServiceImpl', () => {
 
     describe('getPublicKey()', () => {
         it('should be able to get the publickey if response code is 200', (done) => {
-            mockHttpService.fetch = jest.fn(() => {
-                const response = new CsResponse();
-                response.responseCode = 200;
-                response.body = {
-                    result: {
-                        SigningKey: {
-                            osid: 'SOME_KEY'
+            mockHttpService.fetch = jest.fn((request) => {
+                if (request.path.includes("/system/settings/")) {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            response: {
+                                value: "SOME_SCHEMA_NAME"
+                            }
                         }
-                    }
-                };
-                return of(response);
-            });
+                    };
+                    return of(response);
+                } else {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        osid: 'SOME_KEY',
+                        value: 'PUBLIC_KEY',
+                        alg:'RSA',
+                        osOwner:[]
+                    };
+                    return of(response);
+                }
 
+            });
+        
             certificateService.getPublicKey({
-                signingKey: "SOME_KEY",
-                algorithim: 'RSA'
+                osid: "SOME_KEY",
+                alg: 'RSA'
             }).subscribe((r) => {
-                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'POST',
-                    path: expect.stringContaining('MOCK_API_PATH/SOME_KEY')
+                expect(mockHttpService.fetch).toHaveBeenNthCalledWith(2, expect.objectContaining({
+                    type: 'GET',
+                    path: expect.stringContaining('MOCK_RC_API_PATH/SOME_SCHEMA_NAME/v1/key/SOME_KEY')
                 }));
                 expect(r).toEqual(
                     {
-                        osid: 'SOME_KEY'
+                        osid: 'SOME_KEY',
+                        value: 'PUBLIC_KEY',
+                        alg:'RSA',
+                        osOwner:[]
                     }
                 );
                 done();
@@ -72,32 +90,49 @@ describe('CertificateServiceImpl', () => {
         });
 
         it('should be able to get the publickey when configuration is overridden', (done) => {
-            mockHttpService.fetch = jest.fn(() => {
-                const response = new CsResponse();
-                response.responseCode = 200;
-                response.body = {
-                    result: {
-                        SigningKey: {
-                            osid: 'SOME_KEY'
+            mockHttpService.fetch = jest.fn((request) => {
+                if (request.path.includes("/system/settings/")) {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        result: {
+                            response: {
+                                value: "SOME_SCHEMA_NAME"
+                            }
                         }
-                    }
-                };
-                return of(response);
+                    };
+                    return of(response);
+                } else {
+                    const response = new CsResponse();
+                    response.responseCode = 200;
+                    response.body = {
+                        osid: 'SOME_KEY',
+                        value: 'PUBLIC_KEY',
+                        alg:'RSA',
+                        osOwner:[]
+                    };
+                    return of(response);
+                }
+
             });
 
             certificateService.getPublicKey({
-                signingKey: "SOME_KEY",
-                algorithim: 'RSA'
+                osid: "SOME_KEY",
+                alg: 'RSA'
             }, {
-                apiPath: '/some_path'
+                apiPath: '/some_path',
+                rcApiPath: '/path/${schemaName}'
             }).subscribe((r) => {
-                expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
-                    type: 'POST',
-                    path: expect.stringContaining('/some_path')
+                expect(mockHttpService.fetch).toHaveBeenNthCalledWith(2, expect.objectContaining({
+                    type: 'GET',
+                    path: expect.stringContaining('/path/SOME_SCHEMA_NAME/key/SOME_KEY')
                 }));
                 expect(r).toEqual(
                     {
-                        osid: 'SOME_KEY'
+                        osid: 'SOME_KEY',
+                        value: 'PUBLIC_KEY',
+                        alg:'RSA',
+                        osOwner:[]
                     }
                 );
                 done();
@@ -110,17 +145,17 @@ describe('CertificateServiceImpl', () => {
         it('should throw error if schemaName is empty and system settings also not configured', (done) => {
 
             mockHttpService.fetch = jest.fn((request) => {
-                if(request.path.includes("/system/settings/")) {
+                if (request.path.includes("/system/settings/")) {
                     const response = new CsResponse();
                     response.responseCode = 200;
                     response.body = {
                         result: {
                             response: {
-                                value : "SOME_SCHEMA_NAME"
+                                value: "SOME_SCHEMA_NAME"
                             }
                         }
                     };
-                    return  throwError("Test");
+                    return throwError("Test");
                 } else {
                     const response = new CsResponse();
                     response.responseCode = 200;
@@ -131,27 +166,27 @@ describe('CertificateServiceImpl', () => {
                     };
                     return of(response);
                 }
-            
+
             });
-        
+
             certificateService.getCerificateDownloadURI({
                 certificateId: "SOME_ID",
                 type: CertificateType.RC_CERTIFICATE_REGISTRY
-            }).toPromise().catch((e) => {                
+            }).toPromise().catch((e) => {
                 done();
             })
         });
-        
+
         it('should be able to get the download if response code is 200', (done) => {
 
             mockHttpService.fetch = jest.fn((request) => {
-                if(request.path.includes("/system/settings/")) {
+                if (request.path.includes("/system/settings/")) {
                     const response = new CsResponse();
                     response.responseCode = 200;
                     response.body = {
                         result: {
                             response: {
-                                value : "SOME_SCHEMA_NAME"
+                                value: "SOME_SCHEMA_NAME"
                             }
                         }
                     };
@@ -166,7 +201,7 @@ describe('CertificateServiceImpl', () => {
                     };
                     return of(response);
                 }
-            
+
             });
 
             certificateService.getCerificateDownloadURI({
@@ -175,7 +210,7 @@ describe('CertificateServiceImpl', () => {
             }).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenCalledWith(expect.objectContaining({
                     type: 'GET',
-                    path: expect.stringContaining('MOCK_API_PATH/download/SOME_ID')
+                    path: expect.stringContaining('MOCK_API_PATH/certs/download/SOME_ID')
                 }));
                 expect(r).toEqual(
                     {
@@ -188,13 +223,13 @@ describe('CertificateServiceImpl', () => {
 
         it('should be able to get the downloadUrl for RC if response code is 200', (done) => {
             mockHttpService.fetch = jest.fn((request) => {
-                if(request.path.includes("/system/settings/")) {
+                if (request.path.includes("/system/settings/")) {
                     const response = new CsResponse();
                     response.responseCode = 200;
                     response.body = {
                         result: {
                             response: {
-                                value : "SOME_SCHEMA_NAME"
+                                value: "SOME_SCHEMA_NAME"
                             }
                         }
                     };
@@ -205,7 +240,7 @@ describe('CertificateServiceImpl', () => {
                     response.body = "SOME_STRING";
                     return of(response);
                 }
-            
+
             });
             mockSystemSettingsService.getSystemSettings = jest.fn(() => {
                 return of("SOME_SCHEMA_NAME");
@@ -230,13 +265,13 @@ describe('CertificateServiceImpl', () => {
 
         it('should be able to get the downloadUrl for RC when configuration is overridden', (done) => {
             mockHttpService.fetch = jest.fn((request) => {
-                if(request.path.includes("/system/settings/")) {
+                if (request.path.includes("/system/settings/")) {
                     const response = new CsResponse();
                     response.responseCode = 200;
                     response.body = {
                         result: {
                             response: {
-                                value : "SOME_SCHEMA_NAME"
+                                value: "SOME_SCHEMA_NAME"
                             }
                         }
                     };
@@ -247,7 +282,7 @@ describe('CertificateServiceImpl', () => {
                     response.body = "SOME_STRING";
                     return of(response);
                 }
-            
+
             });
             mockSystemSettingsService.getSystemSettings = jest.fn(() => {
                 return of("SOME_SCHEMA_NAME");
@@ -258,7 +293,7 @@ describe('CertificateServiceImpl', () => {
                 type: CertificateType.RC_CERTIFICATE_REGISTRY
             }, {
                 apiPath: '/some_path',
-                rcApiPath:'/api/rc/${schemaName}/v1'
+                rcApiPath: '/api/rc/${schemaName}/v1'
             }).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenNthCalledWith(2, expect.objectContaining({
                     type: 'GET',
@@ -275,13 +310,13 @@ describe('CertificateServiceImpl', () => {
 
         it('should be able to get the downloadUrl for Certifcate Registry when configuration is overridden', (done) => {
             mockHttpService.fetch = jest.fn((request) => {
-                if(request.path.includes("/system/settings/")) {
+                if (request.path.includes("/system/settings/")) {
                     const response = new CsResponse();
                     response.responseCode = 200;
                     response.body = {
                         result: {
                             response: {
-                                value : "SOME_SCHEMA_NAME"
+                                value: "SOME_SCHEMA_NAME"
                             }
                         }
                     };
@@ -296,7 +331,7 @@ describe('CertificateServiceImpl', () => {
                     };
                     return of(response);
                 }
-            
+
             });
             mockSystemSettingsService.getSystemSettings = jest.fn(() => {
                 return of("SOME_SCHEMA_NAME");
@@ -307,11 +342,11 @@ describe('CertificateServiceImpl', () => {
                 type: CertificateType.CERTIFICATE_REGISTRY
             }, {
                 apiPath: '/some_path',
-                rcApiPath:'/api/rc/${schemaName}/v1'
+                rcApiPath: '/api/rc/${schemaName}/v1'
             }).subscribe((r) => {
                 expect(mockHttpService.fetch).toHaveBeenNthCalledWith(1, expect.objectContaining({
                     type: 'GET',
-                    path: expect.stringContaining('/some_path/download/SOME_ID')
+                    path: expect.stringContaining('/some_path/certs/download/SOME_ID')
                 }));
                 expect(r).toEqual(
                     {
