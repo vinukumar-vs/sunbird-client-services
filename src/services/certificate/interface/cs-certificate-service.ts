@@ -1,15 +1,19 @@
 import { Observable } from "rxjs";
-import { CsLearnerCertificate, CsLearnerCertificateV1 } from "src/models";
+import { CsLearnerCertificate } from "../../../models";
 import { CsCertificateServiceConfig } from "../../../index";
 
 
 export interface GetPublicKeyRequest {
-  signingKey: string;
-  algorithim: String;
+  osid: string;
+  alg?: String;
+  schemaName?: string;
 }
 
 export interface GetPublicKeyResponse {
   osid: string;
+  value: string;
+  alg: string;
+  osOwner: string[];
 }
 
 export interface FetchCertificateRequest {
@@ -28,14 +32,14 @@ export interface FetchCertificateResponse {
 }
 
 export interface CSGetLearnerCerificateRequest {
-    userId: string;
-    size?: number;
+  userId: string;
+  size?: number;
 }
 
 export interface CsCertificateService {
-    fetchCertificatesV1( req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<any>;
-    fetchCertificatesV2( req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]>;
-    fetchcertificates( req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]>;
-    getPublicKey( req: GetPublicKeyRequest, config?: CsCertificateServiceConfig): Observable<GetPublicKeyResponse>;
-    getCerificateDownloadURI(req: FetchCertificateRequest, config?: CsCertificateServiceConfig): Observable<FetchCertificateResponse>;
-  }
+  fetchCertificatesV1(req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<any>;
+  fetchCertificatesV2(req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]>;
+  fetchCertificates(req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]>;
+  getPublicKey(req: GetPublicKeyRequest, config?: CsCertificateServiceConfig): Observable<GetPublicKeyResponse>;
+  getCerificateDownloadURI(req: FetchCertificateRequest, config?: CsCertificateServiceConfig): Observable<FetchCertificateResponse>;
+}
