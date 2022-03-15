@@ -77,7 +77,8 @@ export interface CsNotificationServiceConfig {
 
 export interface CsCertificateServiceConfig {
     apiPath: string;
-    rcApiPath?: string;
+    apiPathLegacy?: string;
+    rcApiPath: string;
 }
 
 export interface CsConfig {
@@ -351,6 +352,8 @@ export class CsModule {
         if (config.services.certificateServiceConfig) {
             this._container[mode]<string>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH)
             .toConstantValue(config.services.certificateServiceConfig.apiPath);
+            this._container[mode]<string>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH_LEGACY)
+            .toConstantValue(config.services.certificateServiceConfig.apiPathLegacy ? config.services.certificateServiceConfig.apiPathLegacy : '');
             if (config.services.certificateServiceConfig.rcApiPath) {
                 this._container[mode]<string>(InjectionTokens.services.certificate.RC_API_PATH)
                 .toConstantValue(config.services.certificateServiceConfig.rcApiPath);

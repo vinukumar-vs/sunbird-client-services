@@ -12,7 +12,7 @@ export interface GetPublicKeyResponse {
   osid: string;
 }
 
-export interface DownloadCertificateRequest {
+export interface FetchCertificateRequest {
   certificateId: string;
   schemaName?: string;
   type?: CertificateType;
@@ -23,7 +23,7 @@ export enum CertificateType {
   RC_CERTIFICATE_REGISTRY = "rc_certificate_registry"
 }
 
-export interface DownloadCertificateResponse {
+export interface FetchCertificateResponse {
   printUri: string;
 }
 
@@ -37,5 +37,5 @@ export interface CsCertificateService {
     fetchCertificatesV2( req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]>;
     fetchcertificates( req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]>;
     getPublicKey( req: GetPublicKeyRequest, config?: CsCertificateServiceConfig): Observable<GetPublicKeyResponse>;
-    getCerificateDownloadURI(req: DownloadCertificateRequest, config?: CsCertificateServiceConfig): Observable<DownloadCertificateResponse>;
+    getCerificateDownloadURI(req: FetchCertificateRequest, config?: CsCertificateServiceConfig): Observable<FetchCertificateResponse>;
   }
