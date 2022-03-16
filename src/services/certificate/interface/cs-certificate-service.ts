@@ -36,10 +36,15 @@ export interface CSGetLearnerCerificateRequest {
   size?: number;
 }
 
+export interface CsVerifyCertificateRequest {
+    scannedData: any;
+}
+
 export interface CsCertificateService {
   fetchCertificatesV1(req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<any>;
   fetchCertificatesV2(req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]>;
   fetchCertificates(req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]>;
   getPublicKey(req: GetPublicKeyRequest, config?: CsCertificateServiceConfig): Observable<GetPublicKeyResponse>;
   getCerificateDownloadURI(req: FetchCertificateRequest, config?: CsCertificateServiceConfig): Observable<FetchCertificateResponse>;
+  verifyCertificate(req: CsVerifyCertificateRequest): Promise<any>;
 }

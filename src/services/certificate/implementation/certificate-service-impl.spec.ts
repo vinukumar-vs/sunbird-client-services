@@ -41,6 +41,11 @@ describe('CertificateServiceImpl', () => {
         expect(certificateService).toBeTruthy();
     });
 
+    describe('fetchCertificatesV1', () => {
+        it('should be able to fetch the certificates if response code is 200', (done) => {
+        });
+    })
+
     describe('getPublicKey()', () => {
         it('should be able to get the publickey if response code is 200', (done) => {
             mockHttpService.fetch = jest.fn((request) => {
