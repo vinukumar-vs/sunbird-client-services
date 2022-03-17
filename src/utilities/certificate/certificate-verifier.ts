@@ -5,7 +5,7 @@ import jsigs from 'jsonld-signatures';
 import {contexts} from 'security-context';
 import {RSAKeyPair, Ed25519KeyPair} from 'crypto-ld';
 import documentLoaders from 'jsonld';
-import {credentialsv1, testCertificateContext, testCertificateContextUrl} from './credentials'
+// import {credentialsv1, testCertificateContext, testCertificateContextUrl} from './credentials'
 import { Observable, of } from "rxjs";
 import { CsVerifyCertificateRequest } from "../../services/certificate";
 
@@ -23,8 +23,6 @@ interface SortComprehension {
 
 const urlPath = "/certificate";
 const registerMemberLimit = 4;
-const certificatePublicKey = '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtu87YH+XEkHB+Id7/xmN\nxG6UNCPYyNQeWGvD73oCoPTy6f+L8OOpfEK+P2BCkyKR59L/QL8Mkyn4KTw39LUk\nDtD4ijJC5wt2+f1Si1/d/ZguZ/LFXhqXSZHN18f1sedJjPPr20EyJp0IAoBPap5U\nkCeLGMv0lto+iqasEVRC0o7hbICFrnzFTOl5CTUDYMOndn3XEcK0KdLlhsPfQp0n\nZXCZHbisL1LPD3vqZ/7HKWfr+qsIxYt9aikBaOFg5mMoMvE4sLZTwMm+ElB1HH3h\nhaVnFjycGBwy4A8jzGWy/y++YQy5n0VUlKT2gk62/dHgPKK3NUY2YPBOfuOyBmYp\nwQIDAQAB\n-----END PUBLIC KEY-----'
-const certificatePublicKeyBase58 = "DaipNW4xaH2bh1XGNNdqjnSYyru3hLnUgTBSfSvmZ2hi";
 
 const CERTIFICATE_CONTROLLER_ID =  'https://sunbird.org/';
 const CERTIFICATE_NAMESPACE =  "https://cvstatus.icmr.gov.in/credentials/testCertificate/v1";
@@ -40,7 +38,7 @@ export class CertificateVerifier {
     private static publicKey = '';
 
     public static getDataFromQr(req: CsVerifyCertificateRequest): Promise<any>{
-        this.publicKey = req.publicKey || certificatePublicKey;
+        this.publicKey = req.publicKey;
         const zippedData = atob(req.scannedData.split('data=')[1]);
         const zip = new JSZip();
         return zip.loadAsync(zippedData).then((contents) => {
@@ -69,7 +67,7 @@ export class CertificateVerifier {
                 id: CERTIFICATE_DID,
                 type: 'RsaVerificationKey2018',
                 controller: CERTIFICATE_CONTROLLER_ID,
-                publicKeyPem: certificatePublicKey
+                publicKeyPem: this.publicKey
             };
             const controller = {
                 '@context': jsigs.SECURITY_CONTEXT_URL,
@@ -98,13 +96,18 @@ export class CertificateVerifier {
     
     public static customLoader = url => {
         console.log("checking " + url);
+        // const c = {
+        //     "did:india": this.publicKey,
+        //     "https://example.com/i/india": this.publicKey,
+        //     "https://w3id.org/security/v1": contexts.get("https://w3id.org/security/v1"),
+        //     'https://www.w3.org/2018/credentials#': credentialsv1,
+        //     "https://www.w3.org/2018/credentials/v1": credentialsv1,
+        //     [testCertificateContextUrl]: testCertificateContext,
+        // };
         const c = {
             "did:india": this.publicKey,
             "https://example.com/i/india": this.publicKey,
             "https://w3id.org/security/v1": contexts.get("https://w3id.org/security/v1"),
-            'https://www.w3.org/2018/credentials#': credentialsv1,
-            "https://www.w3.org/2018/credentials/v1": credentialsv1,
-            [testCertificateContextUrl]: testCertificateContext,
         };
         let context = c[url];
         if (context === undefined) {

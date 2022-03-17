@@ -47,7 +47,7 @@ export interface CSGetLearnerCerificateRequest {
 
 export interface CsVerifyCertificateRequest {
     scannedData: string;
-    publicKey?: string
+    publicKey: string
 }
 
 export interface CsCertificateService {
