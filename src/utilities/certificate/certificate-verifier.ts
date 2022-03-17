@@ -40,7 +40,7 @@ export class CertificateVerifier {
     private static publicKey = '';
 
     public static getDataFromQr(req: CsVerifyCertificateRequest): Promise<any>{
-        this.publicKey = req.publicKey;
+        this.publicKey = req.publicKey || certificatePublicKey;
         const zippedData = atob(req.scannedData.split('data=')[1]);
         const zip = new JSZip();
         return zip.loadAsync(zippedData).then((contents) => {
