@@ -92,11 +92,10 @@ export class CertificateServiceImpl implements CsCertificateService {
                     throw new Error('Schema Name Not found');
                 }
             }
-
             let certRequest = {
                 filters: {
                     recipient: {
-                        osid: {
+                        id: {
                             eq: request.userId
                         }
                     }
@@ -117,9 +116,11 @@ export class CertificateServiceImpl implements CsCertificateService {
                         console.log('fetchCertificatesV2 res', response);
                         return response.body.map(r => {
                             let result = {
-                                id: r.training.id,
-                                name: r.training.name,
+                                id: r.osid,
+                                trainingName: r.training.name,
                                 issuerName: r.issuer.name,
+                                issuedOn: r.issuer.osUpdatedAt,
+                                courseId: r.training.id,
                                 type: CertificateType.RC_CERTIFICATE_REGISTRY
                             }
                             return result;
@@ -134,11 +135,11 @@ export class CertificateServiceImpl implements CsCertificateService {
             map((r) => r.map((rs) => {
                 let result = {
                     id: rs._id,
+                    trainingName: rs._source.data.badge.name,
+                    issuerName: rs._source.data? rs._source.data.badge.issuer.name : undefined,
+                    issuedOn: rs._source.data ? rs._source.data.issuedOn: undefined,
                     courseId: rs._source.related.courseId,
-                    name: rs._source.data.badge.name,
                     pdfUrl: rs._source.pdfUrl,
-                    issuedOn: rs._source.data.issuedOn,
-                    issuerName: rs._source.data.badge.issuer.name,
                     type: CertificateType.CERTIFICATE_REGISTRY
                 }
                 return result;
