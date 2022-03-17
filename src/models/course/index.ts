@@ -1,3 +1,4 @@
+import { CertificateType } from '../../services/certificate';
 import {Content} from '../content';
 
 export interface Batch {
@@ -30,10 +31,11 @@ export interface Batch {
 export interface CourseCertificate {
     identifier?: string;
     url?: string;
-    id?: string;
+    id: string;
     name: string;
     lastIssuedOn: string;
     token: string;
+    type?: CertificateType
 }
 
 export interface Course {
