@@ -17,7 +17,6 @@ import {
     GetLegacyCertificateResponse
 } from "../interface";
 import { CsSystemSettingsService } from "../../system-settings/interface/";
-import { CertificateVerifier } from "../../../utilities/certificate/certificate-verifier";
 
 @injectable()
 export class CertificateServiceImpl implements CsCertificateService {
@@ -239,18 +238,6 @@ export class CertificateServiceImpl implements CsCertificateService {
                 return response.body.result;
             })
         );
-    }
-
-    verifyCertificate(req: any): Promise<any> {
-        console.log('verifyCertificate******-->');
-        return new CertificateVerifier().getDataFromQr(req)
-        // .then((res) => {
-        //     console.log('getDataFromQr', res);
-        //     return CertificateVerifier.verifyData(res)
-        // .then((r) => {
-        //     console.log('verifyData result---', r);
-        // })
-        // })
     }
 
 }
