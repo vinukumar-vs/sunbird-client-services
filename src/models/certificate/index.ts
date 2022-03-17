@@ -50,7 +50,8 @@ export interface CsLearnerCertificateV2 {
         issuer: {
             osid: string,
             name: string,
-            url: string
+            url: string,
+            osUpdatedAt: string
         },
         osid: string,
         status: string
@@ -59,10 +60,10 @@ export interface CsLearnerCertificateV2 {
 export interface CsLearnerCertificate {
     id: string;
     courseId?: string;
-    name: string;
+    trainingName: string;
     pdfUrl?: string;
     issuedOn?: string;
-    issuerName: string;
+    issuerName?: string;
     osSignedData?: string;
     type: CertificateType
 }

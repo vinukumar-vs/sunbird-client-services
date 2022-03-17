@@ -45,6 +45,11 @@ export interface CSGetLearnerCerificateRequest {
   size?: number;
 }
 
+export interface CsVerifyCertificateRequest {
+    scannedData: string;
+    publicKey: string
+}
+
 export interface CsCertificateService {
   fetchCertificatesV1(req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<any>;
   fetchCertificatesV2(req: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]>;
