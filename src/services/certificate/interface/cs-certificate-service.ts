@@ -31,13 +31,23 @@ export interface FetchCertificateResponse {
   printUri: string;
 }
 
+export interface GetLegacyCertificateRequest {
+    pdfUrl: string
+}
+
+export interface GetLegacyCertificateResponse {
+  signedUrl: string
+}
+
 export interface CSGetLearnerCerificateRequest {
   userId: string;
+  schemaName?: string;
   size?: number;
 }
 
 export interface CsVerifyCertificateRequest {
-    scannedData: any;
+    scannedData: string;
+    publicKey: string
 }
 
 export interface CsCertificateService {
@@ -47,4 +57,5 @@ export interface CsCertificateService {
   getPublicKey(req: GetPublicKeyRequest, config?: CsCertificateServiceConfig): Observable<GetPublicKeyResponse>;
   getCerificateDownloadURI(req: FetchCertificateRequest, config?: CsCertificateServiceConfig): Observable<FetchCertificateResponse>;
   verifyCertificate(req: CsVerifyCertificateRequest): Promise<any>;
+  getLegacyCerificateDownloadURI(req: GetLegacyCertificateRequest, config?: CsCertificateServiceConfig): Observable<GetLegacyCertificateResponse>;
 }
