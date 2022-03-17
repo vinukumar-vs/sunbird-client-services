@@ -71,7 +71,13 @@ export class CertificateServiceImpl implements CsCertificateService {
         return this.httpService.fetch<{ result: { response: { count: number, content: CsLearnerCertificateV1[] } } }>(apiRequest)
             .pipe(
                 map((response) => {
+                    console.log('fetchCertificatesV1 res', response);
                     return response.body.result.response.content;
+                }),
+                catchError((e) => {
+                    console.log('fetchCertificatesV1 e', e)
+                    return [];
+                    
                 })
             );
     }
@@ -105,10 +111,11 @@ export class CertificateServiceImpl implements CsCertificateService {
                 .withBody(certRequest)
                 .build();
 
-            return this.httpService.fetch<{ result: CsLearnerCertificateV2[] }>(apiRequest)
+            return this.httpService.fetch< CsLearnerCertificateV2[] >(apiRequest)
                 .pipe(
                     map((response) => {
-                        return response.body.result.map(r => {
+                        console.log('fetchCertificatesV2 res', response);
+                        return response.body.map(r => {
                             let result = {
                                 id: r.training.id,
                                 name: r.training.name,
@@ -117,7 +124,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                             }
                             return result;
                         });
-                    })
+                    }),
                 ).toPromise();
         });
     }
@@ -137,9 +144,6 @@ export class CertificateServiceImpl implements CsCertificateService {
                 return result;
             }),
             ),
-            catchError((e) => {
-                return [];
-            }),
         mergeMap((result) => {
             return this.fetchCertificatesV2(request, config).pipe(
                 map(r => [...result, ...r])
@@ -238,7 +242,7 @@ export class CertificateServiceImpl implements CsCertificateService {
 
     verifyCertificate(req: any): Promise<any> {
         console.log('verifyCertificate******-->');
-        return CertificateVerifier.getDataFromQr(req)
+        return new CertificateVerifier().getDataFromQr(req)
         // .then((res) => {
         //     console.log('getDataFromQr', res);
         //     return CertificateVerifier.verifyData(res)
