@@ -5,7 +5,7 @@ import jsigs from 'jsonld-signatures';
 import {contexts} from 'security-context';
 import {RSAKeyPair, Ed25519KeyPair} from 'crypto-ld';
 import documentLoaders from 'jsonld';
-// import {credentialsv1, testCertificateContext, testCertificateContextUrl} from './credentials'
+import {credentialsv1, testCertificateContext, testCertificateContextUrl} from './credentials'
 import { Observable, of } from "rxjs";
 import { CsVerifyCertificateRequest } from "../../services/certificate";
 
@@ -30,6 +30,7 @@ const CERTIFICATE_PUBKEY_ID =  'https://cvstatus.icmr.gov.in/i/india';
 const CERTIFICATE_DID =  'did:india';
 const CERTIFICATE_SCAN_TIMEOUT =  '45000';
 const CERTIFICATE_SIGNED_KEY_TYPE =  'RSA';
+const certificatePublicKey = '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtu87YH+XEkHB+Id7/xmN\nxG6UNCPYyNQeWGvD73oCoPTy6f+L8OOpfEK+P2BCkyKR59L/QL8Mkyn4KTw39LUk\nDtD4ijJC5wt2+f1Si1/d/ZguZ/LFXhqXSZHN18f1sedJjPPr20EyJp0IAoBPap5U\nkCeLGMv0lto+iqasEVRC0o7hbICFrnzFTOl5CTUDYMOndn3XEcK0KdLlhsPfQp0n\nZXCZHbisL1LPD3vqZ/7HKWfr+qsIxYt9aikBaOFg5mMoMvE4sLZTwMm+ElB1HH3h\nhaVnFjycGBwy4A8jzGWy/y++YQy5n0VUlKT2gk62/dHgPKK3NUY2YPBOfuOyBmYp\nwQIDAQAB\n-----END PUBLIC KEY-----'
 
 
 
@@ -96,18 +97,13 @@ export class CertificateVerifier {
     
     public customLoader = url => {
         console.log("checking " + url);
-        // const c = {
-        //     "did:india": this.publicKey,
-        //     "https://example.com/i/india": this.publicKey,
-        //     "https://w3id.org/security/v1": contexts.get("https://w3id.org/security/v1"),
-        //     'https://www.w3.org/2018/credentials#': credentialsv1,
-        //     "https://www.w3.org/2018/credentials/v1": credentialsv1,
-        //     [testCertificateContextUrl]: testCertificateContext,
-        // };
         const c = {
             "did:india": this.publicKey,
             "https://example.com/i/india": this.publicKey,
             "https://w3id.org/security/v1": contexts.get("https://w3id.org/security/v1"),
+            'https://www.w3.org/2018/credentials#': credentialsv1,
+            "https://www.w3.org/2018/credentials/v1": credentialsv1,
+            [testCertificateContextUrl]: testCertificateContext,
         };
         let context = c[url];
         if (context === undefined) {
