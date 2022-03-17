@@ -35,9 +35,9 @@ const CERTIFICATE_SIGNED_KEY_TYPE =  'RSA';
 
 export class CertificateVerifier {
 
-    private static publicKey = '';
+    private publicKey = '';
 
-    public static getDataFromQr(req: CsVerifyCertificateRequest): Promise<any>{
+    public getDataFromQr(req: CsVerifyCertificateRequest): Promise<any>{
         this.publicKey = req.publicKey;
         const zippedData = atob(req.scannedData.split('data=')[1]);
         const zip = new JSZip();
@@ -53,7 +53,7 @@ export class CertificateVerifier {
           );
     }
 
-    public static async verifyData(certificateData): Promise<any>{
+    public async verifyData(certificateData): Promise<any>{
         try {
             const signedJSON = JSON.parse(certificateData);
             const {AssertionProofPurpose} = jsigs.purposes;
@@ -94,7 +94,7 @@ export class CertificateVerifier {
         }
     }
     
-    public static customLoader = url => {
+    public customLoader = url => {
         console.log("checking " + url);
         // const c = {
         //     "did:india": this.publicKey,
