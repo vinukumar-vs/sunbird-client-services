@@ -71,6 +71,7 @@ export class CertificateServiceImpl implements CsCertificateService {
         return this.httpService.fetch<{ result: { response: { count: number, content: CsLearnerCertificateV1[] } } }>(apiRequest)
             .pipe(
                 map((response) => {
+                    console.log('fetchCertificatesV1 res', response);
                     return response.body.result.response.content;
                 }),
                 catchError((e) => {
@@ -110,10 +111,11 @@ export class CertificateServiceImpl implements CsCertificateService {
                 .withBody(certRequest)
                 .build();
 
-            return this.httpService.fetch<{ result: CsLearnerCertificateV2[] }>(apiRequest)
+            return this.httpService.fetch< CsLearnerCertificateV2[] >(apiRequest)
                 .pipe(
                     map((response) => {
-                        return response.body.result.map(r => {
+                        console.log('fetchCertificatesV2 res', response);
+                        return response.body.map(r => {
                             let result = {
                                 id: r.training.id,
                                 name: r.training.name,
@@ -122,7 +124,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                             }
                             return result;
                         });
-                    })
+                    }),
                 ).toPromise();
         });
     }
