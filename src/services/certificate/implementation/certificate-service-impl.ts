@@ -15,10 +15,14 @@ import {
     CertificateType,
     GetLegacyCertificateRequest,
     GetLegacyCertificateResponse,
-    CsVerifyCertificateRequest
+    CsVerifyCertificateRequest,
+    CsCertificateDetailsResponse,
+    CsGetCertificateRequest
 } from "../interface";
 import { CsSystemSettingsService } from "../../system-settings/interface/";
 import { CertificateVerifier } from "../../../utilities/certificate/certificate-verifier";
+import JSZip from "jszip";
+
 
 @injectable()
 export class CertificateServiceImpl implements CsCertificateService {
@@ -245,8 +249,81 @@ export class CertificateServiceImpl implements CsCertificateService {
         );
     }
 
-    verifyCertificate(req: CsVerifyCertificateRequest): Promise<any> {
-        return new CertificateVerifier().getDataFromQr(req)
+    // verifyCertificate(req: CsVerifyCertificateRequest): Promise<any> {
+    //     return new CertificateVerifier().getDataFromQr(req)
+    // }
+
+    getCertificateDetails(request: CsGetCertificateRequest, config?: CsCertificateServiceConfig): Observable<CsCertificateDetailsResponse> {
+        return defer(async () => {
+            let schemaName = request.schemaName
+            if (!schemaName) {
+                try {
+                    schemaName = await this.systemSettingsService.getSystemSettings("certificate_schema").toPromise();
+                } catch (e) {
+                    throw new Error('Schema Name Not found');
+                }
+            }
+
+            const rcRequest: CsRequest = new CsRequest.Builder()
+                    .withType(CsHttpRequestType.GET)
+                    .withPath((config ? config.rcApiPath : this.rcApiPath)!!.replace("${schemaName}", schemaName) + '/download/' + request.certificateId)
+                    .withBearerToken(true)
+                    .withUserToken(true)
+                    .build();
+
+            return this.httpService.fetch<CsCertificateDetailsResponse>(rcRequest)
+                .pipe(
+                    map((response) => {
+                        return response.body;
+                    }),
+                    catchError((e) => {
+                        console.error(e);
+                        return of({ status: 'REVOKED' } as CsCertificateDetailsResponse);
+                        
+                    })
+                ).toPromise();
+        });
+    }
+
+    getEncodedData(encodedData){
+        // const zippedData = encodedData;
+
+        const zippedData = atob(encodedData);
+        const zip = new JSZip();
+
+        return zip.loadAsync(zippedData).then((contents) => {
+            console.log('after unzip', contents)
+            return contents.files['certificate.json'].async('text')
+        }).then( (contents) => {
+            console.log('contents', contents);
+            return JSON.parse(contents);
+        }).catch(err => {
+            console.log('error', err)
+        });
+    }
+
+    async verifyCertificate(req: CsVerifyCertificateRequest, config?: CsCertificateServiceConfig): Promise<any>{
+        let publicKey;
+        if (!req.publicKey) {
+            try {
+                if ( req.certificateData && req.certificateData.issuer && req.certificateData.issuer.publicKey && req.certificateData.issuer.publicKey.length){
+                    const getPublicKeyReq: GetPublicKeyRequest = {
+                        osid: req.certificateData.issuer.publicKey,
+                        schemaName: req.schemaName
+                    }
+                    const publicKeyResp = await this.getPublicKey(getPublicKeyReq, config).toPromise()
+                    publicKey = publicKeyResp.value;
+                } else {
+                    Promise.reject('fields missing')
+                }
+            } catch(e){
+                console.log('publicKey err', e)
+                Promise.reject(e)
+            }
+        } else {
+            publicKey = req.publicKey
+        }
+        return new CertificateVerifier().verifyData(req.certificateData, publicKey)
     }
 
 }
