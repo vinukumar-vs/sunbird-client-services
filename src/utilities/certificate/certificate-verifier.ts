@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import * as vc from "vc-js";
+// import * as vc from "vc-js";
 
 import jsigs from 'jsonld-signatures';
 import {contexts} from 'security-context';
@@ -30,7 +30,6 @@ const CERTIFICATE_PUBKEY_ID =  'https://cvstatus.icmr.gov.in/i/india';
 const CERTIFICATE_DID =  'did:india';
 const CERTIFICATE_SCAN_TIMEOUT =  '45000';
 const CERTIFICATE_SIGNED_KEY_TYPE =  'RSA';
-const certificatePublicKey = '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtu87YH+XEkHB+Id7/xmN\nxG6UNCPYyNQeWGvD73oCoPTy6f+L8OOpfEK+P2BCkyKR59L/QL8Mkyn4KTw39LUk\nDtD4ijJC5wt2+f1Si1/d/ZguZ/LFXhqXSZHN18f1sedJjPPr20EyJp0IAoBPap5U\nkCeLGMv0lto+iqasEVRC0o7hbICFrnzFTOl5CTUDYMOndn3XEcK0KdLlhsPfQp0n\nZXCZHbisL1LPD3vqZ/7HKWfr+qsIxYt9aikBaOFg5mMoMvE4sLZTwMm+ElB1HH3h\nhaVnFjycGBwy4A8jzGWy/y++YQy5n0VUlKT2gk62/dHgPKK3NUY2YPBOfuOyBmYp\nwQIDAQAB\n-----END PUBLIC KEY-----'
 
 
 
