@@ -14,9 +14,11 @@ import {
     FetchCertificateRequest,
     CertificateType,
     GetLegacyCertificateRequest,
-    GetLegacyCertificateResponse
+    GetLegacyCertificateResponse,
+    CsVerifyCertificateRequest
 } from "../interface";
 import { CsSystemSettingsService } from "../../system-settings/interface/";
+import { CertificateVerifier } from "../../../utilities/certificate/certificate-verifier";
 
 @injectable()
 export class CertificateServiceImpl implements CsCertificateService {
@@ -241,6 +243,10 @@ export class CertificateServiceImpl implements CsCertificateService {
                 return response.body.result;
             })
         );
+    }
+
+    verifyCertificate(req: CsVerifyCertificateRequest): Promise<any> {
+        return new CertificateVerifier().getDataFromQr(req)
     }
 
 }

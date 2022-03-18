@@ -57,4 +57,6 @@ export interface CsCertificateService {
   getPublicKey(req: GetPublicKeyRequest, config?: CsCertificateServiceConfig): Observable<GetPublicKeyResponse>;
   getCerificateDownloadURI(req: FetchCertificateRequest, config?: CsCertificateServiceConfig): Observable<FetchCertificateResponse>;
   getLegacyCerificateDownloadURI(req: GetLegacyCertificateRequest, config?: CsCertificateServiceConfig): Observable<GetLegacyCertificateResponse>;
+  verifyCertificate(req: CsVerifyCertificateRequest): Promise<any>;
+//   getEncodedData(req: string): Promise<any>;
 }
