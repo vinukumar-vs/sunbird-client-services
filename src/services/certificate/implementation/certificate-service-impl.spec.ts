@@ -91,32 +91,30 @@ describe('CertificateServiceImpl', () => {
                 } else {
                     const response = new CsResponse();
                     response.responseCode = 200;
-                    response.body = {
-                        result: [{
-                            training: {
-                                osid: '',
-                                name: 'SAMPLE_NAME_RC',
-                                id: '',
-                                batchId: '',
-                                type: ''
-                            },
-                            certificateLabel: '',
-                            signatory: [],
-                            recipient: {
-                                osid: '',
-                                name: '',
-                                id: '',
-                                type: ''
-                            },
-                            issuer: {
-                                osid: '',
-                                name: 'SAMPLE_ISSUER_RC',
-                                url: ''
-                            },
+                    response.body = [{
+                        training: {
                             osid: '',
-                            status: ''
-                        }]
-                    };
+                            name: 'SAMPLE_NAME_RC',
+                            id: '',
+                            batchId: '',
+                            type: ''
+                        },
+                        certificateLabel: '',
+                        signatory: [],
+                        recipient: {
+                            osid: '',
+                            name: '',
+                            id: '',
+                            type: ''
+                        },
+                        issuer: {
+                            osid: '',
+                            name: 'SAMPLE_ISSUER_RC',
+                            url: ''
+                        },
+                        osid: '',
+                        status: ''
+                    }]
                     return of(response);
                 }
 
@@ -133,8 +131,8 @@ describe('CertificateServiceImpl', () => {
                     type: 'POST',
                     path: expect.stringContaining('MOCK_RC_API_PATH/SOME_SCHEMA_NAME/v1/search')
                 }));
-                expect(r[0].name).toEqual('SAMPLE_NAME');
-                expect(r[1].name).toEqual('SAMPLE_NAME_RC');
+                expect(r[0].trainingName).toEqual('SAMPLE_NAME');
+                expect(r[1].trainingName).toEqual('SAMPLE_NAME_RC');
                 expect(r[0].type).toEqual(CertificateType.CERTIFICATE_REGISTRY);
                 expect(r[1].type).toEqual(CertificateType.RC_CERTIFICATE_REGISTRY);
                 expect(r.length).toEqual(2);
@@ -190,32 +188,30 @@ describe('CertificateServiceImpl', () => {
                 } else {
                     const response = new CsResponse();
                     response.responseCode = 200;
-                    response.body = {
-                        result: [{
-                            training: {
-                                osid: '',
-                                name: 'SAMPLE_NAME_RC',
-                                id: '',
-                                batchId: '',
-                                type: ''
-                            },
-                            certificateLabel: '',
-                            signatory: [],
-                            recipient: {
-                                osid: '',
-                                name: '',
-                                id: '',
-                                type: ''
-                            },
-                            issuer: {
-                                osid: '',
-                                name: 'SAMPLE_ISSUER_RC',
-                                url: ''
-                            },
+                    response.body = [{
+                        training: {
                             osid: '',
-                            status: ''
-                        }]
-                    };
+                            name: 'SAMPLE_NAME_RC',
+                            id: '',
+                            batchId: '',
+                            type: ''
+                        },
+                        certificateLabel: '',
+                        signatory: [],
+                        recipient: {
+                            osid: '',
+                            name: '',
+                            id: '',
+                            type: ''
+                        },
+                        issuer: {
+                            osid: '',
+                            name: 'SAMPLE_ISSUER_RC',
+                            url: ''
+                        },
+                        osid: '',
+                        status: ''
+                    }]
                     return of(response);
                 }
 
@@ -235,8 +231,8 @@ describe('CertificateServiceImpl', () => {
                     type: 'POST',
                     path: expect.stringContaining('SOME_RC_API_PATH/SOME_SCHEMA_NAME/v1/search')
                 }));
-                expect(r[0].name).toEqual('SAMPLE_NAME');
-                expect(r[1].name).toEqual('SAMPLE_NAME_RC');
+                expect(r[0].trainingName).toEqual('SAMPLE_NAME');
+                expect(r[1].trainingName).toEqual('SAMPLE_NAME_RC');
                 expect(r.length).toEqual(2);
                 done();
             });
@@ -290,32 +286,30 @@ describe('CertificateServiceImpl', () => {
                 } else {
                     const response = new CsResponse();
                     response.responseCode = 200;
-                    response.body = {
-                        result: [{
-                            training: {
-                                osid: '',
-                                name: 'SAMPLE_NAME_RC',
-                                id: '',
-                                batchId: '',
-                                type: ''
-                            },
-                            certificateLabel: '',
-                            signatory: [],
-                            recipient: {
-                                osid: '',
-                                name: '',
-                                id: '',
-                                type: ''
-                            },
-                            issuer: {
-                                osid: '',
-                                name: 'SAMPLE_ISSUER_RC',
-                                url: ''
-                            },
+                    response.body = [{
+                        training: {
                             osid: '',
-                            status: ''
-                        }]
-                    };
+                            name: 'SAMPLE_NAME_RC',
+                            id: '',
+                            batchId: '',
+                            type: ''
+                        },
+                        certificateLabel: '',
+                        signatory: [],
+                        recipient: {
+                            osid: '',
+                            name: '',
+                            id: '',
+                            type: ''
+                        },
+                        issuer: {
+                            osid: '',
+                            name: 'SAMPLE_ISSUER_RC',
+                            url: ''
+                        },
+                        osid: '',
+                        status: ''
+                    }]
                     return of(response);
                 }
 
@@ -328,7 +322,7 @@ describe('CertificateServiceImpl', () => {
                 apiPath: 'SOME_API_PATH',
                 rcApiPath: 'SOME_RC_API_PATH/${schemaName}/v1'
             }).toPromise().catch(() => {
-                    done()
+                done()
             })
         });
     });
