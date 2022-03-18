@@ -60,6 +60,7 @@ export interface CsVerifyCertificateRequest {
     publicKey?: string;
     certificateData: any;
     schemaName?: string;
+    certificateId: string;
 }
 
 export interface VerifyCertificateResponse {
