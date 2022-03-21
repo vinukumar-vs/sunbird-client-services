@@ -37,30 +37,11 @@ export class CertificateVerifier {
 
     private publicKey = '';
 
-    public getDataFromQr(req: CsVerifyCertificateRequest): Promise<any>{
-        this.publicKey = req.publicKey;
-        const zippedData = atob(req.scannedData.split('data=')[1]);
-        const zip = new JSZip();
-        return zip.loadAsync(zippedData).then((contents) => {
-            console.log('after unzip', contents)
-            return contents.files['certificate.json'].async('text')
-          }).then( (contents) => {
-            console.log('contents', contents);
-            return this.verifyData(contents);
-          }).catch(err => {
-            console.log('error', err)
-              }
-          );
-    }
-
-    public async verifyData(certificateData): Promise<any>{
+    public async verifyData(signedJSON, publicKey): Promise<any>{
+        this.publicKey = publicKey;
         try {
-            const signedJSON = JSON.parse(certificateData);
             const {AssertionProofPurpose} = jsigs.purposes;
-            console.log('signedJSON', signedJSON)
-            console.log('AssertionProofPurpose', AssertionProofPurpose)
             let result;
-            // debugger
             console.log('in if')
             const publicKey = {
                 '@context': jsigs.SECURITY_CONTEXT_URL,
@@ -84,7 +65,13 @@ export class CertificateVerifier {
                 documentLoader: this.customLoader,
                 compactProof: false
             });
-            result.certificateData = signedJSON;
+            result.certificateData = {
+                issuedTo: signedJSON.credentialSubject.name,
+                issuanceDate: signedJSON.issuanceDate,
+                issuerName: signedJSON.issuer.name,
+                trainingName: signedJSON.credentialSubject.trainingName,
+                trainigId: signedJSON.credentialSubject.trainingId
+            };
             console.log('result in csl', result)
             return result;
             
