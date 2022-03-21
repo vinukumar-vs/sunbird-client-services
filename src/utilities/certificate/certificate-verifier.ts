@@ -69,7 +69,8 @@ export class CertificateVerifier {
                 issuedTo: signedJSON.credentialSubject.name,
                 issuanceDate: signedJSON.issuanceDate,
                 issuerName: signedJSON.issuer.name,
-                trainingName: signedJSON.credentialSubject.trainingName
+                trainingName: signedJSON.credentialSubject.trainingName,
+                trainigId: signedJSON.credentialSubject.trainingId
             };
             console.log('result in csl', result)
             return result;

@@ -17,7 +17,8 @@ import {
     GetLegacyCertificateResponse,
     CsVerifyCertificateRequest,
     CsCertificateDetailsResponse,
-    CsGetCertificateRequest
+    CsGetCertificateRequest,
+    CsVerifyCertificateResponse
 } from "../interface";
 import { CsSystemSettingsService } from "../../system-settings/interface/";
 import { CertificateVerifier } from "../../../utilities/certificate/certificate-verifier";
@@ -302,28 +303,48 @@ export class CertificateServiceImpl implements CsCertificateService {
         });
     }
 
-    async verifyCertificate(req: CsVerifyCertificateRequest, config?: CsCertificateServiceConfig): Promise<any>{
-        let publicKey;
-        if (!req.publicKey) {
-            try {
-                if ( req.certificateData && req.certificateData.issuer && req.certificateData.issuer.publicKey && req.certificateData.issuer.publicKey.length){
-                    const getPublicKeyReq: GetPublicKeyRequest = {
-                        osid: req.certificateData.issuer.publicKey,
-                        schemaName: req.schemaName
-                    }
-                    const publicKeyResp = await this.getPublicKey(getPublicKeyReq, config).toPromise()
-                    publicKey = publicKeyResp.value;
-                } else {
-                    Promise.reject('fields missing')
-                }
-            } catch(e){
-                console.log('publicKey err', e)
-                Promise.reject(e)
-            }
-        } else {
-            publicKey = req.publicKey
-        }
-        return new CertificateVerifier().verifyData(req.certificateData, publicKey)
+    verifyCertificate(req: CsVerifyCertificateRequest, config?: CsCertificateServiceConfig): Observable<CsVerifyCertificateResponse> {
+        return this.getCertificateDetails({ certificateId: req.certificateId, schemaName: req.schemaName }, config)
+            .pipe(
+                catchError((e) => {
+                    console.error(e);
+                    // throw e
+                    return of({status: 'active'})
+                }),
+                mergeMap((response: CsCertificateDetailsResponse) => {
+                    return iif(
+                        () => (!req.publicKey),
+                        defer(() => {
+                            if (req.certificateData && req.certificateData.issuer && req.certificateData.issuer.publicKey && req.certificateData.issuer.publicKey.length) {
+                                return this.getPublicKey(req.certificateData.issuer.publicKey, config)
+                                .pipe(
+                                    map((response) => {
+                                        return response.value;
+                                    }),
+                                    catchError((e) => {
+                                        console.error(e);
+                                        throw e
+                                    }),
+                                )
+                            } else {
+                                throw new Error('Public Key Not found')
+                            }
+                        }),
+                        defer(() => {
+                            return of(req.publicKey)
+                        })
+                            .pipe(
+                                mergeMap((publicKey) => {
+                                    return new CertificateVerifier().verifyData(req.certificateData, publicKey).then((data) => {
+                                        return  {
+                                            ...data,
+                                            status: response.status 
+                                        }
+                                    })
+                                })
+                            ))
+                }),
+            )
     }
 
 }

@@ -63,14 +63,15 @@ export interface CsVerifyCertificateRequest {
     certificateId: string;
 }
 
-export interface VerifyCertificateResponse {
-    isVerified: boolean;
+export interface CsVerifyCertificateResponse {
+    verified: boolean;
     status: string;
     certificateData: {
         issuedTo: string;
         issuanceDate: string;
         issuerName: string;
         trainingName: string;
+        trainigId: string;
     }
 }
 
@@ -81,8 +82,7 @@ export interface CsCertificateService {
     getPublicKey(req: GetPublicKeyRequest, config?: CsCertificateServiceConfig): Observable<GetPublicKeyResponse>;
     getCerificateDownloadURI(req: FetchCertificateRequest, config?: CsCertificateServiceConfig): Observable<FetchCertificateResponse>;
     getLegacyCerificateDownloadURI(req: GetLegacyCertificateRequest, config?: CsCertificateServiceConfig): Observable<GetLegacyCertificateResponse>;
-    //   verifyCertificate(req: CsVerifyCertificateRequest): Promise<any>;
     getCertificateDetails(req: CsGetCertificateRequest, config?: CsCertificateServiceConfig): Observable<CsCertificateDetailsResponse>;
     getEncodedData(req: string): Promise<any>;
-    verifyCertificate(req: CsVerifyCertificateRequest, config?: CsCertificateServiceConfig): Promise<VerifyCertificateResponse>
+    verifyCertificate(req: CsVerifyCertificateRequest, config?: CsCertificateServiceConfig): Observable<CsVerifyCertificateResponse>
 }
