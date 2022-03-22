@@ -131,11 +131,11 @@ describe('CertificateServiceImpl', () => {
                     type: 'POST',
                     path: expect.stringContaining('MOCK_RC_API_PATH/SOME_SCHEMA_NAME/v1/search')
                 }));
-                expect(r[0].trainingName).toEqual('SAMPLE_NAME');
-                expect(r[1].trainingName).toEqual('SAMPLE_NAME_RC');
-                expect(r[0].type).toEqual(CertificateType.CERTIFICATE_REGISTRY);
-                expect(r[1].type).toEqual(CertificateType.RC_CERTIFICATE_REGISTRY);
-                expect(r.length).toEqual(2);
+                expect(r.certificates[0].trainingName).toEqual('SAMPLE_NAME');
+                expect(r.certificates[1].trainingName).toEqual('SAMPLE_NAME_RC');
+                expect(r.certificates[0].type).toEqual(CertificateType.CERTIFICATE_REGISTRY);
+                expect(r.certificates[1].type).toEqual(CertificateType.RC_CERTIFICATE_REGISTRY);
+                expect(r.certificates.length).toEqual(2);
                 done();
             });
         });
@@ -231,9 +231,9 @@ describe('CertificateServiceImpl', () => {
                     type: 'POST',
                     path: expect.stringContaining('SOME_RC_API_PATH/SOME_SCHEMA_NAME/v1/search')
                 }));
-                expect(r[0].trainingName).toEqual('SAMPLE_NAME');
-                expect(r[1].trainingName).toEqual('SAMPLE_NAME_RC');
-                expect(r.length).toEqual(2);
+                expect(r.certificates[0].trainingName).toEqual('SAMPLE_NAME');
+                expect(r.certificates[1].trainingName).toEqual('SAMPLE_NAME_RC');
+                expect(r.certificates.length).toEqual(2);
                 done();
             });
         });
