@@ -18,7 +18,8 @@ import {
     CsVerifyCertificateRequest,
     CsCertificateDetailsResponse,
     CsGetCertificateRequest,
-    CsVerifyCertificateResponse
+    CsVerifyCertificateResponse,
+    CsLearnerCertificateResponse
 } from "../interface";
 import { CsSystemSettingsService } from "../../system-settings/interface/";
 import { CertificateVerifier } from "../../../utilities/certificate/certificate-verifier";
@@ -36,7 +37,7 @@ export class CertificateServiceImpl implements CsCertificateService {
     ) {
     }
 
-    fetchCertificatesV1(request: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificateV1[]> {
+    fetchCertificatesV1(request: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<{count: number, content: CsLearnerCertificateV1[]}> {
         if (!this.apiPath && (!config || !config.apiPath)) {
             throw new Error('Required certificate api Path configuration');
         }
@@ -77,7 +78,7 @@ export class CertificateServiceImpl implements CsCertificateService {
         return this.httpService.fetch<{ result: { response: { count: number, content: CsLearnerCertificateV1[] } } }>(apiRequest)
             .pipe(
                 map((response) => {
-                    return response.body.result.response.content;
+                    return response.body.result.response;
                 }),
                 catchError((e) => {
                     console.error(e);
@@ -139,28 +140,34 @@ export class CertificateServiceImpl implements CsCertificateService {
         });
     }
 
-    fetchCertificates(request: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]> {
+    fetchCertificates(request: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificateResponse> {
         return this.fetchCertificatesV1(request, config).pipe(
-            map((r) => r.map((rs) => {
-                let result = {
-                    id: rs._id,
-                    trainingName: rs._source.data.badge.name,
-                    issuerName: rs._source.data? rs._source.data.badge.issuer.name : undefined,
-                    issuedOn: rs._source.data ? rs._source.data.issuedOn: undefined,
-                    courseId: rs._source.related.courseId,
-                    pdfUrl: rs._source.pdfUrl,
-                    type: CertificateType.CERTIFICATE_REGISTRY
-                }
-                return result;
-            }),
-            ),
-        mergeMap((result) => {
-            return this.fetchCertificatesV2(request, config).pipe(
-                map(r => [...result, ...r])
-            )
-        })
-    )
+            mergeMap((result) => {
+                return this.fetchCertificatesV2(request, config).pipe(
+                    map((r) => {
+                        const cer = result.content.map((rs) => {
+                            return {
+                                id: rs._id,
+                                trainingName: rs._source.data.badge.name,
+                                issuerName: rs._source.data? rs._source.data.badge.issuer.name : undefined,
+                                issuedOn: rs._source.data ? rs._source.data.issuedOn: undefined,
+                                courseId: rs._source.related.courseId,
+                                pdfUrl: rs._source.pdfUrl,
+                                type: CertificateType.CERTIFICATE_REGISTRY 
+                            }
+                        });
+                        const certs = {
+                            certRegCount: result.count,
+                            rcCount: r.length,
+                            certificates: [...cer, ...r]
+                        }
+                        return certs;
+                    })
+                )
+            }) 
+        )
     }
+
 
     getPublicKey(request: GetPublicKeyRequest, config?: CsCertificateServiceConfig): Observable<GetPublicKeyResponse> {
         return defer(async () => {

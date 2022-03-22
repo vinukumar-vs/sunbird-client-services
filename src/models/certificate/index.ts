@@ -58,12 +58,12 @@ export interface CsLearnerCertificateV2 {
 }
 
 export interface CsLearnerCertificate {
-    id: string;
-    courseId?: string;
-    trainingName: string;
-    pdfUrl?: string;
-    issuedOn?: string;
-    issuerName?: string;
-    osSignedData?: string;
-    type: CertificateType
+        id: string;
+        courseId?: string;
+        trainingName: string;
+        pdfUrl?: string;
+        issuedOn?: string;
+        issuerName?: string;
+        osSignedData?: string;
+        type: CertificateType
 }
