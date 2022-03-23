@@ -82,7 +82,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                 }),
                 catchError((e) => {
                     console.error(e);
-                    return [];
+                    return of({ count: 0, content: [] });
                     
                 })
             );
@@ -133,7 +133,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                     }),
                     catchError((e) => {
                         console.error(e);
-                        return [];
+                        return of([]);
                         
                     })
                 ).toPromise();
@@ -148,7 +148,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                         const cer = result.content.map((rs) => {
                             return {
                                 id: rs._id,
-                                trainingName: rs._source.data.badge.name,
+                                trainingName: rs._source.data? rs._source.data.badge.name: undefined,
                                 issuerName: rs._source.data? rs._source.data.badge.issuer.name : undefined,
                                 issuedOn: rs._source.data ? rs._source.data.issuedOn: undefined,
                                 courseId: rs._source.related.courseId,
@@ -323,7 +323,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                         () => (!req.publicKey),
                         defer(() => {
                             if (req.certificateData && req.certificateData.issuer && req.certificateData.issuer.publicKey && req.certificateData.issuer.publicKey.length) {
-                                return this.getPublicKey(req.certificateData.issuer.publicKey, config)
+                                return this.getPublicKey({osid: req.certificateData.issuer.publicKey, schemaName:req.schemaName}, config)
                                 .pipe(
                                     map((response) => {
                                         return response.value;
