@@ -20,6 +20,7 @@ export interface FetchCertificateRequest {
     certificateId: string;
     schemaName?: string;
     type?: CertificateType;
+    templateUrl?: string;
 }
 
 export enum CertificateType {

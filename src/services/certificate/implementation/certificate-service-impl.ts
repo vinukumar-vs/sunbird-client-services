@@ -82,7 +82,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                 }),
                 catchError((e) => {
                     console.error(e);
-                    return [];
+                    return of({ count: 0, content: [] });
                     
                 })
             );
@@ -126,6 +126,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                                 issuerName: r.issuer.name,
                                 issuedOn: r.issuer.osUpdatedAt,
                                 courseId: r.training.id,
+                                templateUrl: r.templateUrl,
                                 type: CertificateType.RC_CERTIFICATE_REGISTRY
                             }
                             return result;
@@ -133,7 +134,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                     }),
                     catchError((e) => {
                         console.error(e);
-                        return [];
+                        return of([]);
                         
                     })
                 ).toPromise();
@@ -148,11 +149,12 @@ export class CertificateServiceImpl implements CsCertificateService {
                         const cer = result.content.map((rs) => {
                             return {
                                 id: rs._id,
-                                trainingName: rs._source.data.badge.name,
+                                trainingName: rs._source.data? rs._source.data.badge.name: undefined,
                                 issuerName: rs._source.data? rs._source.data.badge.issuer.name : undefined,
                                 issuedOn: rs._source.data ? rs._source.data.issuedOn: undefined,
                                 courseId: rs._source.related.courseId,
                                 pdfUrl: rs._source.pdfUrl,
+                                templateUrl: rs._source.templateUrl,
                                 type: CertificateType.CERTIFICATE_REGISTRY 
                             }
                         });
@@ -214,7 +216,8 @@ export class CertificateServiceImpl implements CsCertificateService {
                     .withPath((config ? config.rcApiPath : this.rcApiPath)!!.replace("${schemaName}", schemaName) + '/download/' + request.certificateId)
                     .withBearerToken(true)
                     .withHeaders({
-                        'Accept': "image/svg+xml"
+                        'Accept': "image/svg+xml",
+                        'template': request.templateUrl
                     })
                     .build();
                 return this.httpService.fetch<string>(rcRequest).pipe(
@@ -300,10 +303,8 @@ export class CertificateServiceImpl implements CsCertificateService {
         const zip = new JSZip();
 
         return zip.loadAsync(zippedData).then((contents) => {
-            console.log('after unzip', contents)
             return contents.files['certificate.json'].async('text')
         }).then( (contents) => {
-            console.log('contents', contents);
             return JSON.parse(contents);
         }).catch(err => {
             console.log('error', err)
@@ -323,7 +324,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                         () => (!req.publicKey),
                         defer(() => {
                             if (req.certificateData && req.certificateData.issuer && req.certificateData.issuer.publicKey && req.certificateData.issuer.publicKey.length) {
-                                return this.getPublicKey(req.certificateData.issuer.publicKey, config)
+                                return this.getPublicKey({osid: req.certificateData.issuer.publicKey, schemaName:req.schemaName}, config)
                                 .pipe(
                                     map((response) => {
                                         return response.value;
