@@ -7,6 +7,7 @@ export interface CsLearnerCertificateV1 {
     _score: number;
     _source: {
         pdfUrl: string;
+        templateUrl: string;
         data: {
             badge: {
                 name: string;
@@ -54,7 +55,8 @@ export interface CsLearnerCertificateV2 {
             osUpdatedAt: string
         },
         osid: string,
-        status: string
+        status: string,
+        templateUrl: string
 }
 
 export interface CsLearnerCertificate {
@@ -66,4 +68,5 @@ export interface CsLearnerCertificate {
         issuerName?: string;
         osSignedData?: string;
         type: CertificateType
+        templateUrl?: string;
 }

@@ -126,6 +126,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                                 issuerName: r.issuer.name,
                                 issuedOn: r.issuer.osUpdatedAt,
                                 courseId: r.training.id,
+                                templateUrl: r.templateUrl,
                                 type: CertificateType.RC_CERTIFICATE_REGISTRY
                             }
                             return result;
@@ -153,6 +154,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                                 issuedOn: rs._source.data ? rs._source.data.issuedOn: undefined,
                                 courseId: rs._source.related.courseId,
                                 pdfUrl: rs._source.pdfUrl,
+                                templateUrl: rs._source.templateUrl,
                                 type: CertificateType.CERTIFICATE_REGISTRY 
                             }
                         });
@@ -214,7 +216,8 @@ export class CertificateServiceImpl implements CsCertificateService {
                     .withPath((config ? config.rcApiPath : this.rcApiPath)!!.replace("${schemaName}", schemaName) + '/download/' + request.certificateId)
                     .withBearerToken(true)
                     .withHeaders({
-                        'Accept': "image/svg+xml"
+                        'Accept': "image/svg+xml",
+                        'template': request.templateUrl
                     })
                     .build();
                 return this.httpService.fetch<string>(rcRequest).pipe(
@@ -300,10 +303,8 @@ export class CertificateServiceImpl implements CsCertificateService {
         const zip = new JSZip();
 
         return zip.loadAsync(zippedData).then((contents) => {
-            console.log('after unzip', contents)
             return contents.files['certificate.json'].async('text')
         }).then( (contents) => {
-            console.log('contents', contents);
             return JSON.parse(contents);
         }).catch(err => {
             console.log('error', err)
