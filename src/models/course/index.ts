@@ -35,7 +35,8 @@ export interface CourseCertificate {
     name: string;
     lastIssuedOn: string;
     token: string;
-    type?: CertificateType
+    type?: CertificateType,
+    templateUrl?: string;
 }
 
 export interface Course {
