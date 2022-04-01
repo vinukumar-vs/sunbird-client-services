@@ -84,9 +84,7 @@ export class CertificateVerifier {
                 documentUrl: url,
                 document: context
             };
-            console.log('context !== undefined', c);
             return c;
-    
         }
         if (url.startsWith("{")) {
             return JSON.parse(url);
@@ -106,17 +104,14 @@ export class CertificateVerifier {
                     return response.body;
                 }),
                 catchError(e => {
-                    console.log('jsonResp e', e)
                     throw e;
                 })
             ).toPromise();
-            console.log('jsonResp---', jsonResp);
             const c1 = {
                 contextUrl: null,
                 documentUrl: url,
                 document: jsonResp
             };
-            console.log('context !== undefined---====', c1);
             return c1; 
     };
   
