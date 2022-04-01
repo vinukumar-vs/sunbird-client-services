@@ -24,7 +24,6 @@ export class CertificateVerifier {
         try {
             const {AssertionProofPurpose} = jsigs.purposes;
             let result;
-            console.log('in if')
             const publicKey = {
                 '@context': jsigs.SECURITY_CONTEXT_URL,
                 id: CERTIFICATE_DID,
@@ -54,17 +53,14 @@ export class CertificateVerifier {
                 trainingName: signedJSON.credentialSubject.trainingName,
                 trainigId: signedJSON.credentialSubject.trainingId
             };
-            console.log('result in csl', result)
             return result;
             
         } catch (e) {
-            console.log('Invalid data', e);
             throw new Error('Invalid data');
         }
     }
     
     public customLoader = async url => {
-        console.log("checking " + url);
         const c = {
             "did:india": this.publicKey,
             "https://example.com/i/india": this.publicKey,
@@ -75,7 +71,6 @@ export class CertificateVerifier {
         };
         let context = c[url];
         if (context === undefined) {
-            console.log('context === undefined', contexts[url])
             context = contexts[url];
         }
         if (context !== undefined) {
@@ -89,7 +84,6 @@ export class CertificateVerifier {
         if (url.startsWith("{")) {
             return JSON.parse(url);
         }
-        console.log('before api call');
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withHost('https://')
             .withType(CsHttpRequestType.GET)
