@@ -343,7 +343,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                         })
                             .pipe(
                                 mergeMap((publicKey) => {
-                                    return new CertificateVerifier().verifyData(req.certificateData, publicKey).then((data) => {
+                                    return new CertificateVerifier(this.httpService).verifyData(req.certificateData, publicKey).then((data) => {
                                         return  {
                                             ...data,
                                             status: response.status 

@@ -1,39 +1,21 @@
-import JSZip from "jszip";
-// import * as vc from "vc-js";
 
 import jsigs from 'jsonld-signatures';
 import {contexts} from 'security-context';
 import {RSAKeyPair, Ed25519KeyPair} from 'crypto-ld';
 import documentLoaders from 'jsonld';
-import {credentialsv1, testCertificateContext, testCertificateContextUrl} from './credentials'
-import { Observable, of } from "rxjs";
-import { CsVerifyCertificateRequest } from "../../services/certificate";
+import {credentialsv1} from './credentials';
+import { CsHttpRequestType, CsHttpService, CsRequest } from '../../core/http-service/interface';
+import { catchError, map } from "rxjs/operators";
 
-type Primitive = string | number | boolean;
-
-interface SortCriteria {
-  [key: string]: 'asc' | 'desc' | SortComprehension;
-}
-
-interface SortComprehension {
-  order: 'asc' | 'desc';
-  preference?: Primitive[];
-}
-
-
-const urlPath = "/certificate";
-const registerMemberLimit = 4;
 
 const CERTIFICATE_CONTROLLER_ID =  'https://sunbird.org/';
-const CERTIFICATE_NAMESPACE =  "https://cvstatus.icmr.gov.in/credentials/testCertificate/v1";
-const CERTIFICATE_PUBKEY_ID =  'https://cvstatus.icmr.gov.in/i/india';
 const CERTIFICATE_DID =  'did:india';
-const CERTIFICATE_SCAN_TIMEOUT =  '45000';
-const CERTIFICATE_SIGNED_KEY_TYPE =  'RSA';
-
-
-
 export class CertificateVerifier {
+
+    constructor(
+        private httpService: CsHttpService,
+    ) {
+    }
 
     private publicKey = '';
 
@@ -81,15 +63,15 @@ export class CertificateVerifier {
         }
     }
     
-    public customLoader = url => {
+    public customLoader = async url => {
         console.log("checking " + url);
         const c = {
             "did:india": this.publicKey,
             "https://example.com/i/india": this.publicKey,
             "https://w3id.org/security/v1": contexts.get("https://w3id.org/security/v1"),
             'https://www.w3.org/2018/credentials#': credentialsv1,
-            "https://www.w3.org/2018/credentials/v1": credentialsv1,
-            [testCertificateContextUrl]: testCertificateContext,
+            "https://www.w3.org/2018/credentials/v1": credentialsv1
+            
         };
         let context = c[url];
         if (context === undefined) {
@@ -109,9 +91,33 @@ export class CertificateVerifier {
         if (url.startsWith("{")) {
             return JSON.parse(url);
         }
-        console.log("Fallback url lookup for document :" + url)
-        // Todo
-        return documentLoaders({secure: false, strictSSL: false, request: 'request'})(url);
+        console.log('before api call');
+        const apiRequest: CsRequest = new CsRequest.Builder()
+            .withHost('https://')
+            .withType(CsHttpRequestType.GET)
+            .withPath(url.split('//')[1])
+            .withBearerToken(false)
+            .withUserToken(false)
+            .build();
+
+        const jsonResp = await this.httpService.fetch(apiRequest)
+            .pipe(
+                map((response) => {
+                    return response.body;
+                }),
+                catchError(e => {
+                    console.log('jsonResp e', e)
+                    throw e;
+                })
+            ).toPromise();
+            console.log('jsonResp---', jsonResp);
+            const c1 = {
+                contextUrl: null,
+                documentUrl: url,
+                document: jsonResp
+            };
+            console.log('context !== undefined---====', c1);
+            return c1; 
     };
   
 }
