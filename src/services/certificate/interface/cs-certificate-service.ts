@@ -54,12 +54,13 @@ export interface CsGetCertificateRequest {
 export interface CsCertificateDetailsResponse {
     training?: string;
     recipient?: string;
-    status: string
+    status: string;
+    _osSignedData?: any;
 }
 
 export interface CsVerifyCertificateRequest {
     publicKey?: string;
-    certificateData: any;
+    certificateData?: any;
     schemaName?: string;
     certificateId: string;
 }

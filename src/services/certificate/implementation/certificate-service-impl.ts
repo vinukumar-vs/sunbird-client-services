@@ -285,6 +285,7 @@ export class CertificateServiceImpl implements CsCertificateService {
             return this.httpService.fetch<CsCertificateDetailsResponse>(rcRequest)
                 .pipe(
                     map((response) => {
+                        console.log('CsCertificateDetailsResponse csl', response);
                         return response.body;
                     }),
                     catchError((e) => {
@@ -323,8 +324,9 @@ export class CertificateServiceImpl implements CsCertificateService {
                     return iif(
                         () => (!req.publicKey),
                         defer(() => {
-                            if (req.certificateData && req.certificateData.issuer && req.certificateData.issuer.publicKey && req.certificateData.issuer.publicKey.length) {
-                                return this.getPublicKey({osid: req.certificateData.issuer.publicKey, schemaName:req.schemaName}, config)
+                            const certificateData = JSON.parse(response._osSignedData)
+                            if (certificateData && certificateData.issuer && certificateData.issuer.publicKey && certificateData.issuer.publicKey.length) {
+                                return this.getPublicKey({osid: certificateData.issuer.publicKey, schemaName:req.schemaName}, config)
                                 .pipe(
                                     map((response) => {
                                         return response.value;
@@ -341,16 +343,17 @@ export class CertificateServiceImpl implements CsCertificateService {
                         defer(() => {
                             return of(req.publicKey)
                         })
-                            .pipe(
-                                mergeMap((publicKey) => {
-                                    return new CertificateVerifier(this.httpService).verifyData(req.certificateData, publicKey).then((data) => {
-                                        return  {
-                                            ...data,
-                                            status: response.status 
-                                        }
-                                    })
-                                })
-                            ))
+                    )
+                    .pipe(
+                        mergeMap((publicKey) => {
+                            return new CertificateVerifier(this.httpService).verifyData(JSON.parse(response._osSignedData), publicKey).then((data) => {
+                                return  {
+                                    ...data,
+                                    status: response.status 
+                                }
+                            })
+                        })
+                    )
                 }),
             )
     }
