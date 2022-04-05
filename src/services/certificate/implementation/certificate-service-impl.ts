@@ -14,9 +14,17 @@ import {
     FetchCertificateRequest,
     CertificateType,
     GetLegacyCertificateRequest,
-    GetLegacyCertificateResponse
+    GetLegacyCertificateResponse,
+    CsVerifyCertificateRequest,
+    CsCertificateDetailsResponse,
+    CsGetCertificateRequest,
+    CsVerifyCertificateResponse,
+    CsLearnerCertificateResponse
 } from "../interface";
 import { CsSystemSettingsService } from "../../system-settings/interface/";
+import { CertificateVerifier } from "../../../utilities/certificate/certificate-verifier";
+import JSZip from "jszip";
+
 
 @injectable()
 export class CertificateServiceImpl implements CsCertificateService {
@@ -29,7 +37,7 @@ export class CertificateServiceImpl implements CsCertificateService {
     ) {
     }
 
-    fetchCertificatesV1(request: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificateV1[]> {
+    fetchCertificatesV1(request: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<{count: number, content: CsLearnerCertificateV1[]}> {
         if (!this.apiPath && (!config || !config.apiPath)) {
             throw new Error('Required certificate api Path configuration');
         }
@@ -70,11 +78,11 @@ export class CertificateServiceImpl implements CsCertificateService {
         return this.httpService.fetch<{ result: { response: { count: number, content: CsLearnerCertificateV1[] } } }>(apiRequest)
             .pipe(
                 map((response) => {
-                    return response.body.result.response.content;
+                    return response.body.result.response;
                 }),
                 catchError((e) => {
                     console.error(e);
-                    return [];
+                    return of({ count: 0, content: [] });
                     
                 })
             );
@@ -118,6 +126,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                                 issuerName: r.issuer.name,
                                 issuedOn: r.issuer.osUpdatedAt,
                                 courseId: r.training.id,
+                                templateUrl: r.templateUrl,
                                 type: CertificateType.RC_CERTIFICATE_REGISTRY
                             }
                             return result;
@@ -125,35 +134,42 @@ export class CertificateServiceImpl implements CsCertificateService {
                     }),
                     catchError((e) => {
                         console.error(e);
-                        return [];
+                        return of([]);
                         
                     })
                 ).toPromise();
         });
     }
 
-    fetchCertificates(request: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificate[]> {
+    fetchCertificates(request: CSGetLearnerCerificateRequest, config?: CsCertificateServiceConfig): Observable<CsLearnerCertificateResponse> {
         return this.fetchCertificatesV1(request, config).pipe(
-            map((r) => r.map((rs) => {
-                let result = {
-                    id: rs._id,
-                    trainingName: rs._source.data.badge.name,
-                    issuerName: rs._source.data? rs._source.data.badge.issuer.name : undefined,
-                    issuedOn: rs._source.data ? rs._source.data.issuedOn: undefined,
-                    courseId: rs._source.related.courseId,
-                    pdfUrl: rs._source.pdfUrl,
-                    type: CertificateType.CERTIFICATE_REGISTRY
-                }
-                return result;
-            }),
-            ),
-        mergeMap((result) => {
-            return this.fetchCertificatesV2(request, config).pipe(
-                map(r => [...result, ...r])
-            )
-        })
-    )
+            mergeMap((result) => {
+                return this.fetchCertificatesV2(request, config).pipe(
+                    map((r) => {
+                        const cer = result.content.map((rs) => {
+                            return {
+                                id: rs._id,
+                                trainingName: rs._source.data? rs._source.data.badge.name: undefined,
+                                issuerName: rs._source.data? rs._source.data.badge.issuer.name : undefined,
+                                issuedOn: rs._source.data ? rs._source.data.issuedOn: undefined,
+                                courseId: rs._source.related.courseId,
+                                pdfUrl: rs._source.pdfUrl,
+                                templateUrl: rs._source.templateUrl,
+                                type: CertificateType.CERTIFICATE_REGISTRY 
+                            }
+                        });
+                        const certs = {
+                            certRegCount: result.count,
+                            rcCount: r.length,
+                            certificates: [...cer, ...r]
+                        }
+                        return certs;
+                    })
+                )
+            }) 
+        )
     }
+
 
     getPublicKey(request: GetPublicKeyRequest, config?: CsCertificateServiceConfig): Observable<GetPublicKeyResponse> {
         return defer(async () => {
@@ -200,7 +216,8 @@ export class CertificateServiceImpl implements CsCertificateService {
                     .withPath((config ? config.rcApiPath : this.rcApiPath)!!.replace("${schemaName}", schemaName) + '/download/' + request.certificateId)
                     .withBearerToken(true)
                     .withHeaders({
-                        'Accept': "image/svg+xml"
+                        'Accept': "image/svg+xml",
+                        'template': request.templateUrl
                     })
                     .build();
                 return this.httpService.fetch<string>(rcRequest).pipe(
@@ -241,6 +258,104 @@ export class CertificateServiceImpl implements CsCertificateService {
                 return response.body.result;
             })
         );
+    }
+
+    // verifyCertificate(req: CsVerifyCertificateRequest): Promise<any> {
+    //     return new CertificateVerifier().getDataFromQr(req)
+    // }
+
+    getCertificateDetails(request: CsGetCertificateRequest, config?: CsCertificateServiceConfig): Observable<CsCertificateDetailsResponse> {
+        return defer(async () => {
+            let schemaName = request.schemaName
+            if (!schemaName) {
+                try {
+                    schemaName = await this.systemSettingsService.getSystemSettings("certificate_schema").toPromise();
+                } catch (e) {
+                    throw new Error('Schema Name Not found');
+                }
+            }
+
+            const rcRequest: CsRequest = new CsRequest.Builder()
+                    .withType(CsHttpRequestType.GET)
+                    .withPath((config ? config.rcApiPath : this.rcApiPath)!!.replace("${schemaName}", schemaName) + '/download/' + request.certificateId)
+                    .withBearerToken(true)
+                    .withUserToken(true)
+                    .build();
+
+            return this.httpService.fetch<CsCertificateDetailsResponse>(rcRequest)
+                .pipe(
+                    map((response) => {
+                        console.log('CsCertificateDetailsResponse csl', response);
+                        return response.body;
+                    }),
+                    catchError((e) => {
+                        console.error(e);
+                        return of({ status: 'REVOKED' } as CsCertificateDetailsResponse);
+                        
+                    })
+                ).toPromise();
+        });
+    }
+
+    getEncodedData(encodedData){
+        // const zippedData = encodedData;
+
+        const zippedData = atob(encodedData);
+        const zip = new JSZip();
+
+        return zip.loadAsync(zippedData).then((contents) => {
+            return contents.files['certificate.json'].async('text')
+        }).then( (contents) => {
+            return JSON.parse(contents);
+        }).catch(err => {
+            console.log('error', err)
+        });
+    }
+
+    verifyCertificate(req: CsVerifyCertificateRequest, config?: CsCertificateServiceConfig): Observable<CsVerifyCertificateResponse> {
+        return this.getCertificateDetails({ certificateId: req.certificateId, schemaName: req.schemaName }, config)
+            .pipe(
+                catchError((e) => {
+                    console.error(e);
+                    // throw e
+                    return of({status: 'active'})
+                }),
+                mergeMap((response: CsCertificateDetailsResponse) => {
+                    return iif(
+                        () => (!req.publicKey),
+                        defer(() => {
+                            const certificateData = JSON.parse(response._osSignedData)
+                            if (certificateData && certificateData.issuer && certificateData.issuer.publicKey && certificateData.issuer.publicKey.length) {
+                                return this.getPublicKey({osid: certificateData.issuer.publicKey, schemaName:req.schemaName}, config)
+                                .pipe(
+                                    map((response) => {
+                                        return response.value;
+                                    }),
+                                    catchError((e) => {
+                                        console.error(e);
+                                        throw e
+                                    }),
+                                )
+                            } else {
+                                throw new Error('Public Key Not found')
+                            }
+                        }),
+                        defer(() => {
+                            return of(req.publicKey)
+                        })
+                    )
+                    .pipe(
+                        mergeMap((publicKey) => {
+                            return new CertificateVerifier(this.httpService).verifyData(JSON.parse(response._osSignedData), publicKey).then((data) => {
+                                return  {
+                                    ...data,
+                                    status: response.status 
+                                }
+                            })
+                        })
+                    )
+                }),
+            )
     }
 
 }
