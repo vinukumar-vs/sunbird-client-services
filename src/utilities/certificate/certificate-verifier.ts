@@ -6,15 +6,22 @@ import documentLoaders from 'jsonld';
 import {credentialsv1} from './credentials';
 import { CsHttpRequestType, CsHttpService, CsRequest } from '../../core/http-service/interface';
 import { catchError, map } from "rxjs/operators";
+import { InjectionTokens } from '../../injection-tokens';
+import { Container } from 'inversify';
 
 
 const CERTIFICATE_CONTROLLER_ID =  'https://sunbird.org/';
 const CERTIFICATE_DID =  'did:india';
 export class CertificateVerifier {
-
+    get host(): string {
+        return this.container.get(InjectionTokens.core.api.HOST);
+    }
     constructor(
         private httpService: CsHttpService,
+        private container: Container
+
     ) {
+        
     }
 
     private publicKey = '';
@@ -84,14 +91,18 @@ export class CertificateVerifier {
         if (url.startsWith("{")) {
             return JSON.parse(url);
         }
+        console.log('====> host ', this.host); // TODO: log!
         const apiRequest: CsRequest = new CsRequest.Builder()
             .withHost('https://')
             .withType(CsHttpRequestType.GET)
             .withPath(url.split('//')[1])
             .withBearerToken(false)
+            .withHeaders({
+                'Origin': this.host
+            })
             .withUserToken(false)
             .build();
-
+        console.log('====> apiRequest ', apiRequest); // TODO: log!
         const jsonResp = await this.httpService.fetch(apiRequest)
             .pipe(
                 map((response) => {

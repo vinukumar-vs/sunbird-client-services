@@ -34,6 +34,7 @@ export class CertificateServiceImpl implements CsCertificateService {
         @inject(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH_LEGACY) private apiPathLegacy: string,
         @inject(InjectionTokens.services.certificate.RC_API_PATH) private rcApiPath: string,
         @inject(InjectionTokens.services.systemSettings.SYSTEM_SETTINGS_SERVICE) private systemSettingsService: CsSystemSettingsService,
+        @inject(InjectionTokens.CONTAINER) private container: Container
     ) {
     }
 
@@ -346,7 +347,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                     )
                     .pipe(
                         mergeMap((publicKey) => {
-                            return new CertificateVerifier(this.httpService).verifyData(JSON.parse(response._osSignedData), publicKey).then((data) => {
+                            return new CertificateVerifier(this.httpService, this.container).verifyData(JSON.parse(response._osSignedData), publicKey).then((data) => {
                                 return  {
                                     ...data,
                                     status: response.status 
