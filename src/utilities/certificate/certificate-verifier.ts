@@ -54,7 +54,7 @@ export class CertificateVerifier {
                 compactProof: false
             });
             result.certificateData = {
-                issuedTo: signedJSON.credentialSubject.name,
+                issuedTo: signedJSON.credentialSubject.recipientName,
                 issuanceDate: signedJSON.issuanceDate,
                 issuerName: signedJSON.issuer.name,
                 trainingName: signedJSON.credentialSubject.trainingName,
