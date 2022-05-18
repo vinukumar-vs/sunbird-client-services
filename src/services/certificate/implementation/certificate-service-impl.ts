@@ -216,6 +216,7 @@ export class CertificateServiceImpl implements CsCertificateService {
                     .withType(CsHttpRequestType.GET)
                     .withPath((config ? config.rcApiPath : this.rcApiPath)!!.replace("${schemaName}", schemaName) + '/download/' + request.certificateId)
                     .withBearerToken(true)
+                    .withUserToken(true)
                     .withHeaders({
                         'Accept': "image/svg+xml",
                         'template': request.templateUrl
