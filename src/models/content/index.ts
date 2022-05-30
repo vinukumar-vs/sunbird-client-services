@@ -69,6 +69,12 @@ export interface Content {
     se_mediums?: string | string[];
     se_gradeLevels?: string[];
     se_subjects?: string | string[];
+    transcripts?: Transcript[];
+}
+export interface Transcript {
+    artifactUrl: string;
+    identifier: string;
+    language: string;
 }
 
 export interface LicenseDetails {
