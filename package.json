@@ -24,6 +24,7 @@
     "jszip": "^3.7.1",
     "jsonld": "^5.2.0",
     "jsonld-signatures": "^6.0.0",
+    "moment": "^2.29.4",
     "node-fetch": "2.6.5"
   },
   "author": "",
