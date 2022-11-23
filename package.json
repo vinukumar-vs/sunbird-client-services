@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/client-services",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Type definitions and models for Sunbird platform clients",
   "main": "dist/index.js",
   "module": "src/index.ts",
@@ -24,6 +24,7 @@
     "jszip": "^3.7.1",
     "jsonld": "^5.2.0",
     "jsonld-signatures": "^6.0.0",
+    "moment": "^2.29.4",
     "node-fetch": "2.6.5"
   },
   "author": "",
