@@ -33,7 +33,7 @@ import {map, mergeMap} from 'rxjs/operators';
 import {CsGroupActivityService} from '../activity/interface';
 import {CsFormService} from '../../form/interface/cs-form-service';
 import {Form} from '../../../models/form';
-import * as moment from 'moment';
+import * as dayjs from 'dayjs';
 
 @injectable()
 export class GroupServiceImpl implements CsGroupService {
@@ -327,7 +327,8 @@ export class GroupServiceImpl implements CsGroupService {
                         return -1;
                     }
 
-                    return moment(bLastActivity, moment.defaultFormat).valueOf() - moment(aLastActivity, moment.defaultFormat).valueOf()
+                    return dayjs(bLastActivity.slice(0, bLastActivity.lastIndexOf(':'))).valueOf() -
+                                 dayjs(aLastActivity.slice(0, aLastActivity.lastIndexOf(':'))).valueOf();
                 })
                     .map((g) => CsGroup.fromJSON(g) as CsGroupSearchResponse)
             )
