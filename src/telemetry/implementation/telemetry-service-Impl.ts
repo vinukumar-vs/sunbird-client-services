@@ -62,6 +62,17 @@ export class TelemetryServiceImpl implements TelemetryService {
             this.telemetryProvider.interact(interactObject.edata, interactObject.options);
         }
     }
+
+    public raiseSearchTelemetry(interactObject: any) {
+        if (this.isTelemetryInitialised()) {
+            this.telemetryProvider.search(interactObject.edata, interactObject.options);
+        }
+    }
+
+    public raiseSearchTelemetryWith(cdata: Array<ICDataEntry>, env: string, edata: any, telemetryObject?: ITelemetryObject) {
+
+    }
+
     public raiseInteractTelemetryWith(cdata: Array<ICDataEntry>, env: string, edata: any, telemetryObject?: ITelemetryObject) {
 
     }
