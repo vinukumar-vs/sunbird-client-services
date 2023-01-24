@@ -23,5 +23,7 @@ export abstract class TelemetryService {
     public abstract raiseAssesTelemetry(data: any , options: any);
     public abstract raiseResponseTelemetry(data: any , options: any);
     public abstract raiseSummaryTelemetry(data: any , options: any);
+    public abstract raiseSearchTelemetry(interactObject);
+    public abstract raiseSearchTelemetryWith(cdata: Array<ICDataEntry>, env: string, edata: any, telemetryObject?: ITelemetryObject);
 
 }
