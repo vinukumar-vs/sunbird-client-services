@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/client-services",
-  "version": "5.1.2",
+  "version": "6.0.0",
   "description": "Type definitions and models for Sunbird platform clients",
   "main": "dist/index.js",
   "module": "src/index.ts",
@@ -17,15 +17,15 @@
   },
   "dependencies": {
     "@project-sunbird/telemetry-sdk": "0.0.26",
-    "dayjs": "^1.8.20",
-    "inversify": "^5.0.1",
+    "dayjs": "^1.9.8",
+    "inversify": "^5.1.1",
     "jsonld": "^5.2.0",
     "jsonld-signatures": "^6.0.0",
     "jszip": "^3.7.1",
-    "node-fetch": "2.6.5",
+    "node-fetch": "2.6.7",
     "qs": "^6.9.7",
     "reflect-metadata": "^0.1.13",
-    "whatwg-fetch": "^3.1.0"
+    "whatwg-fetch": "^3.6.2"
   },
   "author": "",
   "license": "MIT",
@@ -34,20 +34,20 @@
   },
   "homepage": "https://github.com/Sunbird-Ed/sunbird-client-services#readme",
   "peerDependencies": {
-    "rxjs": "6.x.x"
+    "rxjs": ">=6"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",
-    "@types/node-fetch": "2.5.12",
+    "@types/node-fetch": "^2.6.3",
     "jest": "^25.5.4",
-    "rxjs": "^6.5.3",
-    "terser-webpack-plugin": "^4.1.0",
+    "rxjs": "^6.6.7",
+    "terser-webpack-plugin": "^5.0.2",
     "ts-jest": "^25.5.1",
-    "ts-loader": "^8.2.0",
-    "tslint": "^5.12.0",
-    "typescript": "2.9.1",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^3.3.12"
+    "ts-loader": "^8.4.0",
+    "tslint": "^6.1.0",
+    "typescript": "4.6.4",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^5.0.2"
   },
   "jest": {
     "globals": {
