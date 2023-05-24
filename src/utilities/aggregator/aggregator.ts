@@ -43,17 +43,24 @@ export class Aggregator {
             continue;
           }
 
-          const aKeyValue = Aggregator.deepGet(a, key.split('.'));
-          const bKeyValue = Aggregator.deepGet(b, key.split('.'));
+          // console.log(Aggregator.deepGet(a, key.split('.')));
+
+          const aKeyValue = Aggregator.deepGet(a, key.split('.')).toLowerCase();
+          const bKeyValue = Aggregator.deepGet(b, key.split('.')).toLowerCase();
 
           comparison = comparator ? comparator(aKeyValue, bKeyValue) : String(aKeyValue).localeCompare(bKeyValue);
-          
+
           if (sortBy[key] === 'asc' || sortBy[key] === 'desc') {
             comparison = sortBy[key] === 'asc' ? comparison : -comparison;
           } else {
             const comprehension = sortBy[key] as SortComprehension;
 
             if (comprehension.preference) {
+              for (let index = 0; index < comprehension.preference.length; index++) {
+                if (typeof comprehension.preference[index] === 'string') {
+                  comprehension.preference[index] = (comprehension.preference[index] as any).toLowerCase();
+                }
+              }
               if (comprehension.preference.indexOf(aKeyValue) > -1 && comprehension.preference.indexOf(bKeyValue) > -1) {
                 comparison = comprehension.preference.indexOf(aKeyValue) - comprehension.preference.indexOf(bKeyValue);
               } else if (comprehension.preference.indexOf(aKeyValue) > -1 && comprehension.preference.indexOf(bKeyValue) === -1) {

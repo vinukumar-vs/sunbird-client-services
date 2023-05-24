@@ -65,6 +65,16 @@ export interface Content {
     userConsent?: UserConsent;
     additionalCategories?: string[];
     forumId?: string;
+    se_boards?: string;
+    se_mediums?: string | string[];
+    se_gradeLevels?: string[];
+    se_subjects?: string | string[];
+    transcripts?: Transcript[];
+}
+export interface Transcript {
+    artifactUrl: string;
+    identifier: string;
+    language: string;
 }
 
 export interface LicenseDetails {
@@ -114,6 +124,8 @@ export type ContentMimeType =
     'application/vnd.ekstep.content-collection' |
     'application/vnd.ekstep.plugin-archive' |
     'application/vnd.ekstep.h5p-archive' |
+    'application/vnd.sunbird.question' |
+    'application/vnd.sunbird.questionset' |
     'application/epub' |
     'text/x-url' |
     'video/x-youtube' |

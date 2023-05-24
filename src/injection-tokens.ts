@@ -61,6 +61,16 @@ export const InjectionTokens = {
         discussion: {
             DISCUSSION_SERVICE_API_PATH: Symbol.for('DISCUSSION_SERVICE_API_PATH'),
             DISCUSSION_SERVICE: Symbol.for('DISCUSSION_SERVICE')
+        },
+        notification: {
+            NOTIFICATION_SERVICE_API_PATH: Symbol.for('NOTIFICATION_SERVICE_API_PATH'),
+            NOTIFICATION_SERVICE: Symbol.for('NOTIFICATION_SERVICE')
+        },
+        certificate: {
+            CERTIFICATE_SERVICE_API_PATH: Symbol.for('CERTIFICATE_SERVICE_API_PATH'),
+            CERTIFICATE_SERVICE_API_PATH_LEGACY: Symbol.for('CERTIFICATE_SERVICE_API_PATH_LEGACY'),
+            RC_API_PATH: Symbol.for('RC_API_PATH'),
+            CERTIFICATE_SERVICE: Symbol.for('CERTIFICATE_SERVICE')
         }
     }
 };

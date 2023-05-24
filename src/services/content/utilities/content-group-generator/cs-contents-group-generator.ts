@@ -20,6 +20,7 @@ export interface CsContentGroup {
     name?: string;
     contents?: Content[];
     targetedContents?: Content[];
+    totalCount?: number;
 }
 
 export interface CsContentGroupSortCriteria extends CsSortCriteria<CsContentGroup> {}
