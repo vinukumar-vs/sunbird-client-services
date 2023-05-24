@@ -8,3 +8,5 @@ export * from './device';
 export * from './organisation';
 export * from './form';
 export * from './group';
+export * from './notification';
+export * from './certificate';

@@ -26,6 +26,10 @@ import {SystemSettingsServiceImpl} from './services/system-settings/implementati
 import {CsClientStorage} from './core/cs-client-storage';
 import { CsDiscussionService } from './services/discussion';
 import { DiscussionServiceImpl } from './services/discussion/implementation/discussion-service-impl';
+import { CsNotificationService } from './services/notification/interface/cs-notification-service';
+import { NotificationServiceImpl } from './services/notification/implementation/notification-service-impl';
+import { CsCertificateService } from './services/certificate';
+import { CertificateServiceImpl } from './services/certificate/implementation/certificate-service-impl';
 
 export interface CsDiscussionServiceConfig {
     apiPath: string;
@@ -67,6 +71,16 @@ export interface CsFormServiceConfig {
     apiPath: string;
 }
 
+export interface CsNotificationServiceConfig {
+    apiPath: string;
+}
+
+export interface CsCertificateServiceConfig {
+    apiPath: string;
+    apiPathLegacy?: string;
+    rcApiPath: string;
+}
+
 export interface CsConfig {
     core: {
         httpAdapter?: 'HttpClientBrowserAdapter' | 'HttpClientCordovaAdapter';
@@ -95,7 +109,9 @@ export interface CsConfig {
         formServiceConfig?: CsFormServiceConfig,
         systemSettingsServiceConfig?: CsSystemSettingsServiceConfig,
         discussionServiceConfig?: CsDiscussionServiceConfig,
-        contentServiceConfig?: CsContentServiceConfig
+        contentServiceConfig?: CsContentServiceConfig,
+        notificationServiceConfig?: CsNotificationServiceConfig,
+        certificateServiceConfig?: CsCertificateServiceConfig
     };
 }
 
@@ -164,6 +180,14 @@ export class CsModule {
 
     get discussionService(): CsDiscussionService {
         return this._container.get<CsDiscussionService>(InjectionTokens.services.discussion.DISCUSSION_SERVICE);
+    }
+
+    get notificationService(): CsNotificationService {
+        return this._container.get<CsNotificationService>(InjectionTokens.services.notification.NOTIFICATION_SERVICE);
+    }
+
+    get certificateService(): CsCertificateService {
+        return this._container.get<CsCertificateService>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE);
     }
 
     public async init(config: CsConfig, onConfigUpdate?: () => void, clientStorage?: CsClientStorage) {
@@ -313,5 +337,35 @@ export class CsModule {
             this._container[mode]<string>(InjectionTokens.services.discussion.DISCUSSION_SERVICE_API_PATH)
                 .toConstantValue(config.services.discussionServiceConfig.apiPath);
         }
+
+         // notification service
+        this._container[mode]<CsNotificationService>(InjectionTokens.services.notification.NOTIFICATION_SERVICE)
+            .to(NotificationServiceImpl).inSingletonScope();
+        if (config.services.notificationServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.notification.NOTIFICATION_SERVICE_API_PATH)
+            .toConstantValue(config.services.notificationServiceConfig.apiPath);
+        }
+
+        // certificate service
+        this._container[mode]<CsCertificateService>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE)
+            .to(CertificateServiceImpl).inSingletonScope();
+        if (config.services.certificateServiceConfig) {
+            this._container[mode]<string>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH)
+            .toConstantValue(config.services.certificateServiceConfig.apiPath);
+            this._container[mode]<string>(InjectionTokens.services.certificate.CERTIFICATE_SERVICE_API_PATH_LEGACY)
+            .toConstantValue(config.services.certificateServiceConfig.apiPathLegacy ? config.services.certificateServiceConfig.apiPathLegacy : '');
+            if (config.services.certificateServiceConfig.rcApiPath) {
+                this._container[mode]<string>(InjectionTokens.services.certificate.RC_API_PATH)
+                .toConstantValue(config.services.certificateServiceConfig.rcApiPath);
+            }
+        }
+    }
+
+    updateAuthTokenConfig(accessToken: string) {
+        this._config.core.api.authentication.userToken = accessToken;
+
+        const mode: 'rebind' | 'bind' = this._isInitialised ? 'rebind' : 'bind';
+        this._container[mode]<string | undefined>(InjectionTokens.core.api.authentication.USER_TOKEN)
+            .toConstantValue(this._config.core.api.authentication.userToken);
     }
 }
