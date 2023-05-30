@@ -54,8 +54,7 @@ const config = {
         ]
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
-        fallback: { "util": require.resolve("util/") }
+        extensions: ['.tsx', '.ts', '.js']
     },
     optimization: {
         minimize: true,
