@@ -175,7 +175,7 @@ describe('CourseServiceImpl', () => {
                     courseService2.getSignedCourseCertificate('CERTIFICATE_ID').subscribe({
                         complete: () => fail()
                     });
-                } catch (e: any) {
+                } catch (e) {
                     expect(e.message).toEqual('Required certRegistrationApiPath configuration');
                     done();
                 }

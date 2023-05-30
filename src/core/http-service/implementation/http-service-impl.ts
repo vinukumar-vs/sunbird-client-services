@@ -137,7 +137,7 @@ export class HttpServiceImpl implements CsHttpService {
                 }
 
                 return await this.interceptResponse(request, localResponse);
-            } catch (e: any) {
+            } catch (e) {
                 const wrapError = (res: CsResponse<T>) => {
                     if (res.responseCode >= 400 && res.responseCode <= 499) {
                         throw new CsHttpClientError(`
@@ -156,7 +156,7 @@ export class HttpServiceImpl implements CsHttpService {
                     try {
                         localResponse = await this.interceptResponse(request, e.response);
                         return wrapError(localResponse);
-                    } catch (e: any) {
+                    } catch (e) {
                         if (e.responseCode) {
                             return wrapError(e);
                         }
