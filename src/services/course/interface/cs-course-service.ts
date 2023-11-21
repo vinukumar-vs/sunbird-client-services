@@ -22,7 +22,7 @@ export interface GetContentStateRequest {
     userId: string;
     courseId: string;
     batchId: string;
-    contentIds: string[];
+    contentIds?: string[];
     fields?: ContentStateRequestFields[];
 }
 
